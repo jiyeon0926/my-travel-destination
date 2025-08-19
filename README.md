@@ -1,0 +1,37 @@
+# My Travel Destination
+- 사용자들이 작성한 여행 블로그를 한 곳에서 확인하고, 나만의 여행지를 발견하는 서비스
+
+## 🖌️ 와이어프레임
+- 1️⃣[사용자](https://www.figma.com/design/pz5HnNQ6CbxfQP8pICnl6K/my-travel-service?node-id=2-153&p=f&t=nUCVQhWyv5rZqjOm-0)
+- 2️⃣[관리자](https://www.figma.com/design/pz5HnNQ6CbxfQP8pICnl6K/my-travel-service?node-id=94-839&p=f&t=nUCVQhWyv5rZqjOm-0)
+- 3️⃣[업체](https://www.figma.com/design/pz5HnNQ6CbxfQP8pICnl6K/my-travel-service?node-id=94-838&p=f&t=nUCVQhWyv5rZqjOm-0)
+
+## 🗂️ 역할별 기능
+
+### 0️⃣ 공통
+- 로그인
+- 로그아웃
+
+### 1️⃣ 사용자
+- 회원가입
+- 회원탈퇴
+- 비밀번호 찾기
+- 비밀번호 변경
+- 장소 검색
+- 여행지 검색
+- 여행 상품 검색
+- 여행 상품 예약 및 결제
+- 프로필 변경
+- 블로그 작성/수정/삭제
+- 예약 내역 확인
+
+### 2️⃣ 관리자
+- 업체 관리: 업체 등록/수정/삭제
+- 실시간 지표: 사용자 수, 업체 수, 판매 상품 수, 블로그 수
+- 인기 상품 확인
+
+### 3️⃣ 업체
+- 상품 관리: 상품 등록/수정/삭제, 옵션 등록/수정/삭제, 일정 등록/수정/삭제
+- 예약 내역 확인
+- 비밀번호 찾기
+- 비밀번호 변경
