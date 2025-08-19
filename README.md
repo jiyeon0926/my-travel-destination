@@ -6,6 +6,14 @@
 - 2️⃣[관리자](https://www.figma.com/design/pz5HnNQ6CbxfQP8pICnl6K/my-travel-service?node-id=94-839&p=f&t=nUCVQhWyv5rZqjOm-0)
 - 3️⃣[업체](https://www.figma.com/design/pz5HnNQ6CbxfQP8pICnl6K/my-travel-service?node-id=94-838&p=f&t=nUCVQhWyv5rZqjOm-0)
 
+## 🏷️ 도메인별 기능
+- 사용자 관리
+- 업체 관리
+- 상품 관리
+- 블로그
+- 지도 기반 장소 검색
+- 예약 및 결제
+
 ## 🗂️ 역할별 기능
 
 ### 0️⃣ 공통
