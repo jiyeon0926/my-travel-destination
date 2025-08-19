@@ -1,5 +1,9 @@
+<p align="center">
+  <img width="250" height="250" alt="my-travel-destination" src="https://github.com/user-attachments/assets/b147dc01-3d40-4237-9c74-79b0f84dd488" />
+</p>
+
 # My Travel Destination
-- 사용자들이 작성한 여행 블로그를 한 곳에서 확인하고, 나만의 여행지를 발견하는 서비스
+- 사용자들이 작성한 여행 블로그를 한 곳에서 확인하고, 나의 다음 여행지를 발견하는 서비스
 
 ## 🖌️ 와이어프레임
 - 1️⃣[사용자](https://www.figma.com/design/pz5HnNQ6CbxfQP8pICnl6K/my-travel-service?node-id=2-153&p=f&t=nUCVQhWyv5rZqjOm-0)
