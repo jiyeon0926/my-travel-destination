@@ -5,6 +5,12 @@
 # My Travel Destination
 - 사용자들이 작성한 여행 블로그를 한 곳에서 확인하고, 나의 다음 여행지를 발견하는 서비스
 
+## 📅 프로젝트 기간
+- 총 기간 : 2025-08-16 ~
+- 설계 : 2025-08-16 ~ 2025-08-23
+- BE 개발 : 2025-08-23 ~ 
+- FE 개발 : 
+
 ## 🖌️ 와이어프레임
 - 1️⃣[사용자](https://www.figma.com/design/pz5HnNQ6CbxfQP8pICnl6K/my-travel-service?node-id=2-153&p=f&t=nUCVQhWyv5rZqjOm-0)
 - 2️⃣[관리자](https://www.figma.com/design/pz5HnNQ6CbxfQP8pICnl6K/my-travel-service?node-id=94-839&p=f&t=nUCVQhWyv5rZqjOm-0)
