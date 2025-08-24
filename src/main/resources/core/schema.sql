@@ -29,7 +29,7 @@ create table my_travel_destination.ticket (
 	name varchar(50) not null,
 	sale_start_date datetime not null,
 	sale_end_date datetime,
-	base_price int,
+	base_price integer,
 	phone varchar(20) not null,
 	address varchar(255) not null,
 	description text,
@@ -86,7 +86,7 @@ create table my_travel_destination.reservation_option (
 	id bigint primary key auto_increment,
 	reservation_id bigint not null,
 	ticket_option_id bigint not null,
-	quantity int not null default 1,
+	quantity int not null,
 	unit_price int not null,
 	total_price int not null,
 	created_at datetime not null
@@ -117,7 +117,7 @@ create table my_travel_destination.blog (
 	content text not null,
 	travel_start_date date not null,
 	travel_end_date date not null,
-	estimated_expense int default 0,
+	estimated_expense int not null,
 	total_expense int not null,
 	created_at datetime not null,
 	updated_at datetime not null
