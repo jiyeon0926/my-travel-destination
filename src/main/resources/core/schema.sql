@@ -72,7 +72,7 @@ create table my_travel_destination.reservation (
 	reservation_number varchar(20) unique not null,
 	total_amount int not null,
 	reservation_name varchar(50) not null,
-	reservation_phone varchar(20),
+	reservation_phone varchar(20) not null,
 	status varchar(30) not null,
 	cancelled_at datetime,
 	created_at datetime not null,
