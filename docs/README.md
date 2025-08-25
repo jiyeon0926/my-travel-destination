@@ -57,3 +57,8 @@
 ## 🧩 [ERD](https://dbdiagram.io/d/My-Travel-Destination-686676f8f413ba3508206ce6)
 
 ## 📝 [API 명세서](https://www.notion.so/My-Travel-Destination-2562f0d54a3480bcadeaed91521358fe?source=copy_link)
+
+## 🔒 로그인 및 로그아웃
+이 프로젝트의 핵심은 인증 기능이 아니므로, 로그인 연장 기능은 구현하지 않았습니다. <br/>
+로그인 연장을 구현하려면 Refresh Token이 필요하지만, 현재 프로젝트에서는 해당 기능이 없으므로 Access Token만 발급하도록 설계했습니다. <br/>
+로그아웃 시에는 Access Token을 Redis에 저장하여 즉시 무력화하도록 처리했습니다.
