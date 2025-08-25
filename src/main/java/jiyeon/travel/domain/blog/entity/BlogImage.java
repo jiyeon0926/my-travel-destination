@@ -1,7 +1,6 @@
 package jiyeon.travel.domain.blog.entity;
 
 import jakarta.persistence.*;
-import jiyeon.travel.domain.user.entity.User;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

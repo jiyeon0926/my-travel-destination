@@ -40,7 +40,7 @@ public class TicketSchedule extends BaseEntity {
     @Column(nullable = false)
     private int remainingQuantity;
 
-    @OneToMany(mappedBy = "user")
+    @OneToMany(mappedBy = "ticketSchedule")
     private List<Reservation> reservations = new ArrayList<>();
 
     public TicketSchedule(Ticket ticket, LocalDate startDate, LocalTime startTime, int quantity) {
