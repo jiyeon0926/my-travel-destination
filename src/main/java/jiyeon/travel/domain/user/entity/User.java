@@ -61,4 +61,8 @@ public class User extends BaseEntity {
         this.phone = phone;
         this.role = UserRole.USER;
     }
+
+    public void changeIsDeleted() {
+        this.isDeleted = true;
+    }
 }
