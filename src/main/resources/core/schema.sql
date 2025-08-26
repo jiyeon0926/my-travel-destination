@@ -145,6 +145,6 @@ create table my_travel_destination.blog_ticket_item (
 alter table my_travel_destination.blog_ticket_item add foreign key (blog_id) references my_travel_destination.blog (id);
 alter table my_travel_destination.blog_ticket_item add foreign key (reservation_id) references my_travel_destination.reservation (id);
 
--- 관리자
+-- 관리자 (admin, admin)
 insert into my_travel_destination.user (email, password, display_name, phone, role, is_deleted, created_at, updated_at)
-values ('admin', SHA2('admin', 256), '관리자', '01012345678', 'ADMIN', 0, now(), now())
+values ('admin', '$2a$10$VPrBFOayEQd.JqkxnLPkGO2KUPnSRD0mjA1mXCVQr/i0kGohCBM5y', '관리자', '01012345678', 'ADMIN', 0, now(), now())
