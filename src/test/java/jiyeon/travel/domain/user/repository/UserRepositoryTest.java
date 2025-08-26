@@ -1,6 +1,7 @@
 package jiyeon.travel.domain.user.repository;
 
 import jiyeon.travel.domain.user.entity.User;
+import jiyeon.travel.global.common.enums.UserRole;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -57,6 +58,6 @@ class UserRepositoryTest {
     }
 
     private User createUser(String email, String password, String displayName, String phone) {
-        return new User(email, password, displayName, phone);
+        return new User(email, password, displayName, phone, UserRole.USER);
     }
 }
