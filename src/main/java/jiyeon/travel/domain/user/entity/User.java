@@ -54,12 +54,12 @@ public class User extends BaseEntity {
     @OneToMany(mappedBy = "user")
     private List<Blog> blogs = new ArrayList<>();
 
-    public User(String email, String password, String displayName, String phone) {
+    public User(String email, String password, String displayName, String phone, UserRole role) {
         this.email = email;
         this.password = password;
         this.displayName = displayName;
         this.phone = phone;
-        this.role = UserRole.USER;
+        this.role = role;
     }
 
     public void changeIsDeleted() {

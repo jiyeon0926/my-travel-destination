@@ -2,6 +2,7 @@ package jiyeon.travel.global.config;
 
 import jakarta.servlet.DispatcherType;
 import jiyeon.travel.global.auth.jwt.filter.JwtAuthFilter;
+import jiyeon.travel.global.common.enums.UserRole;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
@@ -36,6 +37,7 @@ public class WebConfig {
                         auth.requestMatchers(WHITE_LIST).permitAll()
                                 .requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll()
                                 .dispatcherTypeMatchers(DispatcherType.FORWARD, DispatcherType.INCLUDE, DispatcherType.ERROR).permitAll()
+                                .requestMatchers("/api/admin/**").hasRole(UserRole.ADMIN.name())
                                 .anyRequest().authenticated())
                 .exceptionHandling(handler -> handler
                         .authenticationEntryPoint(authEntryPoint)

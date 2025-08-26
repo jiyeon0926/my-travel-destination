@@ -6,6 +6,7 @@ import jiyeon.travel.domain.user.entity.User;
 import jiyeon.travel.domain.user.repository.UserRepository;
 import jiyeon.travel.global.auth.AuthenticationScheme;
 import jiyeon.travel.global.auth.jwt.JwtProvider;
+import jiyeon.travel.global.common.enums.UserRole;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -40,7 +41,7 @@ public class AuthService {
                 });
 
         String encodedPassword = passwordEncoder.encode(password);
-        User user = new User(email, encodedPassword, nickname, phone);
+        User user = new User(email, encodedPassword, nickname, phone, UserRole.USER);
         User savedUser = userRepository.save(user);
 
         return new UserSignupResDto(savedUser);
