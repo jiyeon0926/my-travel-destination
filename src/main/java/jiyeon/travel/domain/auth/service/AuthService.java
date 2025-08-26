@@ -48,6 +48,7 @@ public class AuthService {
 
     public LoginResDto login(String email, String password) {
         User user = userRepository.findByEmail(email)
+                .filter(u -> !u.isDeleted())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "사용자를 찾을 수 없습니다."));
 
         validatePassword(password, user.getPassword());
