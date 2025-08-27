@@ -39,4 +39,11 @@ public class PartnerAdminController {
 
         return new ResponseEntity<>(partnerProfileResDto, HttpStatus.OK);
     }
+
+    @GetMapping("/{partnerId}")
+    public ResponseEntity<PartnerProfileResDto> findPartnerById(@PathVariable Long partnerId) {
+        PartnerProfileResDto partnerProfileResDto = partnerAdminService.findPartnerById(partnerId);
+
+        return new ResponseEntity<>(partnerProfileResDto, HttpStatus.OK);
+    }
 }
