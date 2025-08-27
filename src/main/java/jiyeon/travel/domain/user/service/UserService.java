@@ -30,4 +30,15 @@ public class UserService {
 
         return new UserProfileResDto(user);
     }
+
+    @Transactional
+    public UserProfileResDto updateProfile(String email, String nickname, String phone) {
+        User user = userRepository.findByEmail(email)
+                .filter(u -> !u.isDeleted())
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "사용자를 찾을 수 없습니다."));
+
+        user.updateProfile(nickname, phone);
+
+        return new UserProfileResDto(user);
+    }
 }

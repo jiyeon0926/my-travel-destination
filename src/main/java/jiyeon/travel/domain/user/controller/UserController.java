@@ -2,6 +2,7 @@ package jiyeon.travel.domain.user.controller;
 
 import jiyeon.travel.domain.auth.service.AuthService;
 import jiyeon.travel.domain.user.dto.UserProfileResDto;
+import jiyeon.travel.domain.user.dto.UserProfileUpdateReqDto;
 import jiyeon.travel.domain.user.service.UserService;
 import jiyeon.travel.global.auth.AuthenticationScheme;
 import jiyeon.travel.global.auth.UserDetailsImpl;
@@ -36,6 +37,15 @@ public class UserController {
     public ResponseEntity<UserProfileResDto> getProfile(@AuthenticationPrincipal UserDetailsImpl userDetails) {
         String email = userDetails.getUsername();
         UserProfileResDto userProfileResDto = userService.getProfile(email);
+
+        return new ResponseEntity<>(userProfileResDto, HttpStatus.OK);
+    }
+
+    @PatchMapping("/me")
+    public ResponseEntity<UserProfileResDto> updateProfile(@AuthenticationPrincipal UserDetailsImpl userDetails,
+                                                           @RequestBody UserProfileUpdateReqDto userProfileUpdateReqDto) {
+        String email = userDetails.getUsername();
+        UserProfileResDto userProfileResDto = userService.updateProfile(email, userProfileUpdateReqDto.getNickname(), userProfileUpdateReqDto.getPhone());
 
         return new ResponseEntity<>(userProfileResDto, HttpStatus.OK);
     }
