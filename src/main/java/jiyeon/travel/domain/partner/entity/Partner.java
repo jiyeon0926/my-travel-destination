@@ -1,6 +1,7 @@
-package jiyeon.travel.domain.user.entity;
+package jiyeon.travel.domain.partner.entity;
 
 import jakarta.persistence.*;
+import jiyeon.travel.domain.user.entity.User;
 import jiyeon.travel.global.common.entity.BaseEntity;
 import lombok.AccessLevel;
 import lombok.Getter;

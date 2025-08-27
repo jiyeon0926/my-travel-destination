@@ -1,6 +1,6 @@
-package jiyeon.travel.domain.user.repository;
+package jiyeon.travel.domain.partner.repository;
 
-import jiyeon.travel.domain.user.entity.Partner;
+import jiyeon.travel.domain.partner.entity.Partner;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

@@ -1,9 +1,9 @@
-package jiyeon.travel.domain.user.controller;
+package jiyeon.travel.domain.partner.controller;
 
 import jakarta.validation.Valid;
-import jiyeon.travel.domain.user.dto.PartnerSignupReqDto;
-import jiyeon.travel.domain.user.dto.PartnerSignupResDto;
-import jiyeon.travel.domain.user.service.AdminService;
+import jiyeon.travel.domain.partner.dto.PartnerSignupReqDto;
+import jiyeon.travel.domain.partner.dto.PartnerSignupResDto;
+import jiyeon.travel.domain.partner.service.PartnerAdminService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,13 +15,13 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api/admin")
 @RequiredArgsConstructor
-public class AdminController {
+public class PartnerAdminController {
 
-    private final AdminService adminService;
+    private final PartnerAdminService partnerAdminService;
 
     @PostMapping("/partners")
     public ResponseEntity<PartnerSignupResDto> signupPartner(@Valid @RequestBody PartnerSignupReqDto partnerSignupReqDto) {
-        PartnerSignupResDto partnerSignupResDto = adminService.signupPartner(
+        PartnerSignupResDto partnerSignupResDto = partnerAdminService.signupPartner(
                 partnerSignupReqDto.getEmail(),
                 partnerSignupReqDto.getPassword(),
                 partnerSignupReqDto.getName(),

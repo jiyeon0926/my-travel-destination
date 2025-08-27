@@ -1,6 +1,6 @@
-package jiyeon.travel.domain.user.dto;
+package jiyeon.travel.domain.partner.dto;
 
-import jiyeon.travel.domain.user.entity.Partner;
+import jiyeon.travel.domain.partner.entity.Partner;
 import jiyeon.travel.domain.user.entity.User;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;

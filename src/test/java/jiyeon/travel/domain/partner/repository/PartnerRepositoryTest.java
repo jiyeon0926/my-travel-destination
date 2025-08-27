@@ -1,7 +1,8 @@
-package jiyeon.travel.domain.user.repository;
+package jiyeon.travel.domain.partner.repository;
 
-import jiyeon.travel.domain.user.entity.Partner;
+import jiyeon.travel.domain.partner.entity.Partner;
 import jiyeon.travel.domain.user.entity.User;
+import jiyeon.travel.domain.user.repository.UserRepository;
 import jiyeon.travel.global.common.enums.UserRole;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

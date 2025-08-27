@@ -1,9 +1,9 @@
-package jiyeon.travel.domain.user.service;
+package jiyeon.travel.domain.partner.service;
 
-import jiyeon.travel.domain.user.dto.PartnerSignupResDto;
-import jiyeon.travel.domain.user.entity.Partner;
+import jiyeon.travel.domain.partner.dto.PartnerSignupResDto;
+import jiyeon.travel.domain.partner.entity.Partner;
+import jiyeon.travel.domain.partner.repository.PartnerRepository;
 import jiyeon.travel.domain.user.entity.User;
-import jiyeon.travel.domain.user.repository.PartnerRepository;
 import jiyeon.travel.domain.user.repository.UserRepository;
 import jiyeon.travel.global.common.enums.UserRole;
 import lombok.RequiredArgsConstructor;
@@ -15,7 +15,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 @Service
 @RequiredArgsConstructor
-public class AdminService {
+public class PartnerAdminService {
 
     private final UserRepository userRepository;
     private final PartnerRepository partnerRepository;

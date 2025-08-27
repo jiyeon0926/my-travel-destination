@@ -1,4 +1,4 @@
-package jiyeon.travel.domain.user.dto;
+package jiyeon.travel.domain.partner.dto;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
