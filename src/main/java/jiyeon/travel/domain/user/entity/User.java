@@ -10,8 +10,6 @@ import jiyeon.travel.global.common.enums.UserRole;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.springframework.http.HttpStatus;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -85,7 +83,7 @@ public class User extends BaseEntity {
 
     private void changeNickname(String nickname) {
         if (nickname.isBlank()) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "닉네임이 비어있습니다.");
+            throw new IllegalArgumentException("닉네임이 비어있습니다.");
         }
 
         this.displayName = nickname;
@@ -93,7 +91,7 @@ public class User extends BaseEntity {
 
     private void changePhone(String phone) {
         if (phone.isBlank()) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "전화번호가 비어있습니다.");
+            throw new IllegalArgumentException("전화번호가 비어있습니다.");
         }
 
         this.phone = phone;
