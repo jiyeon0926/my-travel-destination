@@ -2,6 +2,7 @@ package jiyeon.travel.domain.user.entity;
 
 import jakarta.persistence.*;
 import jiyeon.travel.domain.blog.entity.Blog;
+import jiyeon.travel.domain.partner.entity.Partner;
 import jiyeon.travel.domain.reservation.entity.Reservation;
 import jiyeon.travel.domain.ticket.entity.Ticket;
 import jiyeon.travel.global.common.entity.BaseEntity;
@@ -64,5 +65,9 @@ public class User extends BaseEntity {
 
     public void changeIsDeleted() {
         this.isDeleted = true;
+    }
+
+    public void changePassword(String newPassword) {
+        this.password = newPassword;
     }
 }

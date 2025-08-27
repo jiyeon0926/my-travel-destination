@@ -67,6 +67,22 @@ public class AuthService {
         blacklistService.saveAccessToken(accessToken);
     }
 
+    @Transactional
+    public void updatePassword(String email, String oldPassword, String newPassword) {
+        User user = userRepository.findByEmail(email)
+                .filter(u -> !u.isDeleted())
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "사용자를 찾을 수 없습니다."));
+
+        validatePassword(oldPassword, user.getPassword());
+
+        if (oldPassword.equals(newPassword)) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "동일한 비밀번호로 변경할 수 없습니다.");
+        }
+
+        String encodedPassword = passwordEncoder.encode(newPassword);
+        user.changePassword(encodedPassword);
+    }
+
     private void validatePassword(String rawPassword, String encodedPassword) {
         boolean isNotValid = !passwordEncoder.matches(rawPassword, encodedPassword);
 
