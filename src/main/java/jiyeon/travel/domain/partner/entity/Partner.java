@@ -32,4 +32,20 @@ public class Partner extends BaseEntity {
         this.businessNumber = businessNumber;
         this.address = address;
     }
+
+    public void updateProfile(String name, String phone, String address) {
+        this.user.updateProfile(name, phone);
+
+        if (address != null) {
+            changeAddress(address);
+        }
+    }
+
+    private void changeAddress(String address) {
+        if (address.isBlank()) {
+            throw new IllegalArgumentException("주소가 비어있습니다.");
+        }
+
+        this.address = address;
+    }
 }

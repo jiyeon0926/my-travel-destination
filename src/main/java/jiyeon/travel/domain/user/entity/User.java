@@ -83,7 +83,7 @@ public class User extends BaseEntity {
 
     private void changeNickname(String nickname) {
         if (nickname.isBlank()) {
-            throw new IllegalArgumentException("닉네임이 비어있습니다.");
+            throw new IllegalArgumentException("이름이 비어있습니다.");
         }
 
         this.displayName = nickname;

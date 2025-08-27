@@ -1,25 +1,24 @@
 package jiyeon.travel.domain.partner.controller;
 
 import jakarta.validation.Valid;
+import jiyeon.travel.domain.partner.dto.PartnerProfileResDto;
 import jiyeon.travel.domain.partner.dto.PartnerSignupReqDto;
 import jiyeon.travel.domain.partner.dto.PartnerSignupResDto;
+import jiyeon.travel.domain.partner.dto.PartnerUpdateReqDto;
 import jiyeon.travel.domain.partner.service.PartnerAdminService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/admin")
+@RequestMapping("/api/admin/partners")
 @RequiredArgsConstructor
 public class PartnerAdminController {
 
     private final PartnerAdminService partnerAdminService;
 
-    @PostMapping("/partners")
+    @PostMapping
     public ResponseEntity<PartnerSignupResDto> signupPartner(@Valid @RequestBody PartnerSignupReqDto partnerSignupReqDto) {
         PartnerSignupResDto partnerSignupResDto = partnerAdminService.signupPartner(
                 partnerSignupReqDto.getEmail(),
@@ -31,5 +30,13 @@ public class PartnerAdminController {
         );
 
         return new ResponseEntity<>(partnerSignupResDto, HttpStatus.CREATED);
+    }
+
+    @PatchMapping("/{partnerId}")
+    public ResponseEntity<PartnerProfileResDto> updatePartnerById(@PathVariable Long partnerId,
+                                                                  @RequestBody PartnerUpdateReqDto partnerUpdateReqDto) {
+        PartnerProfileResDto partnerProfileResDto = partnerAdminService.updatePartnerById(partnerId, partnerUpdateReqDto.getName(), partnerUpdateReqDto.getPhone(), partnerUpdateReqDto.getAddress());
+
+        return new ResponseEntity<>(partnerProfileResDto, HttpStatus.OK);
     }
 }
