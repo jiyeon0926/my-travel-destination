@@ -44,6 +44,24 @@ class PartnerRepositoryTest {
                 );
     }
 
+    @DisplayName("이메일로 업체의 모든 정보를 조회합니다.")
+    @Test
+    void findByEmailAndIsDeletedFalse() {
+        // given
+        User user1 = createUser("user1@naver.com", "1234", "토끼", "010");
+        User savedUser1 = userRepository.save(user1);
+
+        Partner partner1 = createPartner(savedUser1, "123-456", "서울특별시");
+        partnerRepository.save(partner1);
+
+        // when
+        Partner partner = partnerRepository.findByEmailAndIsDeletedFalse("user1@naver.com").get();
+
+        // then
+        assertThat(partner).extracting("user.email", "user.displayName", "user.phone", "businessNumber", "address")
+                .contains("user1@naver.com", "토끼", "010", "123-456", "서울특별시");
+    }
+
     private User createUser(String email, String password, String displayName, String phone) {
         return new User(email, password, displayName, phone, UserRole.PARTNER);
     }
