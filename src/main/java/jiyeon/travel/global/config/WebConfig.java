@@ -39,6 +39,7 @@ public class WebConfig {
                                 .dispatcherTypeMatchers(DispatcherType.FORWARD, DispatcherType.INCLUDE, DispatcherType.ERROR).permitAll()
                                 .requestMatchers("/api/admin/**").hasRole(UserRole.ADMIN.name())
                                 .requestMatchers("/api/users/**").hasRole(UserRole.USER.name())
+                                .requestMatchers("/api/partners/**").hasRole(UserRole.PARTNER.name())
                                 .anyRequest().authenticated())
                 .exceptionHandling(handler -> handler
                         .authenticationEntryPoint(authEntryPoint)
