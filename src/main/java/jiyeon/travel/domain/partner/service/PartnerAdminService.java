@@ -61,4 +61,13 @@ public class PartnerAdminService {
 
         return new PartnerProfileResDto(partner.getUser(), partner);
     }
+
+    @Transactional
+    public void deletePartnerById(Long partnerId) {
+        Partner partner = partnerRepository.findById(partnerId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "업체를 찾을 수 없습니다."));
+
+        partnerRepository.delete(partner);
+        userRepository.delete(partner.getUser());
+    }
 }

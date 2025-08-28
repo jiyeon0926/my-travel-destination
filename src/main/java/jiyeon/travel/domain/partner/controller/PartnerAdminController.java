@@ -46,4 +46,11 @@ public class PartnerAdminController {
 
         return new ResponseEntity<>(partnerProfileResDto, HttpStatus.OK);
     }
+
+    @DeleteMapping("/{partnerId}")
+    public ResponseEntity<Void> deletePartnerById(@PathVariable Long partnerId) {
+        partnerAdminService.deletePartnerById(partnerId);
+
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
 }
