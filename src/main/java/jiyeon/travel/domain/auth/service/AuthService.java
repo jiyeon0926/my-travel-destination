@@ -7,8 +7,9 @@ import jiyeon.travel.domain.user.repository.UserRepository;
 import jiyeon.travel.global.auth.AuthenticationScheme;
 import jiyeon.travel.global.auth.jwt.JwtProvider;
 import jiyeon.travel.global.common.enums.UserRole;
+import jiyeon.travel.global.exception.CustomException;
+import jiyeon.travel.global.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -16,7 +17,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.server.ResponseStatusException;
 
 @Service
 @RequiredArgsConstructor
@@ -32,12 +32,12 @@ public class AuthService {
     public UserSignupResDto signupUser(String email, String password, String nickname, String phone) {
         userRepository.findByEmail(email)
                 .ifPresent(user -> {
-                    throw new ResponseStatusException(HttpStatus.CONFLICT, "이미 존재하는 이메일입니다.");
+                    throw new CustomException(ErrorCode.EMAIL_ALREADY_EXISTS);
                 });
 
         userRepository.findByDisplayName(nickname)
                 .ifPresent(user -> {
-                    throw new ResponseStatusException(HttpStatus.CONFLICT, "이미 존재하는 별명입니다.");
+                    throw new CustomException(ErrorCode.NICKNAME_ALREADY_EXISTS);
                 });
 
         String encodedPassword = passwordEncoder.encode(password);
@@ -50,7 +50,7 @@ public class AuthService {
     public LoginResDto login(String email, String password) {
         User user = userRepository.findByEmail(email)
                 .filter(u -> !u.isDeleted())
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "사용자를 찾을 수 없습니다."));
+                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
 
         validatePassword(password, user.getPassword());
 
@@ -71,12 +71,12 @@ public class AuthService {
     public void updatePassword(String email, String oldPassword, String newPassword) {
         User user = userRepository.findByEmail(email)
                 .filter(u -> !u.isDeleted())
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "사용자를 찾을 수 없습니다."));
+                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
 
         validatePassword(oldPassword, user.getPassword());
 
         if (oldPassword.equals(newPassword)) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "동일한 비밀번호로 변경할 수 없습니다.");
+            throw new CustomException(ErrorCode.PASSWORD_SAME_AS_OLD);
         }
 
         String encodedPassword = passwordEncoder.encode(newPassword);
@@ -87,7 +87,7 @@ public class AuthService {
         boolean isNotValid = !passwordEncoder.matches(rawPassword, encodedPassword);
 
         if (isNotValid) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "비밀번호가 틀렸습니다.");
+            throw new CustomException(ErrorCode.PASSWORD_NOT_MATCH);
         }
     }
 }
