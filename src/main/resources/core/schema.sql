@@ -65,6 +65,17 @@ create table my_travel_destination.ticket_schedule (
 
 alter table my_travel_destination.ticket_schedule add foreign key (ticket_id) references my_travel_destination.ticket (id);
 
+create table my_travel_destination.ticket_image (
+	id bigint primary key auto_increment,
+	ticket_id bigint not null,
+	image_url varchar(500) not null,
+	file_name varchar(255) not null,
+	is_main boolean not null default false,
+	created_at datetime not null
+);
+
+alter table my_travel_destination.ticket_image add foreign key (ticket_id) references my_travel_destination.ticket (id);
+
 create table my_travel_destination.reservation (
 	id bigint primary key auto_increment,
 	user_id bigint not null,

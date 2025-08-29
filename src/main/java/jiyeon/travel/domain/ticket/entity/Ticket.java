@@ -54,6 +54,9 @@ public class Ticket extends BaseEntity {
     @OneToMany(mappedBy = "ticket")
     private List<TicketSchedule> ticketSchedules = new ArrayList<>();
 
+    @OneToMany(mappedBy = "ticket")
+    private List<TicketImage> ticketImages = new ArrayList<>();
+
     @Builder
     public Ticket(User user, LocalDateTime saleStartDate, LocalDateTime saleEndDate, Integer basePrice, String phone, String address, String description) {
         this.user = user;
