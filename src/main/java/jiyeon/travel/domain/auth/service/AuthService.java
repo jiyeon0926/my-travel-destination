@@ -48,10 +48,7 @@ public class AuthService {
     }
 
     public LoginResDto login(String email, String password) {
-        User user = userRepository.findByEmail(email)
-                .filter(u -> !u.isDeleted())
-                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
-
+        User user = userRepository.findActiveByEmailOrElseThrow(email);
         validatePassword(password, user.getPassword());
 
         Authentication authentication = authenticationManager
@@ -69,10 +66,7 @@ public class AuthService {
 
     @Transactional
     public void updatePassword(String email, String oldPassword, String newPassword) {
-        User user = userRepository.findByEmail(email)
-                .filter(u -> !u.isDeleted())
-                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
-
+        User user = userRepository.findActiveByEmailOrElseThrow(email);
         validatePassword(oldPassword, user.getPassword());
 
         if (oldPassword.equals(newPassword)) {

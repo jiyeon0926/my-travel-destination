@@ -46,9 +46,7 @@ public class PartnerAdminService {
 
     @Transactional
     public PartnerProfileResDto updatePartnerById(Long partnerId, String name, String phone, String address) {
-        Partner partner = partnerRepository.findById(partnerId)
-                .orElseThrow(() -> new CustomException(ErrorCode.PARTNER_NOT_FOUND));
-
+        Partner partner = partnerRepository.findByIdOrElseThrow(partnerId);
         partner.updateProfile(name, phone, address);
 
         return new PartnerProfileResDto(partner.getUser(), partner);
@@ -56,17 +54,14 @@ public class PartnerAdminService {
 
     @Transactional(readOnly = true)
     public PartnerProfileResDto findPartnerById(Long partnerId) {
-        Partner partner = partnerRepository.findById(partnerId)
-                .orElseThrow(() -> new CustomException(ErrorCode.PARTNER_NOT_FOUND));
+        Partner partner = partnerRepository.findByIdOrElseThrow(partnerId);
 
         return new PartnerProfileResDto(partner.getUser(), partner);
     }
 
     @Transactional
     public void deletePartnerById(Long partnerId) {
-        Partner partner = partnerRepository.findById(partnerId)
-                .orElseThrow(() -> new CustomException(ErrorCode.PARTNER_NOT_FOUND));
-
+        Partner partner = partnerRepository.findByIdOrElseThrow(partnerId);
         partnerRepository.delete(partner);
         userRepository.delete(partner.getUser());
     }
