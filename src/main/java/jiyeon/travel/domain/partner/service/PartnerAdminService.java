@@ -1,5 +1,6 @@
 package jiyeon.travel.domain.partner.service;
 
+import jiyeon.travel.domain.partner.dto.PartnerListResDto;
 import jiyeon.travel.domain.partner.dto.PartnerProfileResDto;
 import jiyeon.travel.domain.partner.dto.PartnerSignupResDto;
 import jiyeon.travel.domain.partner.entity.Partner;
@@ -10,9 +11,13 @@ import jiyeon.travel.global.common.enums.UserRole;
 import jiyeon.travel.global.exception.CustomException;
 import jiyeon.travel.global.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -64,5 +69,12 @@ public class PartnerAdminService {
         Partner partner = partnerRepository.findByIdOrElseThrow(partnerId);
         partnerRepository.delete(partner);
         userRepository.delete(partner.getUser());
+    }
+
+    @Transactional(readOnly = true)
+    public List<PartnerListResDto> searchPartners(int page, int size, String name) {
+        Pageable pageable = PageRequest.of(page - 1, size);
+
+        return partnerRepository.searchPartners(pageable, name).stream().toList();
     }
 }

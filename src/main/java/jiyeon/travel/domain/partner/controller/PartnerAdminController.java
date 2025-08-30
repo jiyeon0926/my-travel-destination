@@ -1,15 +1,14 @@
 package jiyeon.travel.domain.partner.controller;
 
 import jakarta.validation.Valid;
-import jiyeon.travel.domain.partner.dto.PartnerProfileResDto;
-import jiyeon.travel.domain.partner.dto.PartnerSignupReqDto;
-import jiyeon.travel.domain.partner.dto.PartnerSignupResDto;
-import jiyeon.travel.domain.partner.dto.PartnerUpdateReqDto;
+import jiyeon.travel.domain.partner.dto.*;
 import jiyeon.travel.domain.partner.service.PartnerAdminService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/admin/partners")
@@ -52,5 +51,14 @@ public class PartnerAdminController {
         partnerAdminService.deletePartnerById(partnerId);
 
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
+    @GetMapping("/search")
+    public ResponseEntity<List<PartnerListResDto>> searchPartners(@RequestParam(defaultValue = "1") int page,
+                                                                  @RequestParam(defaultValue = "10") int size,
+                                                                  @RequestParam(required = false) String name) {
+        List<PartnerListResDto> partnerListResDtos = partnerAdminService.searchPartners(page, size, name);
+
+        return new ResponseEntity<>(partnerListResDtos, HttpStatus.OK);
     }
 }
