@@ -66,6 +66,6 @@ public class Ticket extends BaseEntity {
         this.phone = phone;
         this.address = address;
         this.description = description;
-        this.status = TicketStatus.ACTIVE;
+        this.status = TicketStatus.READY;
     }
 }
