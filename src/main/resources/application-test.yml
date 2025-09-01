@@ -26,3 +26,15 @@ spring:
 jwt:
   secret: AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
   access-expiry-millis: 1000000000000
+
+cloud:
+  aws:
+    s3:
+      bucket: my-travel-destination
+    region:
+      static: ap-northeast-2
+    stack:
+      auto: false
+    credentials:
+      access-key: AAAAAAAAAAAAAAAAAAAAA
+      secret-key: AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
