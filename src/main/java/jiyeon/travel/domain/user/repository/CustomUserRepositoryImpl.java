@@ -3,7 +3,7 @@ package jiyeon.travel.domain.user.repository;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import jiyeon.travel.domain.user.dto.QUserListResDto;
-import jiyeon.travel.domain.user.dto.UserListResDto;
+import jiyeon.travel.domain.user.dto.UserDetailResDto;
 import jiyeon.travel.domain.user.entity.QUser;
 import jiyeon.travel.global.common.enums.UserRole;
 import lombok.RequiredArgsConstructor;
@@ -20,7 +20,7 @@ public class CustomUserRepositoryImpl implements CustomUserRepository {
     private final JPAQueryFactory jpaQueryFactory;
 
     @Override
-    public Page<UserListResDto> searchUsers(Pageable pageable, String email, String nickname, Boolean isDeleted) {
+    public Page<UserDetailResDto> searchUsers(Pageable pageable, String email, String nickname, Boolean isDeleted) {
         QUser user = QUser.user;
 
         BooleanBuilder conditions = new BooleanBuilder();
@@ -38,7 +38,7 @@ public class CustomUserRepositoryImpl implements CustomUserRepository {
             conditions.and(user.isDeleted.eq(isDeleted));
         }
 
-        List<UserListResDto> users = jpaQueryFactory
+        List<UserDetailResDto> users = jpaQueryFactory
                 .select(new QUserListResDto(
                         user.id,
                         user.email,

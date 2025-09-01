@@ -6,7 +6,7 @@ import lombok.Getter;
 import java.time.LocalDateTime;
 
 @Getter
-public class UserListResDto {
+public class UserDetailResDto {
 
     private final Long id;
     private final String email;
@@ -17,7 +17,7 @@ public class UserListResDto {
     private final LocalDateTime updatedAt;
 
     @QueryProjection
-    public UserListResDto(Long id, String email, String nickname, String phone, boolean isDeleted, LocalDateTime createdAt, LocalDateTime updatedAt) {
+    public UserDetailResDto(Long id, String email, String nickname, String phone, boolean isDeleted, LocalDateTime createdAt, LocalDateTime updatedAt) {
         this.id = id;
         this.email = email;
         this.nickname = nickname;

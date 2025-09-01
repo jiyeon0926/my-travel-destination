@@ -1,6 +1,6 @@
 package jiyeon.travel.domain.user.service;
 
-import jiyeon.travel.domain.user.dto.UserListResDto;
+import jiyeon.travel.domain.user.dto.UserDetailResDto;
 import jiyeon.travel.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
@@ -17,7 +17,7 @@ public class UserAdminService {
     private final UserRepository userRepository;
 
     @Transactional(readOnly = true)
-    public List<UserListResDto> searchUsers(int page, int size, String email, String nickname, Boolean isDeleted) {
+    public List<UserDetailResDto> searchUsers(int page, int size, String email, String nickname, Boolean isDeleted) {
         Pageable pageable = PageRequest.of(page - 1, size);
 
         return userRepository.searchUsers(pageable, email, nickname, isDeleted).stream().toList();
