@@ -1,8 +1,8 @@
 package jiyeon.travel.domain.partner.service;
 
-import jiyeon.travel.domain.partner.dto.PartnerListResDto;
 import jiyeon.travel.domain.partner.dto.PartnerProfileResDto;
 import jiyeon.travel.domain.partner.dto.PartnerSignupResDto;
+import jiyeon.travel.domain.partner.dto.PartnerSimpleResDto;
 import jiyeon.travel.domain.partner.entity.Partner;
 import jiyeon.travel.domain.partner.repository.PartnerRepository;
 import jiyeon.travel.domain.user.entity.User;
@@ -72,7 +72,7 @@ public class PartnerAdminService {
     }
 
     @Transactional(readOnly = true)
-    public List<PartnerListResDto> searchPartners(int page, int size, String name) {
+    public List<PartnerSimpleResDto> searchPartners(int page, int size, String name) {
         Pageable pageable = PageRequest.of(page - 1, size);
 
         return partnerRepository.searchPartners(pageable, name).stream().toList();

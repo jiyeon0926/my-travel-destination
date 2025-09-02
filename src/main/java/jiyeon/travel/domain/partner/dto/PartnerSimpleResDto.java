@@ -6,7 +6,7 @@ import lombok.Getter;
 import java.time.LocalDateTime;
 
 @Getter
-public class PartnerListResDto {
+public class PartnerSimpleResDto {
 
     private final Long userId;
     private final Long partnerId;
@@ -15,7 +15,7 @@ public class PartnerListResDto {
     private final LocalDateTime createdAt;
 
     @QueryProjection
-    public PartnerListResDto(Long userId, Long partnerId, String partnerName, String businessNumber, LocalDateTime createdAt) {
+    public PartnerSimpleResDto(Long userId, Long partnerId, String partnerName, String businessNumber, LocalDateTime createdAt) {
         this.userId = userId;
         this.partnerId = partnerId;
         this.partnerName = partnerName;

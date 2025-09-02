@@ -2,7 +2,7 @@ package jiyeon.travel.domain.partner.repository;
 
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import jiyeon.travel.domain.partner.dto.PartnerListResDto;
+import jiyeon.travel.domain.partner.dto.PartnerSimpleResDto;
 import jiyeon.travel.domain.partner.dto.QPartnerListResDto;
 import jiyeon.travel.domain.partner.entity.QPartner;
 import jiyeon.travel.domain.user.entity.QUser;
@@ -21,7 +21,7 @@ public class CustomPartnerRepositoryImpl implements CustomPartnerRepository {
     private final JPAQueryFactory jpaQueryFactory;
 
     @Override
-    public Page<PartnerListResDto> searchPartners(Pageable pageable, String name) {
+    public Page<PartnerSimpleResDto> searchPartners(Pageable pageable, String name) {
         QUser user = QUser.user;
         QPartner partner = QPartner.partner;
 
@@ -33,7 +33,7 @@ public class CustomPartnerRepositoryImpl implements CustomPartnerRepository {
             conditions.and(user.displayName.contains(name));
         }
 
-        List<PartnerListResDto> partners = jpaQueryFactory
+        List<PartnerSimpleResDto> partners = jpaQueryFactory
                 .select(new QPartnerListResDto(
                         user.id,
                         partner.id,

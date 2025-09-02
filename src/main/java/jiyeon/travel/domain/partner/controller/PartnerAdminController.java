@@ -54,11 +54,11 @@ public class PartnerAdminController {
     }
 
     @GetMapping("/search")
-    public ResponseEntity<List<PartnerListResDto>> searchPartners(@RequestParam(defaultValue = "1") int page,
-                                                                  @RequestParam(defaultValue = "10") int size,
-                                                                  @RequestParam(required = false) String name) {
-        List<PartnerListResDto> partnerListResDtos = partnerAdminService.searchPartners(page, size, name);
+    public ResponseEntity<List<PartnerSimpleResDto>> searchPartners(@RequestParam(defaultValue = "1") int page,
+                                                                    @RequestParam(defaultValue = "10") int size,
+                                                                    @RequestParam(required = false) String name) {
+        List<PartnerSimpleResDto> partnerSimpleResDtos = partnerAdminService.searchPartners(page, size, name);
 
-        return new ResponseEntity<>(partnerListResDtos, HttpStatus.OK);
+        return new ResponseEntity<>(partnerSimpleResDtos, HttpStatus.OK);
     }
 }
