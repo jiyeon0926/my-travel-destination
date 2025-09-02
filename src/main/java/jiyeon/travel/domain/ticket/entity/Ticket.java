@@ -27,6 +27,9 @@ public class Ticket extends BaseEntity {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
+    @Column(length = 50, nullable = false)
+    private String name;
+
     @Column(nullable = false)
     private LocalDateTime saleStartDate;
 
@@ -58,8 +61,9 @@ public class Ticket extends BaseEntity {
     private List<TicketImage> ticketImages = new ArrayList<>();
 
     @Builder
-    public Ticket(User user, LocalDateTime saleStartDate, LocalDateTime saleEndDate, Integer basePrice, String phone, String address, String description) {
+    public Ticket(User user, String name, LocalDateTime saleStartDate, LocalDateTime saleEndDate, Integer basePrice, String phone, String address, String description) {
         this.user = user;
+        this.name = name;
         this.saleStartDate = saleStartDate;
         this.saleEndDate = saleEndDate;
         this.basePrice = basePrice;

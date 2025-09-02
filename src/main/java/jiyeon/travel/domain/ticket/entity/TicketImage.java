@@ -37,9 +37,10 @@ public class TicketImage {
     @Column(updatable = false, nullable = false)
     private LocalDateTime createdAt;
 
-    public TicketImage(Ticket ticket, String imageUrl, String fileName) {
+    public TicketImage(Ticket ticket, String imageUrl, String fileName, boolean isMain) {
         this.ticket = ticket;
         this.imageUrl = imageUrl;
         this.fileName = fileName;
+        this.isMain = isMain;
     }
 }
