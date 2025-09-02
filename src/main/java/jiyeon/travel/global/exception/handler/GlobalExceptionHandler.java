@@ -4,6 +4,7 @@ import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.MalformedJwtException;
 import jiyeon.travel.global.exception.CustomException;
+import jiyeon.travel.global.exception.ErrorCode;
 import jiyeon.travel.global.exception.ErrorResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.HandlerMethodValidationException;
+import org.springframework.web.multipart.MaxUploadSizeExceededException;
 
 import java.nio.file.AccessDeniedException;
 
@@ -21,7 +23,7 @@ import java.nio.file.AccessDeniedException;
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(HandlerMethodValidationException.class)
-    protected ResponseEntity<String> handleMethodValidationExceptions(HandlerMethodValidationException e) {
+    protected ResponseEntity<String> handleMethodValidationException(HandlerMethodValidationException e) {
         String message = e.getParameterValidationResults()
                 .getFirst()
                 .getResolvableErrors()
@@ -34,7 +36,7 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<String> handleValidationExceptions(MethodArgumentNotValidException e) {
+    public ResponseEntity<String> handleValidationException(MethodArgumentNotValidException e) {
         String message = e.getBindingResult()
                 .getAllErrors()
                 .getFirst()
@@ -88,10 +90,17 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(IllegalArgumentException.class)
-    public ResponseEntity<String> handleIllegalArgumentExceptions(IllegalArgumentException e) {
+    public ResponseEntity<String> handleIllegalArgumentException(IllegalArgumentException e) {
         return ResponseEntity
                 .status(HttpStatus.BAD_REQUEST)
                 .body(e.getMessage());
+    }
+
+    @ExceptionHandler(MaxUploadSizeExceededException.class)
+    public ResponseEntity<String> handleMaxUploadSizeExceededException(MaxUploadSizeExceededException e) {
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body(ErrorCode.FILE_UPLOAD_SIZE_EXCEEDED.getMessage());
     }
 
     @ExceptionHandler(CustomException.class)
@@ -100,7 +109,7 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(Exception.class)
-    protected ResponseEntity<String> handleOtherExceptions(Exception e) {
+    protected ResponseEntity<String> handleOtherException(Exception e) {
         return ResponseEntity
                 .status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body(e.getMessage());
