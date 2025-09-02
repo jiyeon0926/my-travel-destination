@@ -34,4 +34,8 @@ public class S3Service {
 
         return new S3UploadDto(url, key);
     }
+
+    public void deleteFile(String key) {
+        amazonS3.deleteObject(bucket, key);
+    }
 }

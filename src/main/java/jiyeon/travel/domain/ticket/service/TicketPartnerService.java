@@ -123,4 +123,18 @@ public class TicketPartnerService {
                     }
                 }).toList();
     }
+
+    @Transactional
+    public void deleteTicketById(Long ticketId, String email) {
+        User user = userRepository.findActiveByEmailOrElseThrow(email);
+        Ticket ticket = ticketRepository.findByIdAndUserId(ticketId, user.getId())
+                .orElseThrow(() -> new CustomException(ErrorCode.TICKET_NOT_FOUND));
+
+        List<TicketImage> ticketImages = ticketImageRepository.findAllByTicketId(ticketId);
+        if (!ticketImages.isEmpty()) {
+            ticketImages.forEach(image -> s3Service.deleteFile(image.getImageKey()));
+        }
+
+        ticketRepository.delete(ticket);
+    }
 }

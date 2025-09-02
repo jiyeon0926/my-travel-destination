@@ -51,13 +51,13 @@ public class Ticket extends BaseEntity {
     @Enumerated(value = EnumType.STRING)
     private TicketStatus status;
 
-    @OneToMany(mappedBy = "ticket")
+    @OneToMany(mappedBy = "ticket", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<TicketOption> ticketOptions = new ArrayList<>();
 
-    @OneToMany(mappedBy = "ticket")
+    @OneToMany(mappedBy = "ticket", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<TicketSchedule> ticketSchedules = new ArrayList<>();
 
-    @OneToMany(mappedBy = "ticket")
+    @OneToMany(mappedBy = "ticket", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<TicketImage> ticketImages = new ArrayList<>();
 
     @Builder
