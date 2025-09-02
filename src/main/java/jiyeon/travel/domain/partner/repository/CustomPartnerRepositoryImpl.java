@@ -3,7 +3,7 @@ package jiyeon.travel.domain.partner.repository;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import jiyeon.travel.domain.partner.dto.PartnerSimpleResDto;
-import jiyeon.travel.domain.partner.dto.QPartnerListResDto;
+import jiyeon.travel.domain.partner.dto.QPartnerSimpleResDto;
 import jiyeon.travel.domain.partner.entity.QPartner;
 import jiyeon.travel.domain.user.entity.QUser;
 import jiyeon.travel.global.common.enums.UserRole;
@@ -34,7 +34,7 @@ public class CustomPartnerRepositoryImpl implements CustomPartnerRepository {
         }
 
         List<PartnerSimpleResDto> partners = jpaQueryFactory
-                .select(new QPartnerListResDto(
+                .select(new QPartnerSimpleResDto(
                         user.id,
                         partner.id,
                         user.displayName,

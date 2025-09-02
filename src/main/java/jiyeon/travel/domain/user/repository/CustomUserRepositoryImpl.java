@@ -2,7 +2,7 @@ package jiyeon.travel.domain.user.repository;
 
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import jiyeon.travel.domain.user.dto.QUserListResDto;
+import jiyeon.travel.domain.user.dto.QUserDetailResDto;
 import jiyeon.travel.domain.user.dto.UserDetailResDto;
 import jiyeon.travel.domain.user.entity.QUser;
 import jiyeon.travel.global.common.enums.UserRole;
@@ -39,7 +39,7 @@ public class CustomUserRepositoryImpl implements CustomUserRepository {
         }
 
         List<UserDetailResDto> users = jpaQueryFactory
-                .select(new QUserListResDto(
+                .select(new QUserDetailResDto(
                         user.id,
                         user.email,
                         user.displayName,
