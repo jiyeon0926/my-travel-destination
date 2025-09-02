@@ -69,6 +69,7 @@ create table my_travel_destination.ticket_image (
 	id bigint primary key auto_increment,
 	ticket_id bigint not null,
 	image_url varchar(500) not null,
+	image_key varchar(500) not null,
 	file_name varchar(255) not null,
 	is_main boolean not null default false,
 	created_at datetime not null

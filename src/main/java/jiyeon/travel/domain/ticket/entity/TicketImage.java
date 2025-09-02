@@ -27,6 +27,9 @@ public class TicketImage {
     @Column(length = 500, nullable = false)
     private String imageUrl;
 
+    @Column(length = 500, nullable = false)
+    private String imageKey;
+
     @Column(nullable = false)
     private String fileName;
 
@@ -37,9 +40,10 @@ public class TicketImage {
     @Column(updatable = false, nullable = false)
     private LocalDateTime createdAt;
 
-    public TicketImage(Ticket ticket, String imageUrl, String fileName, boolean isMain) {
+    public TicketImage(Ticket ticket, String imageUrl, String imageKey, String fileName, boolean isMain) {
         this.ticket = ticket;
         this.imageUrl = imageUrl;
+        this.imageKey = imageKey;
         this.fileName = fileName;
         this.isMain = isMain;
     }

@@ -15,6 +15,7 @@ import jiyeon.travel.domain.user.entity.User;
 import jiyeon.travel.domain.user.repository.UserRepository;
 import jiyeon.travel.global.exception.CustomException;
 import jiyeon.travel.global.exception.ErrorCode;
+import jiyeon.travel.global.s3.dto.S3UploadDto;
 import jiyeon.travel.global.s3.service.S3Service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -111,10 +112,10 @@ public class TicketPartnerService {
                     try {
                         String fileName = file.getOriginalFilename();
                         String folderName = "ticket/" + LocalDate.now().format(DateTimeFormatter.ofPattern("yyyyMMdd"));
-                        String imageUrl = s3Service.uploadFileToFolder(file, folderName);
+                        S3UploadDto s3UploadDto = s3Service.uploadFileToFolder(file, folderName);
 
                         boolean isMain = i == 0;
-                        TicketImage image = new TicketImage(ticket, imageUrl, fileName, isMain);
+                        TicketImage image = new TicketImage(ticket, s3UploadDto.getUrl(), s3UploadDto.getKey(), fileName, isMain);
 
                         return ticketImageRepository.save(image);
                     } catch (IOException e) {

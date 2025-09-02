@@ -2,6 +2,7 @@ package jiyeon.travel.global.s3.service;
 
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.ObjectMetadata;
+import jiyeon.travel.global.s3.dto.S3UploadDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -19,7 +20,7 @@ public class S3Service {
     @Value("${cloud.aws.s3.bucket}")
     private String bucket;
 
-    public String uploadFileToFolder(MultipartFile file, String folderName) throws IOException {
+    public S3UploadDto uploadFileToFolder(MultipartFile file, String folderName) throws IOException {
         String fileName = UUID.randomUUID() + "_" + file.getOriginalFilename();
         String key = folderName + "/" + fileName;
 
@@ -29,6 +30,8 @@ public class S3Service {
 
         amazonS3.putObject(bucket, key, file.getInputStream(), metadata);
 
-        return amazonS3.getUrl(bucket, key).toString();
+        String url = amazonS3.getUrl(bucket, key).toString();
+
+        return new S3UploadDto(url, key);
     }
 }
