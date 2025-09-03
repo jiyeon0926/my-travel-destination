@@ -1,20 +1,16 @@
 package jiyeon.travel.domain.ticket.entity;
 
 import jakarta.persistence.*;
+import jiyeon.travel.global.common.entity.BaseEntity;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
-
-import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "ticket_image")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
-@EntityListeners(AuditingEntityListener.class)
-public class TicketImage {
+public class TicketImage extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -35,10 +31,6 @@ public class TicketImage {
 
     @Column(nullable = false)
     private boolean isMain;
-
-    @CreatedDate
-    @Column(updatable = false, nullable = false)
-    private LocalDateTime createdAt;
 
     public TicketImage(Ticket ticket, String imageUrl, String imageKey, String fileName, boolean isMain) {
         this.ticket = ticket;
