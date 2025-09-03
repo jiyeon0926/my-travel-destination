@@ -20,6 +20,8 @@ public class TicketInfoResDto {
     private final String address;
     private final String description;
     private final String status;
+    private final LocalDateTime createdAt;
+    private final LocalDateTime updatedAt;
 
     public TicketInfoResDto(Ticket ticket) {
         this.id = ticket.getId();
@@ -32,5 +34,7 @@ public class TicketInfoResDto {
         this.address = ticket.getAddress();
         this.description = ticket.getDescription();
         this.status = ticket.getStatus().name();
+        this.createdAt = ticket.getCreatedAt();
+        this.updatedAt = ticket.getUpdatedAt();
     }
 }
