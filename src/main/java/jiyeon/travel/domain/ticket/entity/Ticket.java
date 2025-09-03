@@ -72,4 +72,38 @@ public class Ticket extends BaseEntity {
         this.description = description;
         this.status = TicketStatus.READY;
     }
+
+    public void updateTicketInfo(String name, LocalDateTime saleStartDate, LocalDateTime saleEndDate, Integer basePrice, String phone, String address, String description) {
+        if (name != null) changeName(name);
+        if (saleStartDate != null) this.saleStartDate = saleStartDate;
+        if (saleEndDate != null) this.saleEndDate = saleEndDate;
+        if (basePrice != null) this.basePrice = basePrice;
+        if (phone != null) changePhone(phone);
+        if (address != null) changeAddress(address);
+        if (description != null) this.description = description;
+    }
+
+    private void changeName(String name) {
+        if (name.isBlank()) {
+            throw new IllegalArgumentException("이름이 비어있습니다.");
+        }
+
+        this.name = name;
+    }
+
+    private void changePhone(String phone) {
+        if (phone.isBlank()) {
+            throw new IllegalArgumentException("전화번호가 비어있습니다.");
+        }
+
+        this.phone = phone;
+    }
+
+    private void changeAddress(String address) {
+        if (address.isBlank()) {
+            throw new IllegalArgumentException("주소가 비어있습니다.");
+        }
+
+        this.address = address;
+    }
 }

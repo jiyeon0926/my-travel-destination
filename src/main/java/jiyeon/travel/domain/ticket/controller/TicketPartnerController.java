@@ -3,6 +3,8 @@ package jiyeon.travel.domain.ticket.controller;
 import jakarta.validation.Valid;
 import jiyeon.travel.domain.ticket.dto.TicketCreateReqDto;
 import jiyeon.travel.domain.ticket.dto.TicketDetailResDto;
+import jiyeon.travel.domain.ticket.dto.TicketInfoResDto;
+import jiyeon.travel.domain.ticket.dto.TicketInfoUpdateReqDto;
 import jiyeon.travel.domain.ticket.service.TicketPartnerService;
 import jiyeon.travel.global.auth.UserDetailsImpl;
 import lombok.RequiredArgsConstructor;
@@ -50,5 +52,25 @@ public class TicketPartnerController {
         ticketPartnerService.deleteTicketById(ticketId, email);
 
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
+    @PatchMapping("/{ticketId}")
+    public ResponseEntity<TicketInfoResDto> updateTicketInfoById(@AuthenticationPrincipal UserDetailsImpl userDetails,
+                                                                 @PathVariable Long ticketId,
+                                                                 @RequestBody TicketInfoUpdateReqDto ticketInfoUpdateReqDto) {
+        String email = userDetails.getUsername();
+        TicketInfoResDto ticketInfoResDto = ticketPartnerService.updateTicketInfoById(
+                ticketId,
+                email,
+                ticketInfoUpdateReqDto.getName(),
+                ticketInfoUpdateReqDto.getSaleStartDate(),
+                ticketInfoUpdateReqDto.getSaleEndDate(),
+                ticketInfoUpdateReqDto.getPhone(),
+                ticketInfoUpdateReqDto.getAddress(),
+                ticketInfoUpdateReqDto.getBasePrice(),
+                ticketInfoUpdateReqDto.getDescription()
+        );
+
+        return new ResponseEntity<>(ticketInfoResDto, HttpStatus.OK);
     }
 }
