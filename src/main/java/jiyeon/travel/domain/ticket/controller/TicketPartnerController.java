@@ -1,10 +1,7 @@
 package jiyeon.travel.domain.ticket.controller;
 
 import jakarta.validation.Valid;
-import jiyeon.travel.domain.ticket.dto.TicketCreateReqDto;
-import jiyeon.travel.domain.ticket.dto.TicketDetailResDto;
-import jiyeon.travel.domain.ticket.dto.TicketInfoDetailResDto;
-import jiyeon.travel.domain.ticket.dto.TicketInfoUpdateReqDto;
+import jiyeon.travel.domain.ticket.dto.*;
 import jiyeon.travel.domain.ticket.service.TicketPartnerService;
 import jiyeon.travel.global.auth.UserDetailsImpl;
 import lombok.RequiredArgsConstructor;
@@ -72,6 +69,16 @@ public class TicketPartnerController {
         );
 
         return new ResponseEntity<>(ticketInfoResDto, HttpStatus.OK);
+    }
+
+    @PostMapping("/{ticketId}/images")
+    public ResponseEntity<List<TicketImageDetailResDto>> addImageById(@AuthenticationPrincipal UserDetailsImpl userDetails,
+                                                                @PathVariable Long ticketId,
+                                                                @RequestParam("images") List<MultipartFile> files) {
+        String email = userDetails.getUsername();
+        List<TicketImageDetailResDto> ticketImageDetailResDtos = ticketPartnerService.addImageById(email, ticketId, files);
+
+        return new ResponseEntity<>(ticketImageDetailResDtos, HttpStatus.CREATED);
     }
 
     @DeleteMapping("/{ticketId}/images/{imageId}")

@@ -10,4 +10,6 @@ import java.util.List;
 public interface TicketImageRepository extends JpaRepository<TicketImage, Long>, CustomTicketImageRepository {
 
     List<TicketImage> findAllByTicketId(Long ticketId);
+
+    int countByTicketId(Long ticketId);
 }

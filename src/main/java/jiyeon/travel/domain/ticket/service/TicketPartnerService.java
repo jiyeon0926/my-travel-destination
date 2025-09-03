@@ -1,9 +1,6 @@
 package jiyeon.travel.domain.ticket.service;
 
-import jiyeon.travel.domain.ticket.dto.TicketDetailResDto;
-import jiyeon.travel.domain.ticket.dto.TicketInfoDetailResDto;
-import jiyeon.travel.domain.ticket.dto.TicketOptionCreateReqDto;
-import jiyeon.travel.domain.ticket.dto.TicketScheduleCreateReqDto;
+import jiyeon.travel.domain.ticket.dto.*;
 import jiyeon.travel.domain.ticket.entity.Ticket;
 import jiyeon.travel.domain.ticket.entity.TicketImage;
 import jiyeon.travel.domain.ticket.entity.TicketOption;
@@ -36,6 +33,8 @@ import java.util.stream.IntStream;
 @Service
 @RequiredArgsConstructor
 public class TicketPartnerService {
+
+    private static final int IMAGE_MAX_SIZE = 5;
 
     private final TicketRepository ticketRepository;
     private final TicketOptionRepository ticketOptionRepository;
@@ -111,6 +110,24 @@ public class TicketPartnerService {
     }
 
     @Transactional
+    public List<TicketImageDetailResDto> addImageById(String email, Long ticketId, List<MultipartFile> files) {
+        Ticket ticket = ticketRepository.findByIdAndEmail(ticketId, email)
+                .orElseThrow(() -> new CustomException(ErrorCode.TICKET_NOT_FOUND));
+
+        int imageCount = ticketImageRepository.countByTicketId(ticketId);
+
+        if (imageCount == 0) {
+            return saveTicketImages(ticket, files).stream()
+                    .map(TicketImageDetailResDto::new)
+                    .toList();
+        }
+
+        return addTicketImages(ticket, files, imageCount).stream()
+                .map(TicketImageDetailResDto::new)
+                .toList();
+    }
+
+    @Transactional
     public void deleteImageById(String email, Long ticketId, Long imageId) {
         TicketImage ticketImage = ticketImageRepository.findByIdAndTicketIdAndEmail(imageId, ticketId, email)
                 .orElseThrow(() -> new CustomException(ErrorCode.TICKET_IMAGE_NOT_FOUND));
@@ -140,14 +157,12 @@ public class TicketPartnerService {
     }
 
     private List<TicketImage> saveTicketImages(Ticket ticket, List<MultipartFile> files) {
-        int maxSize = 5;
-        if (files.size() > maxSize) {
+        if (files.size() > IMAGE_MAX_SIZE) {
             throw new CustomException(ErrorCode.IMAGE_MAX_COUNT_EXCEEDED);
         }
 
         boolean isImage = files.stream()
                 .allMatch(file -> Objects.requireNonNull(file.getContentType()).startsWith("image"));
-
         if (!isImage) {
             throw new CustomException(ErrorCode.IMAGE_ONLY_ALLOWED);
         }
@@ -163,6 +178,33 @@ public class TicketPartnerService {
 
                         boolean isMain = i == 0;
                         TicketImage image = new TicketImage(ticket, s3UploadDto.getUrl(), s3UploadDto.getKey(), fileName, isMain);
+
+                        return ticketImageRepository.save(image);
+                    } catch (IOException e) {
+                        throw new CustomException(ErrorCode.FILE_UPLOAD_FAILED);
+                    }
+                }).toList();
+    }
+
+    private List<TicketImage> addTicketImages(Ticket ticket, List<MultipartFile> files, int count) {
+        if (count + files.size() > IMAGE_MAX_SIZE) {
+            throw new CustomException(ErrorCode.IMAGE_MAX_COUNT_EXCEEDED);
+        }
+
+        boolean isImage = files.stream()
+                .allMatch(file -> Objects.requireNonNull(file.getContentType()).startsWith("image"));
+        if (!isImage) {
+            throw new CustomException(ErrorCode.IMAGE_ONLY_ALLOWED);
+        }
+
+        return files.stream()
+                .map(file -> {
+                    try {
+                        String fileName = file.getOriginalFilename();
+                        String folderName = "ticket/" + LocalDate.now().format(DateTimeFormatter.ofPattern("yyyyMMdd"));
+                        S3UploadDto s3UploadDto = s3Service.uploadFileToFolder(file, folderName);
+
+                        TicketImage image = new TicketImage(ticket, s3UploadDto.getUrl(), s3UploadDto.getKey(), fileName, false);
 
                         return ticketImageRepository.save(image);
                     } catch (IOException e) {

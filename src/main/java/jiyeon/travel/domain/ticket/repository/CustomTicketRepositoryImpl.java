@@ -33,4 +33,20 @@ public class CustomTicketRepositoryImpl implements CustomTicketRepository {
                 .where(conditions)
                 .fetchOne());
     }
+
+    @Override
+    public Optional<Ticket> findByIdAndEmail(Long id, String email) {
+        QUser user = QUser.user;
+        QTicket ticket = QTicket.ticket;
+
+        BooleanBuilder conditions = new BooleanBuilder();
+        conditions.and(ticket.id.eq(id));
+        conditions.and(user.email.eq(email));
+
+        return Optional.ofNullable(jpaQueryFactory
+                .selectFrom(ticket)
+                .innerJoin(user).on(ticket.user.id.eq(user.id)).fetchJoin()
+                .where(conditions)
+                .fetchOne());
+    }
 }
