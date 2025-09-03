@@ -133,11 +133,28 @@ public class TicketPartnerService {
                 .orElseThrow(() -> new CustomException(ErrorCode.TICKET_IMAGE_NOT_FOUND));
 
         if (ticketImage.isMain()) {
-            throw new CustomException(ErrorCode.TICKET_MAIN_IMAGE);
+            throw new CustomException(ErrorCode.CANNOT_DELETE_TICKET_MAIN_IMAGE);
         }
 
         s3Service.deleteFile(ticketImage.getImageKey());
         ticketImageRepository.delete(ticketImage);
+    }
+
+    @Transactional
+    public TicketImageDetailResDto changeImageMainById(String email, Long ticketId, Long imageId) {
+        TicketImage ticketImage = ticketImageRepository.findByIdAndTicketIdAndEmail(imageId, ticketId, email)
+                .orElseThrow(() -> new CustomException(ErrorCode.TICKET_IMAGE_NOT_FOUND));
+
+        if (ticketImage.isMain()) {
+            throw new CustomException(ErrorCode.ALREADY_TICKET_MAIN_IMAGE);
+        }
+
+        ticketImageRepository.findByTicketIdAndIsMainTrue(ticketId)
+                .ifPresent(image -> image.changeImageMain(false));
+
+        ticketImage.changeImageMain(true);
+
+        return new TicketImageDetailResDto(ticketImage);
     }
 
     private List<TicketOption> saveTicketOptions(Ticket ticket, List<TicketOptionCreateReqDto> options) {

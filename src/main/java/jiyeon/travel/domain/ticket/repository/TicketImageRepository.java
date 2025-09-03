@@ -5,6 +5,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface TicketImageRepository extends JpaRepository<TicketImage, Long>, CustomTicketImageRepository {
@@ -12,4 +13,6 @@ public interface TicketImageRepository extends JpaRepository<TicketImage, Long>,
     List<TicketImage> findAllByTicketId(Long ticketId);
 
     int countByTicketId(Long ticketId);
+
+    Optional<TicketImage> findByTicketIdAndIsMainTrue(Long ticketId);
 }

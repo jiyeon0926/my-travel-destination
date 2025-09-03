@@ -73,8 +73,8 @@ public class TicketPartnerController {
 
     @PostMapping("/{ticketId}/images")
     public ResponseEntity<List<TicketImageDetailResDto>> addImageById(@AuthenticationPrincipal UserDetailsImpl userDetails,
-                                                                @PathVariable Long ticketId,
-                                                                @RequestParam("images") List<MultipartFile> files) {
+                                                                      @PathVariable Long ticketId,
+                                                                      @RequestParam("images") List<MultipartFile> files) {
         String email = userDetails.getUsername();
         List<TicketImageDetailResDto> ticketImageDetailResDtos = ticketPartnerService.addImageById(email, ticketId, files);
 
@@ -89,5 +89,15 @@ public class TicketPartnerController {
         ticketPartnerService.deleteImageById(email, ticketId, imageId);
 
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
+    @PatchMapping("/{ticketId}/images/{imageId}/main")
+    public ResponseEntity<TicketImageDetailResDto> changeImageMainById(@AuthenticationPrincipal UserDetailsImpl userDetails,
+                                                                       @PathVariable Long ticketId,
+                                                                       @PathVariable Long imageId) {
+        String email = userDetails.getUsername();
+        TicketImageDetailResDto ticketImageDetailResDto = ticketPartnerService.changeImageMainById(email, ticketId, imageId);
+
+        return new ResponseEntity<>(ticketImageDetailResDto, HttpStatus.OK);
     }
 }

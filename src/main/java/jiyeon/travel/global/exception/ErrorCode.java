@@ -19,7 +19,7 @@ public enum ErrorCode {
     IMAGE_ONLY_ALLOWED(BAD_REQUEST, "이미지 파일만 업로드할 수 있습니다."),
     FILE_UPLOAD_SIZE_EXCEEDED(BAD_REQUEST, "파일 업로드 크기는 최대 10MB까지 가능합니다."),
     TICKET_OPTION_PRESENT(BAD_REQUEST, "옵션이 존재할 경우, 기본 가격을 설정할 수 없습니다."),
-    TICKET_MAIN_IMAGE(BAD_REQUEST, "티켓 대표 이미지는 삭제할 수 없습니다."),
+    CANNOT_DELETE_TICKET_MAIN_IMAGE(BAD_REQUEST, "티켓 대표 이미지는 삭제할 수 없습니다."),
 
     // 404 NOT_FOUND
     USER_NOT_FOUND(NOT_FOUND, "사용자를 찾을 수 없습니다."),
@@ -31,6 +31,7 @@ public enum ErrorCode {
     EMAIL_ALREADY_EXISTS(CONFLICT, "이미 존재하는 이메일입니다."),
     NICKNAME_ALREADY_EXISTS(CONFLICT, "이미 존재하는 별명입니다."),
     BUSINESS_NUMBER_ALREADY_EXISTS(CONFLICT, "동일한 사업장번호가 존재합니다."),
+    ALREADY_TICKET_MAIN_IMAGE(CONFLICT, "이미 대표 이미지입니다."),
 
     // 500
     FILE_UPLOAD_FAILED(INTERNAL_SERVER_ERROR, "파일 업로드를 실패하였습니다.");

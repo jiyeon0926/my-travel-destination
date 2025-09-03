@@ -39,4 +39,8 @@ public class TicketImage extends BaseEntity {
         this.fileName = fileName;
         this.isMain = isMain;
     }
+
+    public void changeImageMain(boolean isMain) {
+        this.isMain = isMain;
+    }
 }
