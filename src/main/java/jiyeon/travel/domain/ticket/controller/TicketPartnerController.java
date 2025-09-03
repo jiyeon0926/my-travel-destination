@@ -73,4 +73,14 @@ public class TicketPartnerController {
 
         return new ResponseEntity<>(ticketInfoResDto, HttpStatus.OK);
     }
+
+    @DeleteMapping("/{ticketId}/images/{imageId}")
+    public ResponseEntity<Void> deleteImageById(@AuthenticationPrincipal UserDetailsImpl userDetails,
+                                                @PathVariable Long ticketId,
+                                                @PathVariable Long imageId) {
+        String email = userDetails.getUsername();
+        ticketPartnerService.deleteImageById(email, ticketId, imageId);
+
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
 }

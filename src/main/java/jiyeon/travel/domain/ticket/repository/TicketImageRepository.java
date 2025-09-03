@@ -7,7 +7,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface TicketImageRepository extends JpaRepository<TicketImage, Long> {
+public interface TicketImageRepository extends JpaRepository<TicketImage, Long>, CustomTicketImageRepository {
 
     List<TicketImage> findAllByTicketId(Long ticketId);
 }

@@ -110,6 +110,19 @@ public class TicketPartnerService {
         return new TicketInfoDetailResDto(ticket);
     }
 
+    @Transactional
+    public void deleteImageById(String email, Long ticketId, Long imageId) {
+        TicketImage ticketImage = ticketImageRepository.findByIdAndTicketIdAndEmail(imageId, ticketId, email)
+                .orElseThrow(() -> new CustomException(ErrorCode.TICKET_IMAGE_NOT_FOUND));
+
+        if (ticketImage.isMain()) {
+            throw new CustomException(ErrorCode.TICKET_MAIN_IMAGE);
+        }
+
+        s3Service.deleteFile(ticketImage.getImageKey());
+        ticketImageRepository.delete(ticketImage);
+    }
+
     private List<TicketOption> saveTicketOptions(Ticket ticket, List<TicketOptionCreateReqDto> options) {
         List<TicketOption> optionList = options.stream()
                 .map(option -> new TicketOption(ticket, option.getName(), option.getPrice()))
