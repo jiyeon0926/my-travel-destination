@@ -1,7 +1,7 @@
 package jiyeon.travel.domain.ticket.service;
 
 import jiyeon.travel.domain.ticket.dto.TicketDetailResDto;
-import jiyeon.travel.domain.ticket.dto.TicketInfoResDto;
+import jiyeon.travel.domain.ticket.dto.TicketInfoDetailResDto;
 import jiyeon.travel.domain.ticket.dto.TicketOptionCreateReqDto;
 import jiyeon.travel.domain.ticket.dto.TicketScheduleCreateReqDto;
 import jiyeon.travel.domain.ticket.entity.Ticket;
@@ -92,9 +92,9 @@ public class TicketPartnerService {
     }
 
     @Transactional
-    public TicketInfoResDto updateTicketInfoById(Long ticketId, String email, String name,
-                                                 LocalDateTime saleStartDate, LocalDateTime saleEndDate, String phone,
-                                                 String address, Integer basePrice, String description) {
+    public TicketInfoDetailResDto updateTicketInfoById(Long ticketId, String email, String name,
+                                                       LocalDateTime saleStartDate, LocalDateTime saleEndDate, String phone,
+                                                       String address, Integer basePrice, String description) {
         Ticket ticket = ticketRepository.findByIdAndEmailWithUserAndOption(ticketId, email)
                 .orElseThrow(() -> new CustomException(ErrorCode.TICKET_NOT_FOUND));
 
@@ -107,7 +107,7 @@ public class TicketPartnerService {
             ticket.updateTicketInfo(name, saleStartDate, saleEndDate, basePrice, phone, address, description);
         }
 
-        return new TicketInfoResDto(ticket);
+        return new TicketInfoDetailResDto(ticket);
     }
 
     private List<TicketOption> saveTicketOptions(Ticket ticket, List<TicketOptionCreateReqDto> options) {

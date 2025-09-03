@@ -3,7 +3,7 @@ package jiyeon.travel.domain.ticket.controller;
 import jakarta.validation.Valid;
 import jiyeon.travel.domain.ticket.dto.TicketCreateReqDto;
 import jiyeon.travel.domain.ticket.dto.TicketDetailResDto;
-import jiyeon.travel.domain.ticket.dto.TicketInfoResDto;
+import jiyeon.travel.domain.ticket.dto.TicketInfoDetailResDto;
 import jiyeon.travel.domain.ticket.dto.TicketInfoUpdateReqDto;
 import jiyeon.travel.domain.ticket.service.TicketPartnerService;
 import jiyeon.travel.global.auth.UserDetailsImpl;
@@ -55,11 +55,11 @@ public class TicketPartnerController {
     }
 
     @PatchMapping("/{ticketId}")
-    public ResponseEntity<TicketInfoResDto> updateTicketInfoById(@AuthenticationPrincipal UserDetailsImpl userDetails,
-                                                                 @PathVariable Long ticketId,
-                                                                 @RequestBody TicketInfoUpdateReqDto ticketInfoUpdateReqDto) {
+    public ResponseEntity<TicketInfoDetailResDto> updateTicketInfoById(@AuthenticationPrincipal UserDetailsImpl userDetails,
+                                                                       @PathVariable Long ticketId,
+                                                                       @RequestBody TicketInfoUpdateReqDto ticketInfoUpdateReqDto) {
         String email = userDetails.getUsername();
-        TicketInfoResDto ticketInfoResDto = ticketPartnerService.updateTicketInfoById(
+        TicketInfoDetailResDto ticketInfoResDto = ticketPartnerService.updateTicketInfoById(
                 ticketId,
                 email,
                 ticketInfoUpdateReqDto.getName(),

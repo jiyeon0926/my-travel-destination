@@ -6,7 +6,7 @@ import lombok.RequiredArgsConstructor;
 
 @Getter
 @RequiredArgsConstructor
-public class TicketImageResDto {
+public class TicketImageDto {
 
     private final Long imageId;
     private final String imageUrl;
@@ -14,8 +14,8 @@ public class TicketImageResDto {
     private final String fileName;
     private final boolean isMain;
 
-    public static TicketImageResDto from(TicketImage ticketImage) {
-        return new TicketImageResDto(
+    public static TicketImageDto from(TicketImage ticketImage) {
+        return new TicketImageDto(
                 ticketImage.getId(),
                 ticketImage.getImageUrl(),
                 ticketImage.getImageKey(),

@@ -8,10 +8,9 @@ import java.time.LocalDateTime;
 
 @Getter
 @RequiredArgsConstructor
-public class TicketInfoResDto {
+public class TicketInfoDetailResDto {
 
     private final Long id;
-    private final Long userId;
     private final String ticketName;
     private final LocalDateTime saleStartDate;
     private final LocalDateTime saleEndDate;
@@ -23,9 +22,8 @@ public class TicketInfoResDto {
     private final LocalDateTime createdAt;
     private final LocalDateTime updatedAt;
 
-    public TicketInfoResDto(Ticket ticket) {
+    public TicketInfoDetailResDto(Ticket ticket) {
         this.id = ticket.getId();
-        this.userId = ticket.getUser().getId();
         this.ticketName = ticket.getName();
         this.saleStartDate = ticket.getSaleStartDate();
         this.saleEndDate = ticket.getSaleEndDate();

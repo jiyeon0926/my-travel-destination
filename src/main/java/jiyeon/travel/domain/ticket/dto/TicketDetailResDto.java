@@ -24,9 +24,9 @@ public class TicketDetailResDto {
     private final String address;
     private final String description;
     private final String status;
-    private final List<TicketOptionResDto> options;
-    private final List<TicketScheduleResDto> schedules;
-    private final List<TicketImageResDto> images;
+    private final List<TicketOptionDto> options;
+    private final List<TicketScheduleDto> schedules;
+    private final List<TicketImageDto> images;
     private final LocalDateTime createdAt;
     private final LocalDateTime updatedAt;
 
@@ -41,9 +41,9 @@ public class TicketDetailResDto {
         this.address = ticket.getAddress();
         this.description = ticket.getDescription();
         this.status = ticket.getStatus().name();
-        this.options = options.stream().map(TicketOptionResDto::from).toList();
-        this.schedules = schedules.stream().map(TicketScheduleResDto::from).toList();
-        this.images = images.stream().map(TicketImageResDto::from).toList();
+        this.options = options.stream().map(TicketOptionDto::from).toList();
+        this.schedules = schedules.stream().map(TicketScheduleDto::from).toList();
+        this.images = images.stream().map(TicketImageDto::from).toList();
         this.createdAt = ticket.getCreatedAt();
         this.updatedAt = ticket.getUpdatedAt();
     }

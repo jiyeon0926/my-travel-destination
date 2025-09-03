@@ -9,7 +9,7 @@ import java.time.LocalTime;
 
 @Getter
 @RequiredArgsConstructor
-public class TicketScheduleResDto {
+public class TicketScheduleDto {
 
     private final Long scheduleId;
     private final boolean isActive;
@@ -18,8 +18,8 @@ public class TicketScheduleResDto {
     private final int quantity;
     private final int remainingQuantity;
 
-    public static TicketScheduleResDto from(TicketSchedule ticketSchedule) {
-        return new TicketScheduleResDto(
+    public static TicketScheduleDto from(TicketSchedule ticketSchedule) {
+        return new TicketScheduleDto(
                 ticketSchedule.getId(),
                 ticketSchedule.isActive(),
                 ticketSchedule.getStartDate(),

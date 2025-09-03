@@ -6,14 +6,14 @@ import lombok.RequiredArgsConstructor;
 
 @Getter
 @RequiredArgsConstructor
-public class TicketOptionResDto {
+public class TicketOptionDto {
 
     private final Long optionId;
     private final String name;
     private final int price;
 
-    public static TicketOptionResDto from(TicketOption ticketOption) {
-        return new TicketOptionResDto(
+    public static TicketOptionDto from(TicketOption ticketOption) {
+        return new TicketOptionDto(
                 ticketOption.getId(),
                 ticketOption.getName(),
                 ticketOption.getPrice()
