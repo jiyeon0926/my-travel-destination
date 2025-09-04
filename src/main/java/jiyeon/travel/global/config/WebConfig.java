@@ -7,11 +7,11 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.access.AccessDeniedHandler;
@@ -25,14 +25,15 @@ public class WebConfig {
     private static final String[] WHITE_LIST = {"/api/auth/signup", "/api/auth/login", "/api/blogs/search"};
 
     private final JwtAuthFilter jwtAuthFilter;
-    private final AuthenticationProvider authenticationProvider;
     private final AuthenticationEntryPoint authEntryPoint;
     private final AccessDeniedHandler accessDeniedHandler;
+    private final UserDetailsService userDetailsService;
 
     @Bean
     SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.cors(AbstractHttpConfigurer::disable)
                 .csrf(AbstractHttpConfigurer::disable)
+                .userDetailsService(userDetailsService)
                 .authorizeHttpRequests(auth ->
                         auth.requestMatchers(WHITE_LIST).permitAll()
                                 .requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll()
@@ -45,7 +46,6 @@ public class WebConfig {
                         .authenticationEntryPoint(authEntryPoint)
                         .accessDeniedHandler(accessDeniedHandler))
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .authenticationProvider(authenticationProvider)
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();

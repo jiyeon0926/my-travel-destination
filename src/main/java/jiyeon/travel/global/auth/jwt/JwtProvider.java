@@ -21,14 +21,14 @@ import java.util.function.Function;
 @Slf4j
 public class JwtProvider {
 
+    private final UserRepository userRepository;
+
     @Value("${jwt.secret}")
     private String secret;
 
     @Getter
     @Value("${jwt.access-expiry-millis}")
     private long accessExpiryMillis;
-
-    private final UserRepository userRepository;
 
     public String generateAccessToken(Authentication authentication) {
         String username = authentication.getName();
