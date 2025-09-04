@@ -87,6 +87,16 @@ public class TicketPartnerController {
         return new ResponseEntity<>(ticketScheduleDetailResDto, HttpStatus.CREATED);
     }
 
+    @DeleteMapping("/{ticketId}/schedules/{scheduleId}")
+    public ResponseEntity<Void> deleteScheduleById(@AuthenticationPrincipal UserDetailsImpl userDetails,
+                                                   @PathVariable Long ticketId,
+                                                   @PathVariable Long scheduleId) {
+        String email = userDetails.getUsername();
+        ticketPartnerService.deleteScheduleById(email, ticketId, scheduleId);
+
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
     @PostMapping("/{ticketId}/images")
     public ResponseEntity<List<TicketImageDetailResDto>> addImageById(@AuthenticationPrincipal UserDetailsImpl userDetails,
                                                                       @PathVariable Long ticketId,

@@ -8,8 +8,9 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 
 @Repository
-public interface TicketScheduleRepository extends JpaRepository<TicketSchedule, Long> {
+public interface TicketScheduleRepository extends JpaRepository<TicketSchedule, Long>, CustomTicketScheduleRepository {
 
     boolean existsByTicketIdAndStartDate(Long ticketId, LocalDate startDate);
+
     boolean existsByTicketIdAndStartDateAndStartTime(Long ticketId, LocalDate startDate, LocalTime startTime);
 }

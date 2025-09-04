@@ -130,6 +130,14 @@ public class TicketPartnerService {
     }
 
     @Transactional
+    public void deleteScheduleById(String email, Long ticketId, Long scheduleId) {
+        TicketSchedule ticketSchedule = ticketScheduleRepository.findByIdAndTicketIdAndEmail(scheduleId, ticketId, email)
+                .orElseThrow(() -> new CustomException(ErrorCode.TICKET_SCHEDULE_NOT_FOUND));
+
+        ticketScheduleRepository.delete(ticketSchedule);
+    }
+
+    @Transactional
     public List<TicketImageDetailResDto> addImageById(String email, Long ticketId, List<MultipartFile> files) {
         Ticket ticket = ticketRepository.findByIdAndEmail(ticketId, email)
                 .orElseThrow(() -> new CustomException(ErrorCode.TICKET_NOT_FOUND));
