@@ -24,6 +24,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Collections;
 import java.util.List;
@@ -107,6 +108,25 @@ public class TicketPartnerService {
         }
 
         return new TicketInfoDetailResDto(ticket);
+    }
+
+    @Transactional
+    public TicketScheduleDetailResDto addScheduleById(String email, Long ticketId,
+                                                      LocalDate startDate, LocalTime startTime, int quantity) {
+        Ticket ticket = ticketRepository.findByIdAndEmail(ticketId, email)
+                .orElseThrow(() -> new CustomException(ErrorCode.TICKET_NOT_FOUND));
+
+        boolean isDate = ticketScheduleRepository.existsByTicketIdAndStartDate(ticketId, startDate);
+        boolean isDateAndTime = ticketScheduleRepository.existsByTicketIdAndStartDateAndStartTime(ticketId, startDate, startTime);
+
+        if ((isDate && startTime == null) || isDateAndTime) {
+            throw new CustomException(ErrorCode.TICKET_SCHEDULE_ALREADY_EXISTS);
+        }
+
+        TicketSchedule ticketSchedule = new TicketSchedule(ticket, startDate, startTime, quantity);
+        TicketSchedule savedTicketSchedule = ticketScheduleRepository.save(ticketSchedule);
+
+        return new TicketScheduleDetailResDto(ticket, savedTicketSchedule);
     }
 
     @Transactional

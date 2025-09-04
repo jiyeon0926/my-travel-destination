@@ -71,6 +71,22 @@ public class TicketPartnerController {
         return new ResponseEntity<>(ticketInfoResDto, HttpStatus.OK);
     }
 
+    @PostMapping("/{ticketId}/schedules")
+    public ResponseEntity<TicketScheduleDetailResDto> addScheduleById(@AuthenticationPrincipal UserDetailsImpl userDetails,
+                                                                      @PathVariable Long ticketId,
+                                                                      @Valid @RequestBody TicketScheduleCreateReqDto ticketScheduleCreateReqDto) {
+        String email = userDetails.getUsername();
+        TicketScheduleDetailResDto ticketScheduleDetailResDto = ticketPartnerService.addScheduleById(
+                email,
+                ticketId,
+                ticketScheduleCreateReqDto.getStartDate(),
+                ticketScheduleCreateReqDto.getStartTime(),
+                ticketScheduleCreateReqDto.getQuantity()
+        );
+
+        return new ResponseEntity<>(ticketScheduleDetailResDto, HttpStatus.CREATED);
+    }
+
     @PostMapping("/{ticketId}/images")
     public ResponseEntity<List<TicketImageDetailResDto>> addImageById(@AuthenticationPrincipal UserDetailsImpl userDetails,
                                                                       @PathVariable Long ticketId,
