@@ -3,6 +3,7 @@ package jiyeon.travel.domain.ticket.entity;
 import jakarta.persistence.*;
 import jiyeon.travel.domain.reservation.entity.Reservation;
 import jiyeon.travel.global.common.entity.BaseEntity;
+import jiyeon.travel.global.common.enums.TicketSaleStatus;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -50,5 +51,36 @@ public class TicketSchedule extends BaseEntity {
         this.startTime = startTime;
         this.quantity = quantity;
         this.remainingQuantity = quantity;
+    }
+
+    public void updateSchedule(Boolean isActive, LocalDate startDate, LocalTime startTime, Integer newQuantity) {
+        if (isActive != null) this.isActive = isActive;
+        if (startDate != null) this.startDate = startDate;
+        if (startTime != null) this.startTime = startTime;
+
+        if (newQuantity != null) {
+            if (newQuantity < this.quantity) {
+                throw new IllegalArgumentException("수량은 기존보다 줄일 수 없습니다.");
+            }
+
+            this.remainingQuantity = calculateRemainingQuantity(newQuantity);
+            this.quantity = newQuantity;
+        }
+    }
+
+    public boolean isReadyStatus() {
+        return hasSaleStatus(TicketSaleStatus.READY);
+    }
+
+    public boolean isInactiveStatus() {
+        return hasSaleStatus(TicketSaleStatus.INACTIVE);
+    }
+
+    private int calculateRemainingQuantity(int newQuantity) {
+        return this.remainingQuantity + (newQuantity - this.quantity);
+    }
+
+    private boolean hasSaleStatus(TicketSaleStatus status) {
+        return ticket.getSaleStatus() == status;
     }
 }

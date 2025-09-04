@@ -97,6 +97,25 @@ public class TicketPartnerController {
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
+    @PatchMapping("/{ticketId}/schedules/{scheduleId}")
+    public ResponseEntity<TicketScheduleDetailResDto> updateScheduleById(@AuthenticationPrincipal UserDetailsImpl userDetails,
+                                                                         @PathVariable Long ticketId,
+                                                                         @PathVariable Long scheduleId,
+                                                                         @Valid @RequestBody TicketScheduleUpdateReqDto ticketScheduleUpdateReqDto) {
+        String email = userDetails.getUsername();
+        TicketScheduleDetailResDto ticketScheduleDetailResDto = ticketPartnerService.updateScheduleById(
+                email,
+                ticketId,
+                scheduleId,
+                ticketScheduleUpdateReqDto.getStartDate(),
+                ticketScheduleUpdateReqDto.getStartTime(),
+                ticketScheduleUpdateReqDto.getIsActive(),
+                ticketScheduleUpdateReqDto.getQuantity()
+        );
+
+        return new ResponseEntity<>(ticketScheduleDetailResDto, HttpStatus.OK);
+    }
+
     @PostMapping("/{ticketId}/images")
     public ResponseEntity<List<TicketImageDetailResDto>> addImageById(@AuthenticationPrincipal UserDetailsImpl userDetails,
                                                                       @PathVariable Long ticketId,

@@ -115,12 +115,7 @@ public class TicketPartnerService {
         Ticket ticket = ticketRepository.findByIdAndEmail(ticketId, email)
                 .orElseThrow(() -> new CustomException(ErrorCode.TICKET_NOT_FOUND));
 
-        boolean isDate = ticketScheduleRepository.existsByTicketIdAndStartDate(ticketId, startDate);
-        boolean isDateAndTime = ticketScheduleRepository.existsByTicketIdAndStartDateAndStartTime(ticketId, startDate, startTime);
-
-        if ((isDate && startTime == null) || isDateAndTime) {
-            throw new CustomException(ErrorCode.TICKET_SCHEDULE_ALREADY_EXISTS);
-        }
+        validateDateAndTime(ticketId, startDate, startTime);
 
         TicketSchedule ticketSchedule = new TicketSchedule(ticket, startDate, startTime, quantity);
         TicketSchedule savedTicketSchedule = ticketScheduleRepository.save(ticketSchedule);
@@ -134,6 +129,21 @@ public class TicketPartnerService {
                 .orElseThrow(() -> new CustomException(ErrorCode.TICKET_SCHEDULE_NOT_FOUND));
 
         ticketScheduleRepository.delete(ticketSchedule);
+    }
+
+    @Transactional
+    public TicketScheduleDetailResDto updateScheduleById(String email, Long ticketId, Long scheduleId, LocalDate startDate,
+                                                         LocalTime startTime, Boolean isActive, Integer quantity) {
+        TicketSchedule ticketSchedule = ticketScheduleRepository.findByIdAndTicketIdAndEmail(scheduleId, ticketId, email)
+                .orElseThrow(() -> new CustomException(ErrorCode.TICKET_SCHEDULE_NOT_FOUND));
+
+        validateDateAndTime(ticketId, startDate, startTime);
+
+        if (ticketSchedule.isReadyStatus() || ticketSchedule.isInactiveStatus()) {
+            ticketSchedule.updateSchedule(isActive, startDate, startTime, quantity);
+        }
+
+        return new TicketScheduleDetailResDto(ticketSchedule.getTicket(), ticketSchedule);
     }
 
     @Transactional
@@ -228,6 +238,15 @@ public class TicketPartnerService {
                         throw new CustomException(ErrorCode.FILE_UPLOAD_FAILED);
                     }
                 }).toList();
+    }
+
+    private void validateDateAndTime(Long ticketId, LocalDate startDate, LocalTime startTime) {
+        boolean isDate = ticketScheduleRepository.existsByTicketIdAndStartDate(ticketId, startDate);
+        boolean isDateAndTime = ticketScheduleRepository.existsByTicketIdAndStartDateAndStartTime(ticketId, startDate, startTime);
+
+        if ((isDate && startTime == null) || isDateAndTime) {
+            throw new CustomException(ErrorCode.TICKET_SCHEDULE_ALREADY_EXISTS);
+        }
     }
 
     private List<TicketImage> addTicketImages(Ticket ticket, List<MultipartFile> files, int count) {

@@ -84,11 +84,11 @@ public class Ticket extends BaseEntity {
     }
 
     public boolean isReadyStatus() {
-        return saleStatus.equals(TicketSaleStatus.READY);
+        return saleStatus == (TicketSaleStatus.READY);
     }
 
     public boolean isInactiveStatus() {
-        return saleStatus.equals(TicketSaleStatus.INACTIVE);
+        return saleStatus == (TicketSaleStatus.INACTIVE);
     }
 
     private void changeName(String name) {
