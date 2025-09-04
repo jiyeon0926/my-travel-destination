@@ -31,7 +31,7 @@ public class TicketInfoDetailResDto {
         this.phone = ticket.getPhone();
         this.address = ticket.getAddress();
         this.description = ticket.getDescription();
-        this.status = ticket.getStatus().name();
+        this.status = ticket.getSaleStatus().name();
         this.createdAt = ticket.getCreatedAt();
         this.updatedAt = ticket.getUpdatedAt();
     }

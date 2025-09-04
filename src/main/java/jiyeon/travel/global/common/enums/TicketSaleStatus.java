@@ -1,6 +1,6 @@
 package jiyeon.travel.global.common.enums;
 
-public enum TicketStatus {
+public enum TicketSaleStatus {
 
     READY("판매 전"),
     ACTIVE("판매중"),
@@ -10,7 +10,7 @@ public enum TicketStatus {
 
     private final String description;
 
-    TicketStatus(String description) {
+    TicketSaleStatus(String description) {
         this.description = description;
     }
 }

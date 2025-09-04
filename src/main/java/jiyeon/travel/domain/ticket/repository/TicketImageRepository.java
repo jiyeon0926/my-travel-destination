@@ -1,6 +1,7 @@
 package jiyeon.travel.domain.ticket.repository;
 
 import jiyeon.travel.domain.ticket.entity.TicketImage;
+import jiyeon.travel.domain.ticket.repository.custom.CustomTicketImageRepository;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

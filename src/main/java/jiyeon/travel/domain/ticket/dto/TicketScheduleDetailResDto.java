@@ -14,6 +14,7 @@ import java.time.LocalTime;
 public class TicketScheduleDetailResDto {
 
     private final Long ticketId;
+    private final String ticketName;
     private final Long scheduleId;
     private final boolean isActive;
     private final LocalDate startDate;
@@ -25,6 +26,7 @@ public class TicketScheduleDetailResDto {
 
     public TicketScheduleDetailResDto(Ticket ticket, TicketSchedule ticketSchedule) {
         this.ticketId = ticket.getId();
+        this.ticketName = ticket.getName();
         this.scheduleId = ticketSchedule.getId();
         this.isActive = ticketSchedule.isActive();
         this.startDate = ticketSchedule.getStartDate();

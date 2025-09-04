@@ -1,4 +1,4 @@
-package jiyeon.travel.domain.ticket.repository;
+package jiyeon.travel.domain.ticket.repository.custom;
 
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.jpa.impl.JPAQueryFactory;

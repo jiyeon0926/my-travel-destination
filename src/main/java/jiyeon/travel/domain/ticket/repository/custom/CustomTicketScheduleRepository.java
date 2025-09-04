@@ -1,4 +1,4 @@
-package jiyeon.travel.domain.ticket.repository;
+package jiyeon.travel.domain.ticket.repository.custom;
 
 import jiyeon.travel.domain.ticket.entity.TicketSchedule;
 

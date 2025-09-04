@@ -11,7 +11,6 @@ import jiyeon.travel.domain.ticket.repository.TicketRepository;
 import jiyeon.travel.domain.ticket.repository.TicketScheduleRepository;
 import jiyeon.travel.domain.user.entity.User;
 import jiyeon.travel.domain.user.repository.UserRepository;
-import jiyeon.travel.global.common.enums.TicketStatus;
 import jiyeon.travel.global.exception.CustomException;
 import jiyeon.travel.global.exception.ErrorCode;
 import jiyeon.travel.global.s3.dto.S3UploadDto;
@@ -98,7 +97,7 @@ public class TicketPartnerService {
         Ticket ticket = ticketRepository.findByIdAndEmailWithUserAndOption(ticketId, email)
                 .orElseThrow(() -> new CustomException(ErrorCode.TICKET_NOT_FOUND));
 
-        if (ticket.getStatus().equals(TicketStatus.READY) || ticket.getStatus().equals(TicketStatus.INACTIVE)) {
+        if (ticket.isReadyStatus() || ticket.isInactiveStatus()) {
             boolean isOption = ticket.getTicketOptions().stream().anyMatch(option -> option.getName() != null);
             if (basePrice != null && isOption) {
                 throw new CustomException(ErrorCode.TICKET_OPTION_PRESENT);

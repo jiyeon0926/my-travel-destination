@@ -11,6 +11,7 @@ import java.time.LocalDateTime;
 public class TicketImageDetailResDto {
 
     private final Long ticketId;
+    private final String ticketName;
     private final Long imageId;
     private final String imageUrl;
     private final String imageKey;
@@ -21,6 +22,7 @@ public class TicketImageDetailResDto {
 
     public TicketImageDetailResDto(TicketImage ticketImage) {
         this.ticketId = ticketImage.getTicket().getId();
+        this.ticketName = ticketImage.getTicket().getName();
         this.imageId = ticketImage.getId();
         this.imageUrl = ticketImage.getImageUrl();
         this.imageKey = ticketImage.getImageKey();

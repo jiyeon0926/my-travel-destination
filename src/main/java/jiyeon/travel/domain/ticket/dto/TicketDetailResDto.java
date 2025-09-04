@@ -23,7 +23,7 @@ public class TicketDetailResDto {
     private final String phone;
     private final String address;
     private final String description;
-    private final String status;
+    private final String saleStatus;
     private final List<TicketOptionDto> options;
     private final List<TicketScheduleDto> schedules;
     private final List<TicketImageDto> images;
@@ -40,7 +40,7 @@ public class TicketDetailResDto {
         this.phone = ticket.getPhone();
         this.address = ticket.getAddress();
         this.description = ticket.getDescription();
-        this.status = ticket.getStatus().name();
+        this.saleStatus = ticket.getSaleStatus().name();
         this.options = options.stream().map(TicketOptionDto::from).toList();
         this.schedules = schedules.stream().map(TicketScheduleDto::from).toList();
         this.images = images.stream().map(TicketImageDto::from).toList();

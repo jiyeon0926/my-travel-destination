@@ -3,7 +3,7 @@ package jiyeon.travel.domain.ticket.entity;
 import jakarta.persistence.*;
 import jiyeon.travel.domain.user.entity.User;
 import jiyeon.travel.global.common.entity.BaseEntity;
-import jiyeon.travel.global.common.enums.TicketStatus;
+import jiyeon.travel.global.common.enums.TicketSaleStatus;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -49,7 +49,7 @@ public class Ticket extends BaseEntity {
 
     @Column(length = 30, nullable = false)
     @Enumerated(value = EnumType.STRING)
-    private TicketStatus status;
+    private TicketSaleStatus saleStatus;
 
     @OneToMany(mappedBy = "ticket", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<TicketOption> ticketOptions = new ArrayList<>();
@@ -70,7 +70,7 @@ public class Ticket extends BaseEntity {
         this.phone = phone;
         this.address = address;
         this.description = description;
-        this.status = TicketStatus.READY;
+        this.saleStatus = TicketSaleStatus.READY;
     }
 
     public void updateTicketInfo(String name, LocalDateTime saleStartDate, LocalDateTime saleEndDate, Integer basePrice, String phone, String address, String description) {
@@ -81,6 +81,14 @@ public class Ticket extends BaseEntity {
         if (phone != null) changePhone(phone);
         if (address != null) changeAddress(address);
         if (description != null) this.description = description;
+    }
+
+    public boolean isReadyStatus() {
+        return saleStatus.equals(TicketSaleStatus.READY);
+    }
+
+    public boolean isInactiveStatus() {
+        return saleStatus.equals(TicketSaleStatus.INACTIVE);
     }
 
     private void changeName(String name) {
