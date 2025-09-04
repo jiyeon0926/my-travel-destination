@@ -33,7 +33,7 @@ create table my_travel_destination.ticket (
 	phone varchar(20) not null,
 	address varchar(255) not null,
 	description text,
-	status varchar(30) not null,
+	sale_status varchar(30) not null,
 	created_at datetime not null,
 	updated_at datetime not null
 );
