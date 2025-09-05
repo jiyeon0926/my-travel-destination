@@ -110,6 +110,14 @@ public class TicketPartnerService {
     }
 
     @Transactional
+    public void deleteOptionById(String email, Long ticketId, Long optionId) {
+        TicketOption ticketOption = ticketOptionRepository.findByIdAndTicketIdAndEmail(optionId, ticketId, email)
+                .orElseThrow(() -> new CustomException(ErrorCode.TICKET_OPTION_NOT_FOUND));
+
+        ticketOptionRepository.delete(ticketOption);
+    }
+
+    @Transactional
     public TicketScheduleDetailResDto addScheduleById(String email, Long ticketId,
                                                       LocalDate startDate, LocalTime startTime, int quantity) {
         Ticket ticket = ticketRepository.findByIdAndEmail(ticketId, email)

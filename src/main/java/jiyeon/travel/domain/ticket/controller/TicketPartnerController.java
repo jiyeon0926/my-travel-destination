@@ -71,6 +71,16 @@ public class TicketPartnerController {
         return new ResponseEntity<>(ticketInfoResDto, HttpStatus.OK);
     }
 
+    @DeleteMapping("/{ticketId}/options/{optionId}")
+    public ResponseEntity<Void> deleteOptionById(@AuthenticationPrincipal UserDetailsImpl userDetails,
+                                                 @PathVariable Long ticketId,
+                                                 @PathVariable Long optionId) {
+        String email = userDetails.getUsername();
+        ticketPartnerService.deleteOptionById(email, ticketId, optionId);
+
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
     @PostMapping("/{ticketId}/schedules")
     public ResponseEntity<TicketScheduleDetailResDto> addScheduleById(@AuthenticationPrincipal UserDetailsImpl userDetails,
                                                                       @PathVariable Long ticketId,
@@ -118,8 +128,8 @@ public class TicketPartnerController {
 
     @PostMapping("/{ticketId}/images")
     public ResponseEntity<TicketImageDetailsResDto> addImageById(@AuthenticationPrincipal UserDetailsImpl userDetails,
-                                                                      @PathVariable Long ticketId,
-                                                                      @RequestParam("images") List<MultipartFile> files) {
+                                                                 @PathVariable Long ticketId,
+                                                                 @RequestParam("images") List<MultipartFile> files) {
         String email = userDetails.getUsername();
         TicketImageDetailsResDto ticketImageDetailsResDto = ticketPartnerService.addImageById(email, ticketId, files);
 
