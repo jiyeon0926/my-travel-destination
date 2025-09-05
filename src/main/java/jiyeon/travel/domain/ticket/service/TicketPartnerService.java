@@ -97,13 +97,19 @@ public class TicketPartnerService {
         Ticket ticket = ticketRepository.findByIdAndEmailWithUserAndOption(ticketId, email)
                 .orElseThrow(() -> new CustomException(ErrorCode.TICKET_NOT_FOUND));
 
-        if (ticket.isReadyStatus() || ticket.isInactiveStatus()) {
+        if (ticket.isReadyStatus()) {
             boolean isOption = ticket.getTicketOptions().stream().anyMatch(option -> option.getName() != null);
             if (basePrice != null && isOption) {
                 throw new CustomException(ErrorCode.TICKET_OPTION_PRESENT);
             }
 
-            ticket.updateTicketInfo(name, saleStartDate, saleEndDate, basePrice, phone, address, description);
+            if (name != null) ticket.changeName(name);
+            if (saleStartDate != null) ticket.changeSaleStartDate(saleStartDate, LocalDateTime.now());
+            if (saleEndDate != null) ticket.changeSaleEndDate(saleEndDate);
+            if (basePrice != null) ticket.changeBasePrice(basePrice);
+            if (phone != null) ticket.changePhone(phone);
+            if (address != null) ticket.changeAddress(address);
+            if (description != null) ticket.changeDescription(description);
         }
 
         return new TicketInfoDetailResDto(ticket);
@@ -147,8 +153,11 @@ public class TicketPartnerService {
 
         validateDateAndTime(ticketId, startDate, startTime);
 
-        if (ticketSchedule.isReadyStatus() || ticketSchedule.isInactiveStatus()) {
-            ticketSchedule.updateSchedule(isActive, startDate, startTime, quantity);
+        if (ticketSchedule.isReadyStatus()) {
+            if (isActive != null) ticketSchedule.changeIsActive(isActive);
+            if (startDate != null) ticketSchedule.changeStartDate(startDate);
+            if (startTime != null) ticketSchedule.changeStartTime(startTime);
+            if (quantity != null) ticketSchedule.increaseQuantity(quantity);
         }
 
         return new TicketScheduleDetailResDto(ticketSchedule.getTicket(), ticketSchedule);

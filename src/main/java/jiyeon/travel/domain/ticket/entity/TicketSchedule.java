@@ -53,31 +53,29 @@ public class TicketSchedule extends BaseEntity {
         this.remainingQuantity = quantity;
     }
 
-    public void updateSchedule(Boolean isActive, LocalDate startDate, LocalTime startTime, Integer newQuantity) {
-        if (isActive != null) this.isActive = isActive;
-        if (startDate != null) this.startDate = startDate;
-        if (startTime != null) this.startTime = startTime;
-
-        if (newQuantity != null) {
-            if (newQuantity < this.quantity) {
-                throw new IllegalArgumentException("수량은 기존보다 줄일 수 없습니다.");
-            }
-
-            this.remainingQuantity = calculateRemainingQuantity(newQuantity);
-            this.quantity = newQuantity;
-        }
-    }
-
     public boolean isReadyStatus() {
         return hasSaleStatus(TicketSaleStatus.READY);
     }
 
-    public boolean isInactiveStatus() {
-        return hasSaleStatus(TicketSaleStatus.INACTIVE);
+    public void changeIsActive(boolean isActive) {
+        this.isActive = isActive;
     }
 
-    private int calculateRemainingQuantity(int newQuantity) {
-        return this.remainingQuantity + (newQuantity - this.quantity);
+    public void changeStartDate(LocalDate startDate) {
+        this.startDate = startDate;
+    }
+
+    public void changeStartTime(LocalTime startTime) {
+        this.startTime = startTime;
+    }
+
+    public void increaseQuantity(Integer newQuantity) {
+        if (newQuantity < this.quantity) {
+            throw new IllegalArgumentException("수량은 기존보다 줄일 수 없습니다.");
+        }
+
+        this.remainingQuantity += (newQuantity - this.quantity);
+        this.quantity = newQuantity;
     }
 
     private boolean hasSaleStatus(TicketSaleStatus status) {

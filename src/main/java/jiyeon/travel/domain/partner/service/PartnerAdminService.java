@@ -52,7 +52,10 @@ public class PartnerAdminService {
     @Transactional
     public PartnerProfileResDto updatePartnerById(Long partnerId, String name, String phone, String address) {
         Partner partner = partnerRepository.findByIdOrElseThrow(partnerId);
-        partner.updateProfile(name, phone, address);
+
+        if (name != null) partner.changeName(name);
+        if (name != null) partner.changePhone(phone);
+        if (name != null) partner.changeAddress(address);
 
         return new PartnerProfileResDto(partner.getUser(), partner);
     }

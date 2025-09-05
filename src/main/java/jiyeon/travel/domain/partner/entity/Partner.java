@@ -33,15 +33,15 @@ public class Partner extends BaseEntity {
         this.address = address;
     }
 
-    public void updateProfile(String name, String phone, String address) {
-        this.user.updateProfile(name, phone);
-
-        if (address != null) {
-            changeAddress(address);
-        }
+    public void changeName(String name) {
+        this.user.changeName(name);
     }
 
-    private void changeAddress(String address) {
+    public void changePhone(String phone) {
+        this.user.changePhone(phone);
+    }
+
+    public void changeAddress(String address) {
         if (address.isBlank()) {
             throw new IllegalArgumentException("주소가 비어있습니다.");
         }

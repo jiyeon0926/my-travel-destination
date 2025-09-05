@@ -29,7 +29,9 @@ public class UserService {
     @Transactional
     public UserProfileResDto updateProfile(String email, String nickname, String phone) {
         User user = userRepository.findActiveByEmailOrElseThrow(email);
-        user.updateProfile(nickname, phone);
+
+        if (nickname != null) user.changeName(nickname);
+        if (phone != null) user.changePhone(phone);
 
         return new UserProfileResDto(user);
     }

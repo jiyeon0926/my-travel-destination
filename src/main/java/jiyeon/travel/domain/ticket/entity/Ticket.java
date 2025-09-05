@@ -64,8 +64,8 @@ public class Ticket extends BaseEntity {
     public Ticket(User user, String name, LocalDateTime saleStartDate, LocalDateTime saleEndDate, Integer basePrice, String phone, String address, String description) {
         this.user = user;
         this.name = name;
-        this.saleStartDate = saleStartDate;
-        this.saleEndDate = saleEndDate;
+        this.saleStartDate = validateSaleStartDate(saleStartDate, LocalDateTime.now());
+        this.saleEndDate = validateSaleEndDate(saleEndDate);
         this.basePrice = basePrice;
         this.phone = phone;
         this.address = address;
@@ -73,25 +73,11 @@ public class Ticket extends BaseEntity {
         this.saleStatus = TicketSaleStatus.READY;
     }
 
-    public void updateTicketInfo(String name, LocalDateTime saleStartDate, LocalDateTime saleEndDate, Integer basePrice, String phone, String address, String description) {
-        if (name != null) changeName(name);
-        if (saleStartDate != null) this.saleStartDate = saleStartDate;
-        if (saleEndDate != null) this.saleEndDate = saleEndDate;
-        if (basePrice != null) this.basePrice = basePrice;
-        if (phone != null) changePhone(phone);
-        if (address != null) changeAddress(address);
-        if (description != null) this.description = description;
-    }
-
     public boolean isReadyStatus() {
         return saleStatus == (TicketSaleStatus.READY);
     }
 
-    public boolean isInactiveStatus() {
-        return saleStatus == (TicketSaleStatus.INACTIVE);
-    }
-
-    private void changeName(String name) {
+    public void changeName(String name) {
         if (name.isBlank()) {
             throw new IllegalArgumentException("이름이 비어있습니다.");
         }
@@ -99,7 +85,19 @@ public class Ticket extends BaseEntity {
         this.name = name;
     }
 
-    private void changePhone(String phone) {
+    public void changeSaleStartDate(LocalDateTime saleStartDate, LocalDateTime now) {
+        this.saleStartDate = validateSaleStartDate(saleStartDate, now);
+    }
+
+    public void changeSaleEndDate(LocalDateTime saleEndDate) {
+        this.saleEndDate = validateSaleEndDate(saleEndDate);
+    }
+
+    public void changeBasePrice(Integer basePrice) {
+        this.basePrice = basePrice;
+    }
+
+    public void changePhone(String phone) {
         if (phone.isBlank()) {
             throw new IllegalArgumentException("전화번호가 비어있습니다.");
         }
@@ -107,11 +105,31 @@ public class Ticket extends BaseEntity {
         this.phone = phone;
     }
 
-    private void changeAddress(String address) {
+    public void changeAddress(String address) {
         if (address.isBlank()) {
             throw new IllegalArgumentException("주소가 비어있습니다.");
         }
 
         this.address = address;
+    }
+
+    public void changeDescription(String description) {
+        this.description = description;
+    }
+
+    private LocalDateTime validateSaleStartDate(LocalDateTime saleStartDate, LocalDateTime now) {
+        if (saleStartDate.isBefore(now)) {
+            throw new IllegalArgumentException("판매 시작일은 현재 시간 이후여야 합니다.");
+        }
+
+        return saleStartDate;
+    }
+
+    private LocalDateTime validateSaleEndDate(LocalDateTime saleEndDate) {
+        if (saleEndDate.isBefore(this.saleStartDate)) {
+            throw new IllegalArgumentException("판매 종료일은 시작일 이후여야 합니다.");
+        }
+
+        return saleEndDate;
     }
 }

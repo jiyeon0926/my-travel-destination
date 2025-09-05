@@ -71,25 +71,15 @@ public class User extends BaseEntity {
         this.password = newPassword;
     }
 
-    public void updateProfile(String nickname, String phone) {
-        if (nickname != null) {
-            changeNickname(nickname);
-        }
-
-        if (phone != null) {
-            changePhone(phone);
-        }
-    }
-
-    private void changeNickname(String nickname) {
-        if (nickname.isBlank()) {
+    public void changeName(String name) {
+        if (name.isBlank()) {
             throw new IllegalArgumentException("이름이 비어있습니다.");
         }
 
-        this.displayName = nickname;
+        this.displayName = name;
     }
 
-    private void changePhone(String phone) {
+    public void changePhone(String phone) {
         if (phone.isBlank()) {
             throw new IllegalArgumentException("전화번호가 비어있습니다.");
         }
