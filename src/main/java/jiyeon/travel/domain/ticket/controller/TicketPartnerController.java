@@ -117,13 +117,13 @@ public class TicketPartnerController {
     }
 
     @PostMapping("/{ticketId}/images")
-    public ResponseEntity<List<TicketImageDetailResDto>> addImageById(@AuthenticationPrincipal UserDetailsImpl userDetails,
+    public ResponseEntity<TicketImageDetailsResDto> addImageById(@AuthenticationPrincipal UserDetailsImpl userDetails,
                                                                       @PathVariable Long ticketId,
                                                                       @RequestParam("images") List<MultipartFile> files) {
         String email = userDetails.getUsername();
-        List<TicketImageDetailResDto> ticketImageDetailResDtos = ticketPartnerService.addImageById(email, ticketId, files);
+        TicketImageDetailsResDto ticketImageDetailsResDto = ticketPartnerService.addImageById(email, ticketId, files);
 
-        return new ResponseEntity<>(ticketImageDetailResDtos, HttpStatus.CREATED);
+        return new ResponseEntity<>(ticketImageDetailsResDto, HttpStatus.CREATED);
     }
 
     @DeleteMapping("/{ticketId}/images/{imageId}")

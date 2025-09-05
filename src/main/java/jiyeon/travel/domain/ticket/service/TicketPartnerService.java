@@ -147,21 +147,17 @@ public class TicketPartnerService {
     }
 
     @Transactional
-    public List<TicketImageDetailResDto> addImageById(String email, Long ticketId, List<MultipartFile> files) {
+    public TicketImageDetailsResDto addImageById(String email, Long ticketId, List<MultipartFile> files) {
         Ticket ticket = ticketRepository.findByIdAndEmail(ticketId, email)
                 .orElseThrow(() -> new CustomException(ErrorCode.TICKET_NOT_FOUND));
 
         int imageCount = ticketImageRepository.countByTicketId(ticketId);
 
-        if (imageCount == 0) {
-            return saveTicketImages(ticket, files).stream()
-                    .map(TicketImageDetailResDto::new)
-                    .toList();
-        }
+        List<TicketImage> savedImages = (imageCount == 0)
+                ? saveTicketImages(ticket, files)
+                : addTicketImages(ticket, files, imageCount);
 
-        return addTicketImages(ticket, files, imageCount).stream()
-                .map(TicketImageDetailResDto::new)
-                .toList();
+        return new TicketImageDetailsResDto(ticket, savedImages);
     }
 
     @Transactional
