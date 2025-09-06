@@ -3,6 +3,7 @@ package jiyeon.travel.domain.ticket.entity;
 import jakarta.persistence.*;
 import jiyeon.travel.domain.reservation.entity.ReservationOption;
 import jiyeon.travel.global.common.entity.BaseEntity;
+import jiyeon.travel.global.common.enums.TicketSaleStatus;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -39,6 +40,14 @@ public class TicketOption extends BaseEntity {
         this.price = price;
     }
 
+    public boolean isReadyStatus() {
+        return hasSaleStatus(TicketSaleStatus.READY);
+    }
+
+    public boolean isNotReadyStatus() {
+        return !isReadyStatus();
+    }
+
     public void changeName(String name) {
         if (name.isBlank()) {
             throw new IllegalArgumentException("이름이 비어있습니다.");
@@ -49,5 +58,9 @@ public class TicketOption extends BaseEntity {
 
     public void changePrice(int price) {
         this.price = price;
+    }
+
+    private boolean hasSaleStatus(TicketSaleStatus status) {
+        return ticket.getSaleStatus() == status;
     }
 }

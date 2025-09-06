@@ -22,6 +22,8 @@ public enum ErrorCode {
     CANNOT_DELETE_TICKET_MAIN_IMAGE(BAD_REQUEST, "티켓 대표 이미지는 삭제할 수 없습니다."),
     NULL_TIME_SCHEDULE_DUPLICATE(BAD_REQUEST, "하루 기준으로 시간 없는 일정은 중복 등록할 수 없습니다."),
     SCHEDULE_OUT_OF_SALE_RANGE(BAD_REQUEST, "일정은 판매 시작일부터 종료일까지의 범위 내에서만 등록 가능합니다."),
+    TICKET_READY_ONLY(BAD_REQUEST, "티켓이 판매 전일 때만 추가/수정/삭제 할 수 있습니다."),
+    TICKET_IMAGE_UPDATE_NOT_ALLOWED(BAD_REQUEST, "티켓이 판매 중지/판매 종료/매진일 경우, 이미지 추가/삭제/대표 이미지 변경이 불가합니다."),
 
     // 404 NOT_FOUND
     USER_NOT_FOUND(NOT_FOUND, "사용자를 찾을 수 없습니다."),

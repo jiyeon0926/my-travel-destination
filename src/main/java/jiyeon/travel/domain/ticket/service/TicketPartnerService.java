@@ -82,6 +82,10 @@ public class TicketPartnerService {
     public void deleteTicketById(Long ticketId, String email) {
         Ticket ticket = ticketRepository.findByIdAndEmailOrElseThrow(ticketId, email);
 
+        if (ticket.isNotReadyStatus()) {
+            throw new CustomException(ErrorCode.TICKET_READY_ONLY);
+        }
+
         List<TicketImage> ticketImages = ticketImageRepository.findAllByTicketId(ticketId);
         if (!ticketImages.isEmpty()) {
             ticketImages.forEach(image -> s3Service.deleteFile(image.getImageKey()));
@@ -97,20 +101,22 @@ public class TicketPartnerService {
         Ticket ticket = ticketRepository.findByIdAndEmailWithUserAndOption(ticketId, email)
                 .orElseThrow(() -> new CustomException(ErrorCode.TICKET_NOT_FOUND));
 
-        if (ticket.isReadyStatus()) {
-            boolean isOption = ticket.getTicketOptions().stream().anyMatch(option -> option.getName() != null);
-            if (basePrice != null && isOption) {
-                throw new CustomException(ErrorCode.TICKET_OPTION_PRESENT);
-            }
-
-            if (name != null) ticket.changeName(name);
-            if (saleStartDate != null) ticket.changeSaleStartDate(saleStartDate, LocalDateTime.now());
-            if (saleEndDate != null) ticket.changeSaleEndDate(saleEndDate);
-            if (basePrice != null) ticket.changeBasePrice(basePrice);
-            if (phone != null) ticket.changePhone(phone);
-            if (address != null) ticket.changeAddress(address);
-            if (description != null) ticket.changeDescription(description);
+        if (ticket.isNotReadyStatus()) {
+            throw new CustomException(ErrorCode.TICKET_READY_ONLY);
         }
+
+        boolean isOption = ticket.getTicketOptions().stream().anyMatch(option -> option.getName() != null);
+        if (basePrice != null && isOption) {
+            throw new CustomException(ErrorCode.TICKET_OPTION_PRESENT);
+        }
+
+        if (name != null) ticket.changeName(name);
+        if (saleStartDate != null) ticket.changeSaleStartDate(saleStartDate, LocalDateTime.now());
+        if (saleEndDate != null) ticket.changeSaleEndDate(saleEndDate);
+        if (basePrice != null) ticket.changeBasePrice(basePrice);
+        if (phone != null) ticket.changePhone(phone);
+        if (address != null) ticket.changeAddress(address);
+        if (description != null) ticket.changeDescription(description);
 
         return new TicketInfoDetailResDto(ticket);
     }
@@ -118,6 +124,10 @@ public class TicketPartnerService {
     @Transactional
     public TicketOptionDetailResDto addOptionById(String email, Long ticketId, String name, int price) {
         Ticket ticket = ticketRepository.findByIdAndEmailOrElseThrow(ticketId, email);
+
+        if (ticket.isNotReadyStatus()) {
+            throw new CustomException(ErrorCode.TICKET_READY_ONLY);
+        }
 
         if (ticket.getBasePrice() != null) {
             throw new CustomException(ErrorCode.BASE_PRICE_PRESENT);
@@ -134,6 +144,10 @@ public class TicketPartnerService {
         TicketOption ticketOption = ticketOptionRepository.findByIdAndTicketIdAndEmail(optionId, ticketId, email)
                 .orElseThrow(() -> new CustomException(ErrorCode.TICKET_OPTION_NOT_FOUND));
 
+        if (ticketOption.isNotReadyStatus()) {
+            throw new CustomException(ErrorCode.TICKET_READY_ONLY);
+        }
+
         ticketOptionRepository.delete(ticketOption);
     }
 
@@ -141,6 +155,10 @@ public class TicketPartnerService {
     public TicketOptionDetailResDto updateOptionById(String email, Long ticketId, Long optionId, String name, Integer price) {
         TicketOption ticketOption = ticketOptionRepository.findByIdAndTicketIdAndEmail(optionId, ticketId, email)
                 .orElseThrow(() -> new CustomException(ErrorCode.TICKET_OPTION_NOT_FOUND));
+
+        if (ticketOption.isNotReadyStatus()) {
+            throw new CustomException(ErrorCode.TICKET_READY_ONLY);
+        }
 
         if (name != null) ticketOption.changeName(name);
         if (price != null) ticketOption.changePrice(price);
@@ -152,6 +170,10 @@ public class TicketPartnerService {
     public TicketScheduleDetailResDto addScheduleById(String email, Long ticketId,
                                                       LocalDate startDate, LocalTime startTime, int quantity) {
         Ticket ticket = ticketRepository.findByIdAndEmailOrElseThrow(ticketId, email);
+
+        if (ticket.isNotReadyStatus()) {
+            throw new CustomException(ErrorCode.TICKET_READY_ONLY);
+        }
 
         validateDuplicateDateAndTime(ticketId, startDate, startTime);
         validateScheduleBySaleDateTime(ticket, startDate, startTime);
@@ -167,6 +189,10 @@ public class TicketPartnerService {
         TicketSchedule ticketSchedule = ticketScheduleRepository.findByIdAndTicketIdAndEmail(scheduleId, ticketId, email)
                 .orElseThrow(() -> new CustomException(ErrorCode.TICKET_SCHEDULE_NOT_FOUND));
 
+        if (ticketSchedule.isNotReadyStatus()) {
+            throw new CustomException(ErrorCode.TICKET_READY_ONLY);
+        }
+
         ticketScheduleRepository.delete(ticketSchedule);
     }
 
@@ -176,15 +202,17 @@ public class TicketPartnerService {
         TicketSchedule ticketSchedule = ticketScheduleRepository.findByIdAndTicketIdAndEmail(scheduleId, ticketId, email)
                 .orElseThrow(() -> new CustomException(ErrorCode.TICKET_SCHEDULE_NOT_FOUND));
 
+        if (ticketSchedule.isNotReadyStatus()) {
+            throw new CustomException(ErrorCode.TICKET_READY_ONLY);
+        }
+
         validateDuplicateDateAndTime(ticketId, startDate, startTime);
         validateScheduleBySaleDateTime(ticketSchedule.getTicket(), startDate, startTime);
 
-        if (ticketSchedule.isReadyStatus()) {
-            if (isActive != null) ticketSchedule.changeIsActive(isActive);
-            if (startDate != null) ticketSchedule.changeStartDate(startDate);
-            if (startTime != null) ticketSchedule.changeStartTime(startTime);
-            if (quantity != null) ticketSchedule.increaseQuantity(quantity);
-        }
+        if (isActive != null) ticketSchedule.changeIsActive(isActive);
+        if (startDate != null) ticketSchedule.changeStartDate(startDate);
+        if (startTime != null) ticketSchedule.changeStartTime(startTime);
+        if (quantity != null) ticketSchedule.increaseQuantity(quantity);
 
         return new TicketScheduleDetailResDto(ticketSchedule.getTicket(), ticketSchedule);
     }
@@ -193,8 +221,9 @@ public class TicketPartnerService {
     public TicketImageDetailsResDto addImageById(String email, Long ticketId, List<MultipartFile> files) {
         Ticket ticket = ticketRepository.findByIdAndEmailOrElseThrow(ticketId, email);
 
-        int imageCount = ticketImageRepository.countByTicketId(ticketId);
+        validateImageUpdateAllowed(ticket);
 
+        int imageCount = ticketImageRepository.countByTicketId(ticketId);
         List<TicketImage> savedImages = (imageCount == 0)
                 ? saveTicketImages(ticket, files)
                 : addTicketImages(ticket, files, imageCount);
@@ -206,6 +235,8 @@ public class TicketPartnerService {
     public void deleteImageById(String email, Long ticketId, Long imageId) {
         TicketImage ticketImage = ticketImageRepository.findByIdAndTicketIdAndEmail(imageId, ticketId, email)
                 .orElseThrow(() -> new CustomException(ErrorCode.TICKET_IMAGE_NOT_FOUND));
+
+        validateImageUpdateAllowed(ticketImage.getTicket());
 
         if (ticketImage.isMain()) {
             throw new CustomException(ErrorCode.CANNOT_DELETE_TICKET_MAIN_IMAGE);
@@ -219,6 +250,8 @@ public class TicketPartnerService {
     public TicketImageDetailResDto changeImageMainById(String email, Long ticketId, Long imageId) {
         TicketImage ticketImage = ticketImageRepository.findByIdAndTicketIdAndEmail(imageId, ticketId, email)
                 .orElseThrow(() -> new CustomException(ErrorCode.TICKET_IMAGE_NOT_FOUND));
+
+        validateImageUpdateAllowed(ticketImage.getTicket());
 
         if (ticketImage.isMain()) {
             throw new CustomException(ErrorCode.ALREADY_TICKET_MAIN_IMAGE);
@@ -359,5 +392,11 @@ public class TicketPartnerService {
                         throw new CustomException(ErrorCode.FILE_UPLOAD_FAILED);
                     }
                 }).toList();
+    }
+
+    private void validateImageUpdateAllowed(Ticket ticket) {
+        if (ticket.cannotUpdateImage()) {
+            throw new CustomException(ErrorCode.TICKET_IMAGE_UPDATE_NOT_ALLOWED);
+        }
     }
 }

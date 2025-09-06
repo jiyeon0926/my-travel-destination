@@ -57,6 +57,10 @@ public class TicketSchedule extends BaseEntity {
         return hasSaleStatus(TicketSaleStatus.READY);
     }
 
+    public boolean isNotReadyStatus() {
+        return !isReadyStatus();
+    }
+
     public void changeIsActive(boolean isActive) {
         this.isActive = isActive;
     }

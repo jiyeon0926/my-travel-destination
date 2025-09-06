@@ -77,6 +77,18 @@ public class Ticket extends BaseEntity {
         return saleStatus == (TicketSaleStatus.READY);
     }
 
+    public boolean isNotReadyStatus() {
+        return !isReadyStatus();
+    }
+
+    public boolean canUpdateImage() {
+        return isReadyStatus() || saleStatus == (TicketSaleStatus.ACTIVE);
+    }
+
+    public boolean cannotUpdateImage() {
+        return !canUpdateImage();
+    }
+
     public void changeName(String name) {
         if (name.isBlank()) {
             throw new IllegalArgumentException("이름이 비어있습니다.");
