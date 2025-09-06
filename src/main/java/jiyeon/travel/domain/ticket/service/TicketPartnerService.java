@@ -80,8 +80,7 @@ public class TicketPartnerService {
 
     @Transactional
     public void deleteTicketById(Long ticketId, String email) {
-        Ticket ticket = ticketRepository.findByIdAndEmailWithUserAndOption(ticketId, email)
-                .orElseThrow(() -> new CustomException(ErrorCode.TICKET_NOT_FOUND));
+        Ticket ticket = ticketRepository.findByIdAndEmailOrElseThrow(ticketId, email);
 
         List<TicketImage> ticketImages = ticketImageRepository.findAllByTicketId(ticketId);
         if (!ticketImages.isEmpty()) {
@@ -127,8 +126,7 @@ public class TicketPartnerService {
     @Transactional
     public TicketScheduleDetailResDto addScheduleById(String email, Long ticketId,
                                                       LocalDate startDate, LocalTime startTime, int quantity) {
-        Ticket ticket = ticketRepository.findByIdAndEmail(ticketId, email)
-                .orElseThrow(() -> new CustomException(ErrorCode.TICKET_NOT_FOUND));
+        Ticket ticket = ticketRepository.findByIdAndEmailOrElseThrow(ticketId, email);
 
         validateDuplicateDateAndTime(ticketId, startDate, startTime);
         validateScheduleBySaleDateTime(ticket, startDate, startTime);
@@ -168,8 +166,7 @@ public class TicketPartnerService {
 
     @Transactional
     public TicketImageDetailsResDto addImageById(String email, Long ticketId, List<MultipartFile> files) {
-        Ticket ticket = ticketRepository.findByIdAndEmail(ticketId, email)
-                .orElseThrow(() -> new CustomException(ErrorCode.TICKET_NOT_FOUND));
+        Ticket ticket = ticketRepository.findByIdAndEmailOrElseThrow(ticketId, email);
 
         int imageCount = ticketImageRepository.countByTicketId(ticketId);
 
