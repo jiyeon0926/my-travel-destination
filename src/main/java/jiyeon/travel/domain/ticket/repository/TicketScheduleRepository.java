@@ -7,6 +7,7 @@ import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.List;
 
 @Repository
 public interface TicketScheduleRepository extends JpaRepository<TicketSchedule, Long>, CustomTicketScheduleRepository {
@@ -16,4 +17,6 @@ public interface TicketScheduleRepository extends JpaRepository<TicketSchedule, 
     boolean existsByTicketIdAndStartDateAndStartTime(Long ticketId, LocalDate startDate, LocalTime startTime);
 
     boolean existsByTicketIdAndStartDateAndStartTimeIsNull(Long ticketId, LocalDate startDate);
+
+    List<TicketSchedule> getAllByTicketIdAndIsActiveTrueOrderByStartDateAsc(Long ticketId);
 }
