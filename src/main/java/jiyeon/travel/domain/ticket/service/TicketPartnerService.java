@@ -130,7 +130,8 @@ public class TicketPartnerService {
         Ticket ticket = ticketRepository.findByIdAndEmail(ticketId, email)
                 .orElseThrow(() -> new CustomException(ErrorCode.TICKET_NOT_FOUND));
 
-        validateDateAndTime(ticketId, startDate, startTime);
+        validateDuplicateDateAndTime(ticketId, startDate, startTime);
+        validateScheduleBySaleDateTime(ticket, startDate, startTime);
 
         TicketSchedule ticketSchedule = new TicketSchedule(ticket, startDate, startTime, quantity);
         TicketSchedule savedTicketSchedule = ticketScheduleRepository.save(ticketSchedule);
@@ -152,7 +153,8 @@ public class TicketPartnerService {
         TicketSchedule ticketSchedule = ticketScheduleRepository.findByIdAndTicketIdAndEmail(scheduleId, ticketId, email)
                 .orElseThrow(() -> new CustomException(ErrorCode.TICKET_SCHEDULE_NOT_FOUND));
 
-        validateDateAndTime(ticketId, startDate, startTime);
+        validateDuplicateDateAndTime(ticketId, startDate, startTime);
+        validateScheduleBySaleDateTime(ticketSchedule.getTicket(), startDate, startTime);
 
         if (ticketSchedule.isReadyStatus()) {
             if (isActive != null) ticketSchedule.changeIsActive(isActive);
@@ -220,7 +222,13 @@ public class TicketPartnerService {
         validateNullTimeSchedules(schedules);
 
         List<TicketSchedule> scheduleList = schedules.stream()
-                .map(schedule -> new TicketSchedule(ticket, schedule.getStartDate(), schedule.getStartTime(), schedule.getQuantity()))
+                .map(schedule -> {
+                    LocalDate startDate = schedule.getStartDate();
+                    LocalTime startTime = schedule.getStartTime();
+                    validateScheduleBySaleDateTime(ticket, startDate, startTime);
+
+                    return new TicketSchedule(ticket, schedule.getStartDate(), schedule.getStartTime(), schedule.getQuantity());
+                })
                 .toList();
 
         return ticketScheduleRepository.saveAll(scheduleList);
@@ -240,6 +248,24 @@ public class TicketPartnerService {
                         throw new CustomException(ErrorCode.NULL_TIME_SCHEDULE_DUPLICATE);
                     }
                 });
+    }
+
+    private void validateScheduleBySaleDateTime(Ticket ticket, LocalDate startDate, LocalTime startTime) {
+        LocalDate saleStartDate = ticket.getSaleStartDate().toLocalDate();
+        LocalDate saleEndDate = ticket.getSaleEndDate().toLocalDate();
+        LocalTime saleStartTime = ticket.getSaleStartDate().toLocalTime();
+        LocalTime saleEndTime = ticket.getSaleEndDate().toLocalTime();
+
+        if (startDate.isBefore(saleStartDate) || startDate.isAfter(saleEndDate)) {
+            throw new CustomException(ErrorCode.SCHEDULE_OUT_OF_SALE_RANGE);
+        }
+
+        if (startTime != null) {
+            if (startDate.isEqual(saleStartDate) && !startTime.isAfter(saleStartTime)
+                    || startDate.isEqual(saleEndDate) && !startTime.isBefore(saleEndTime)) {
+                throw new CustomException(ErrorCode.SCHEDULE_OUT_OF_SALE_RANGE);
+            }
+        }
     }
 
     private List<TicketImage> saveTicketImages(Ticket ticket, List<MultipartFile> files) {
@@ -272,7 +298,7 @@ public class TicketPartnerService {
                 }).toList();
     }
 
-    private void validateDateAndTime(Long ticketId, LocalDate startDate, LocalTime startTime) {
+    private void validateDuplicateDateAndTime(Long ticketId, LocalDate startDate, LocalTime startTime) {
         boolean isDate = ticketScheduleRepository.existsByTicketIdAndStartDate(ticketId, startDate);
         boolean isDateAndTime = ticketScheduleRepository.existsByTicketIdAndStartDateAndStartTime(ticketId, startDate, startTime);
         boolean isNullTime = ticketScheduleRepository.existsByTicketIdAndStartDateAndStartTimeIsNull(ticketId, startDate);
