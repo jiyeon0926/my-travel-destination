@@ -14,4 +14,6 @@ public interface TicketScheduleRepository extends JpaRepository<TicketSchedule, 
     boolean existsByTicketIdAndStartDate(Long ticketId, LocalDate startDate);
 
     boolean existsByTicketIdAndStartDateAndStartTime(Long ticketId, LocalDate startDate, LocalTime startTime);
+
+    boolean existsByTicketIdAndStartDateAndStartTimeIsNull(Long ticketId, LocalDate startDate);
 }

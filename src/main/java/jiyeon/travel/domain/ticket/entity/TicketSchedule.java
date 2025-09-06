@@ -47,8 +47,8 @@ public class TicketSchedule extends BaseEntity {
     public TicketSchedule(Ticket ticket, LocalDate startDate, LocalTime startTime, int quantity) {
         this.ticket = ticket;
         this.isActive = true;
-        this.startDate = startDate;
-        this.startTime = startTime;
+        this.startDate = validateStartDate(startDate);
+        this.startTime = validateStartTime(startTime);
         this.quantity = quantity;
         this.remainingQuantity = quantity;
     }
@@ -62,11 +62,11 @@ public class TicketSchedule extends BaseEntity {
     }
 
     public void changeStartDate(LocalDate startDate) {
-        this.startDate = startDate;
+        this.startDate = validateStartDate(startDate);
     }
 
     public void changeStartTime(LocalTime startTime) {
-        this.startTime = startTime;
+        this.startTime = validateStartTime(startTime);
     }
 
     public void increaseQuantity(Integer newQuantity) {
@@ -76,6 +76,25 @@ public class TicketSchedule extends BaseEntity {
 
         this.remainingQuantity += (newQuantity - this.quantity);
         this.quantity = newQuantity;
+    }
+
+    private LocalDate validateStartDate(LocalDate startDate) {
+        LocalDate saleStartDate = ticket.getSaleStartDate().toLocalDate();
+        if (startDate.isBefore(saleStartDate)) {
+            throw new IllegalArgumentException("판매 시작일 이전으로 일정을 등록할 수 없습니다.");
+        }
+
+        return startDate;
+    }
+
+    private LocalTime validateStartTime(LocalTime startTime) {
+        LocalTime saleStartTime = ticket.getSaleStartDate().toLocalTime();
+
+        if (startTime != null && startTime.isBefore(saleStartTime)) {
+            throw new IllegalArgumentException("판매 시작 시간 이전으로 일정을 등록할 수 없습니다.");
+        }
+
+        return startTime;
     }
 
     private boolean hasSaleStatus(TicketSaleStatus status) {

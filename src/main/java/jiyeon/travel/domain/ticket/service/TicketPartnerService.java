@@ -28,6 +28,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 @Service
@@ -216,11 +217,29 @@ public class TicketPartnerService {
     }
 
     private List<TicketSchedule> saveTicketSchedules(Ticket ticket, List<TicketScheduleCreateReqDto> schedules) {
+        validateNullTimeSchedules(schedules);
+
         List<TicketSchedule> scheduleList = schedules.stream()
                 .map(schedule -> new TicketSchedule(ticket, schedule.getStartDate(), schedule.getStartTime(), schedule.getQuantity()))
                 .toList();
 
         return ticketScheduleRepository.saveAll(scheduleList);
+    }
+
+    private void validateNullTimeSchedules(List<TicketScheduleCreateReqDto> schedules) {
+        schedules.stream()
+                .collect(Collectors.groupingBy(TicketScheduleCreateReqDto::getStartDate))
+                .forEach((date, shceduleReqList) -> {
+                    boolean hasAllDaySchedule = shceduleReqList.stream()
+                            .anyMatch(schedule -> schedule.getStartTime() == null);
+
+                    boolean hasTimedSchedule = shceduleReqList.stream()
+                            .anyMatch(schedule -> schedule.getStartTime() != null);
+
+                    if (hasAllDaySchedule && hasTimedSchedule) {
+                        throw new CustomException(ErrorCode.NULL_TIME_SCHEDULE_DUPLICATE);
+                    }
+                });
     }
 
     private List<TicketImage> saveTicketImages(Ticket ticket, List<MultipartFile> files) {
@@ -256,9 +275,14 @@ public class TicketPartnerService {
     private void validateDateAndTime(Long ticketId, LocalDate startDate, LocalTime startTime) {
         boolean isDate = ticketScheduleRepository.existsByTicketIdAndStartDate(ticketId, startDate);
         boolean isDateAndTime = ticketScheduleRepository.existsByTicketIdAndStartDateAndStartTime(ticketId, startDate, startTime);
+        boolean isNullTime = ticketScheduleRepository.existsByTicketIdAndStartDateAndStartTimeIsNull(ticketId, startDate);
 
         if ((isDate && startTime == null) || isDateAndTime) {
             throw new CustomException(ErrorCode.TICKET_SCHEDULE_ALREADY_EXISTS);
+        }
+
+        if ((isNullTime && isDate)) {
+            throw new CustomException(ErrorCode.NULL_TIME_SCHEDULE_DUPLICATE);
         }
     }
 
