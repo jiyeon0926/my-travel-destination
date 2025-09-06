@@ -138,6 +138,17 @@ public class TicketPartnerService {
     }
 
     @Transactional
+    public TicketOptionDetailResDto updateOptionById(String email, Long ticketId, Long optionId, String name, Integer price) {
+        TicketOption ticketOption = ticketOptionRepository.findByIdAndTicketIdAndEmail(optionId, ticketId, email)
+                .orElseThrow(() -> new CustomException(ErrorCode.TICKET_OPTION_NOT_FOUND));
+
+        if (name != null) ticketOption.changeName(name);
+        if (price != null) ticketOption.changePrice(price);
+
+        return new TicketOptionDetailResDto(ticketOption.getTicket(), ticketOption);
+    }
+
+    @Transactional
     public TicketScheduleDetailResDto addScheduleById(String email, Long ticketId,
                                                       LocalDate startDate, LocalTime startTime, int quantity) {
         Ticket ticket = ticketRepository.findByIdAndEmailOrElseThrow(ticketId, email);

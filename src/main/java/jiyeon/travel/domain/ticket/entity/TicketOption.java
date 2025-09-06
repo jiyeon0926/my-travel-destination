@@ -38,4 +38,16 @@ public class TicketOption extends BaseEntity {
         this.name = name;
         this.price = price;
     }
+
+    public void changeName(String name) {
+        if (name.isBlank()) {
+            throw new IllegalArgumentException("이름이 비어있습니다.");
+        }
+
+        this.name = name;
+    }
+
+    public void changePrice(int price) {
+        this.price = price;
+    }
 }

@@ -96,6 +96,23 @@ public class TicketPartnerController {
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
+    @PatchMapping("/{ticketId}/options/{optionId}")
+    public ResponseEntity<TicketOptionDetailResDto> updateOptionById(@AuthenticationPrincipal UserDetailsImpl userDetails,
+                                                                     @PathVariable Long ticketId,
+                                                                     @PathVariable Long optionId,
+                                                                     @RequestBody TicketOptionUpdateReqDto ticketOptionUpdateReqDto) {
+        String email = userDetails.getUsername();
+        TicketOptionDetailResDto ticketOptionDetailResDto = ticketPartnerService.updateOptionById(
+                email,
+                ticketId,
+                optionId,
+                ticketOptionUpdateReqDto.getName(),
+                ticketOptionUpdateReqDto.getPrice()
+        );
+
+        return new ResponseEntity<>(ticketOptionDetailResDto, HttpStatus.OK);
+    }
+
     @PostMapping("/{ticketId}/schedules")
     public ResponseEntity<TicketScheduleDetailResDto> addScheduleById(@AuthenticationPrincipal UserDetailsImpl userDetails,
                                                                       @PathVariable Long ticketId,
