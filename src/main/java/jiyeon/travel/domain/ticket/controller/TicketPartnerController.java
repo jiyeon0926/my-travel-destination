@@ -71,6 +71,21 @@ public class TicketPartnerController {
         return new ResponseEntity<>(ticketInfoResDto, HttpStatus.OK);
     }
 
+    @PostMapping("/{ticketId}/options")
+    public ResponseEntity<TicketOptionDetailResDto> addOptionById(@AuthenticationPrincipal UserDetailsImpl userDetails,
+                                                                  @PathVariable Long ticketId,
+                                                                  @Valid @RequestBody TicketOptionCreateReqDto ticketOptionCreateReqDto) {
+        String email = userDetails.getUsername();
+        TicketOptionDetailResDto ticketOptionDetailResDto = ticketPartnerService.addOptionById(
+                email,
+                ticketId,
+                ticketOptionCreateReqDto.getName(),
+                ticketOptionCreateReqDto.getPrice()
+        );
+
+        return new ResponseEntity<>(ticketOptionDetailResDto, HttpStatus.CREATED);
+    }
+
     @DeleteMapping("/{ticketId}/options/{optionId}")
     public ResponseEntity<Void> deleteOptionById(@AuthenticationPrincipal UserDetailsImpl userDetails,
                                                  @PathVariable Long ticketId,

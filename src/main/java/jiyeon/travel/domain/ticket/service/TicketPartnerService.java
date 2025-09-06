@@ -116,6 +116,20 @@ public class TicketPartnerService {
     }
 
     @Transactional
+    public TicketOptionDetailResDto addOptionById(String email, Long ticketId, String name, int price) {
+        Ticket ticket = ticketRepository.findByIdAndEmailOrElseThrow(ticketId, email);
+
+        if (ticket.getBasePrice() != null) {
+            throw new CustomException(ErrorCode.BASE_PRICE_PRESENT);
+        }
+
+        TicketOption ticketOption = new TicketOption(ticket, name, price);
+        TicketOption savedTicketOption = ticketOptionRepository.save(ticketOption);
+
+        return new TicketOptionDetailResDto(ticket, savedTicketOption);
+    }
+
+    @Transactional
     public void deleteOptionById(String email, Long ticketId, Long optionId) {
         TicketOption ticketOption = ticketOptionRepository.findByIdAndTicketIdAndEmail(optionId, ticketId, email)
                 .orElseThrow(() -> new CustomException(ErrorCode.TICKET_OPTION_NOT_FOUND));
