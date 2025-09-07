@@ -16,6 +16,8 @@ import jiyeon.travel.global.exception.ErrorCode;
 import jiyeon.travel.global.s3.dto.S3UploadDto;
 import jiyeon.travel.global.s3.service.S3Service;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -76,6 +78,13 @@ public class TicketPartnerService {
         List<TicketImage> savedTicketImages = (files != null) ? saveTicketImages(savedTicket, files) : Collections.emptyList();
 
         return new TicketDetailResDto(savedTicket, savedOptions, savedSchedules, savedTicketImages);
+    }
+
+    @Transactional(readOnly = true)
+    public TicketListResDto findAllByEmail(int page, int size, String email) {
+        Pageable pageable = PageRequest.of(page - 1, size);
+
+        return ticketRepository.findAllByEmail(pageable, email);
     }
 
     @Transactional
