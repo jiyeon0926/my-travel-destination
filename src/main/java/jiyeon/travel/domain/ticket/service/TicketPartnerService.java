@@ -87,6 +87,13 @@ public class TicketPartnerService {
         return ticketRepository.findAllByEmail(pageable, email);
     }
 
+    @Transactional(readOnly = true)
+    public TicketDetailResDto findMyTicketById(String email, Long ticketId) {
+        Ticket ticket = ticketRepository.findByIdAndEmailOrElseThrow(ticketId, email);
+
+        return new TicketDetailResDto(ticket, ticket.getTicketOptions(), ticket.getTicketSchedules(), ticket.getTicketImages());
+    }
+
     @Transactional
     public void deleteTicketById(Long ticketId, String email) {
         Ticket ticket = ticketRepository.findByIdAndEmailOrElseThrow(ticketId, email);

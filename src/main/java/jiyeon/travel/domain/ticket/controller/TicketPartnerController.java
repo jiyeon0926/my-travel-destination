@@ -44,12 +44,21 @@ public class TicketPartnerController {
 
     @GetMapping
     public ResponseEntity<TicketListResDto> findAllMyTickets(@RequestParam(defaultValue = "1") int page,
-                                                    @RequestParam(defaultValue = "10") int size,
-                                                    @AuthenticationPrincipal UserDetailsImpl userDetails) {
+                                                             @RequestParam(defaultValue = "10") int size,
+                                                             @AuthenticationPrincipal UserDetailsImpl userDetails) {
         String email = userDetails.getUsername();
         TicketListResDto ticketListResDto = ticketPartnerService.findAllMyTickets(page, size, email);
 
         return new ResponseEntity<>(ticketListResDto, HttpStatus.OK);
+    }
+
+    @GetMapping("/{ticketId}")
+    public ResponseEntity<TicketDetailResDto> findMyTicketById(@AuthenticationPrincipal UserDetailsImpl userDetails,
+                                                               @PathVariable Long ticketId) {
+        String email = userDetails.getUsername();
+        TicketDetailResDto ticketDetailResDto = ticketPartnerService.findMyTicketById(email, ticketId);
+
+        return new ResponseEntity<>(ticketDetailResDto, HttpStatus.OK);
     }
 
     @DeleteMapping("/{ticketId}")
