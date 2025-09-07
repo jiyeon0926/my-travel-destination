@@ -81,7 +81,7 @@ public class TicketPartnerService {
     }
 
     @Transactional(readOnly = true)
-    public TicketListResDto findAllByEmail(int page, int size, String email) {
+    public TicketListResDto findAllMyTickets(int page, int size, String email) {
         Pageable pageable = PageRequest.of(page - 1, size);
 
         return ticketRepository.findAllByEmail(pageable, email);

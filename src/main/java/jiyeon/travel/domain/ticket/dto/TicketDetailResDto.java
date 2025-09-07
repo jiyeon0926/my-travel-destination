@@ -15,7 +15,6 @@ import java.util.List;
 public class TicketDetailResDto {
 
     private final Long id;
-    private final Long userId;
     private final String ticketName;
     private final LocalDateTime saleStartDate;
     private final LocalDateTime saleEndDate;
@@ -32,7 +31,6 @@ public class TicketDetailResDto {
 
     public TicketDetailResDto(Ticket ticket, List<TicketOption> options, List<TicketSchedule> schedules, List<TicketImage> images) {
         this.id = ticket.getId();
-        this.userId = ticket.getUser().getId();
         this.ticketName = ticket.getName();
         this.saleStartDate = ticket.getSaleStartDate();
         this.saleEndDate = ticket.getSaleEndDate();

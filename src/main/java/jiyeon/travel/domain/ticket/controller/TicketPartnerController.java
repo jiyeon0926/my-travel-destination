@@ -43,11 +43,11 @@ public class TicketPartnerController {
     }
 
     @GetMapping
-    public ResponseEntity<TicketListResDto> findAllByEmail(@RequestParam(defaultValue = "1") int page,
-                                                           @RequestParam(defaultValue = "10") int size,
-                                                           @AuthenticationPrincipal UserDetailsImpl userDetails) {
+    public ResponseEntity<TicketListResDto> findAllMyTickets(@RequestParam(defaultValue = "1") int page,
+                                                    @RequestParam(defaultValue = "10") int size,
+                                                    @AuthenticationPrincipal UserDetailsImpl userDetails) {
         String email = userDetails.getUsername();
-        TicketListResDto ticketListResDto = ticketPartnerService.findAllByEmail(page, size, email);
+        TicketListResDto ticketListResDto = ticketPartnerService.findAllMyTickets(page, size, email);
 
         return new ResponseEntity<>(ticketListResDto, HttpStatus.OK);
     }
