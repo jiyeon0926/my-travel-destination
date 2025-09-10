@@ -11,6 +11,7 @@ import jiyeon.travel.domain.ticket.repository.TicketRepository;
 import jiyeon.travel.domain.ticket.repository.TicketScheduleRepository;
 import jiyeon.travel.domain.user.entity.User;
 import jiyeon.travel.domain.user.repository.UserRepository;
+import jiyeon.travel.global.common.enums.TicketSaleStatus;
 import jiyeon.travel.global.exception.CustomException;
 import jiyeon.travel.global.exception.ErrorCode;
 import jiyeon.travel.global.s3.dto.S3UploadDto;
@@ -139,6 +140,30 @@ public class TicketPartnerService {
         if (phone != null) ticket.changePhone(phone);
         if (address != null) ticket.changeAddress(address);
         if (description != null) ticket.changeDescription(description);
+
+        return new TicketInfoDetailResDto(ticket);
+    }
+
+    /**
+     * TODO: 상태 변경 예외 처리
+     * - 현재 티켓 상태가 "판매 중"이면서 예약이 없을 경우에만 "판매 중지"로 변경 가능
+     * - "판매 중지" 외 다른 상태로 변경 불가
+     */
+    @Transactional
+    public TicketInfoDetailResDto changeTicketStatusById(String email, Long ticketId, String saleStatus) {
+        Ticket ticket = ticketRepository.findByIdAndEmailOrElseThrow(ticketId, email);
+        TicketSaleStatus currentStatus = TicketSaleStatus.of(saleStatus);
+
+        boolean isNotInactive = !TicketSaleStatus.INACTIVE.equals(currentStatus);
+        if (isNotInactive) {
+            throw new CustomException(ErrorCode.INVALID_STATUS_CHANGE);
+        }
+
+        if (ticket.isNotActiveStatus()) {
+            throw new CustomException(ErrorCode.INVALID_TICKET_INACTIVE_CHANGE);
+        }
+
+        ticket.changeSaleStatus(currentStatus);
 
         return new TicketInfoDetailResDto(ticket);
     }

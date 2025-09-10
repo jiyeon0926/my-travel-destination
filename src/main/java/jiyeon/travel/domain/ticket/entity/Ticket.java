@@ -81,8 +81,16 @@ public class Ticket extends BaseEntity {
         return !isReadyStatus();
     }
 
+    public boolean isActiveStatus() {
+        return saleStatus == (TicketSaleStatus.ACTIVE);
+    }
+
+    public boolean isNotActiveStatus() {
+        return !isActiveStatus();
+    }
+
     public boolean canUpdateImage() {
-        return isReadyStatus() || saleStatus == (TicketSaleStatus.ACTIVE);
+        return isReadyStatus() || isActiveStatus();
     }
 
     public boolean cannotUpdateImage() {

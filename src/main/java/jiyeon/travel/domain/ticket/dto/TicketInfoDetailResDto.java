@@ -18,7 +18,7 @@ public class TicketInfoDetailResDto {
     private final String phone;
     private final String address;
     private final String description;
-    private final String status;
+    private final String saleStatus;
     private final LocalDateTime createdAt;
     private final LocalDateTime updatedAt;
 
@@ -31,7 +31,7 @@ public class TicketInfoDetailResDto {
         this.phone = ticket.getPhone();
         this.address = ticket.getAddress();
         this.description = ticket.getDescription();
-        this.status = ticket.getSaleStatus().name();
+        this.saleStatus = ticket.getSaleStatus().name();
         this.createdAt = ticket.getCreatedAt();
         this.updatedAt = ticket.getUpdatedAt();
     }

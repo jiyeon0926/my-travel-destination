@@ -90,6 +90,16 @@ public class TicketPartnerController {
         return new ResponseEntity<>(ticketInfoResDto, HttpStatus.OK);
     }
 
+    @PatchMapping("/{ticketId}/status")
+    public ResponseEntity<TicketInfoDetailResDto> changeTicketStatusById(@AuthenticationPrincipal UserDetailsImpl userDetails,
+                                                                         @PathVariable Long ticketId,
+                                                                         @Valid @RequestBody TicketStatusReqDto ticketStatusReqDto) {
+        String email = userDetails.getUsername();
+        TicketInfoDetailResDto ticketInfoDetailResDto = ticketPartnerService.changeTicketStatusById(email, ticketId, ticketStatusReqDto.getSaleStatus());
+
+        return new ResponseEntity<>(ticketInfoDetailResDto, HttpStatus.OK);
+    }
+
     @PostMapping("/{ticketId}/options")
     public ResponseEntity<TicketOptionDetailResDto> addOptionById(@AuthenticationPrincipal UserDetailsImpl userDetails,
                                                                   @PathVariable Long ticketId,
