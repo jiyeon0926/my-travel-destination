@@ -2,10 +2,13 @@ package jiyeon.travel.domain.ticket.repository;
 
 import jiyeon.travel.domain.ticket.entity.Ticket;
 import jiyeon.travel.domain.ticket.repository.custom.CustomTicketRepository;
+import jiyeon.travel.global.common.enums.TicketSaleStatus;
 import jiyeon.travel.global.exception.CustomException;
 import jiyeon.travel.global.exception.ErrorCode;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
+
+import java.util.List;
 
 @Repository
 public interface TicketRepository extends JpaRepository<Ticket, Long>, CustomTicketRepository {
@@ -19,4 +22,6 @@ public interface TicketRepository extends JpaRepository<Ticket, Long>, CustomTic
         return this.findByIdAndEmail(id, email)
                 .orElseThrow(() -> new CustomException(ErrorCode.TICKET_NOT_FOUND));
     }
+
+    List<Ticket> findBySaleStatus(TicketSaleStatus saleStatus);
 }
