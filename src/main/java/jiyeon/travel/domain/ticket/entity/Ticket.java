@@ -64,8 +64,8 @@ public class Ticket extends BaseEntity {
     public Ticket(User user, String name, LocalDateTime saleStartDate, LocalDateTime saleEndDate, Integer basePrice, String phone, String address, String description) {
         this.user = user;
         this.name = name;
-        this.saleStartDate = validateSaleStartDate(saleStartDate, LocalDateTime.now());
-        this.saleEndDate = validateSaleEndDate(saleEndDate);
+        this.saleStartDate = saleStartDate;
+        this.saleEndDate = saleEndDate;
         this.basePrice = basePrice;
         this.phone = phone;
         this.address = address;
@@ -89,6 +89,14 @@ public class Ticket extends BaseEntity {
         return !canUpdateImage();
     }
 
+    public boolean hasSaleStarted(LocalDateTime referenceTime) {
+        return !this.saleStartDate.isAfter(referenceTime);
+    }
+
+    public boolean hasSaleEnded(LocalDateTime referenceTime) {
+        return !this.saleEndDate.isAfter(referenceTime);
+    }
+
     public void changeName(String name) {
         if (name.isBlank()) {
             throw new IllegalArgumentException("이름이 비어있습니다.");
@@ -97,12 +105,12 @@ public class Ticket extends BaseEntity {
         this.name = name;
     }
 
-    public void changeSaleStartDate(LocalDateTime saleStartDate, LocalDateTime now) {
-        this.saleStartDate = validateSaleStartDate(saleStartDate, now);
+    public void changeSaleStartDate(LocalDateTime saleStartDate) {
+        this.saleStartDate = saleStartDate;
     }
 
     public void changeSaleEndDate(LocalDateTime saleEndDate) {
-        this.saleEndDate = validateSaleEndDate(saleEndDate);
+        this.saleEndDate = saleEndDate;
     }
 
     public void changeBasePrice(Integer basePrice) {
@@ -129,19 +137,7 @@ public class Ticket extends BaseEntity {
         this.description = description;
     }
 
-    private LocalDateTime validateSaleStartDate(LocalDateTime saleStartDate, LocalDateTime now) {
-        if (saleStartDate.isBefore(now)) {
-            throw new IllegalArgumentException("판매 시작일은 현재 시간 이후여야 합니다.");
-        }
-
-        return saleStartDate;
-    }
-
-    private LocalDateTime validateSaleEndDate(LocalDateTime saleEndDate) {
-        if (saleEndDate.isBefore(this.saleStartDate)) {
-            throw new IllegalArgumentException("판매 종료일은 시작일 이후여야 합니다.");
-        }
-
-        return saleEndDate;
+    public void changeSaleStatus(TicketSaleStatus saleStatus) {
+        this.saleStatus = saleStatus;
     }
 }

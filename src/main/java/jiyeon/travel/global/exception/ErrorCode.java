@@ -24,6 +24,8 @@ public enum ErrorCode {
     SCHEDULE_OUT_OF_SALE_RANGE(BAD_REQUEST, "일정은 판매 시작일부터 종료일까지의 범위 내에서만 등록 가능합니다."),
     TICKET_READY_ONLY(BAD_REQUEST, "티켓이 판매 전일 때만 추가/수정/삭제 할 수 있습니다."),
     TICKET_IMAGE_UPDATE_NOT_ALLOWED(BAD_REQUEST, "티켓이 판매 중지/판매 종료/매진일 경우, 이미지 추가/삭제/대표 이미지 변경이 불가합니다."),
+    INVALID_SALE_START_DATE(BAD_REQUEST, "판매 시작일은 현재 시간 이후여야 합니다."),
+    INVALID_SALE_END_DATE(BAD_REQUEST, "판매 종료일은 시작일 이후여야 합니다."),
 
     // 404 NOT_FOUND
     USER_NOT_FOUND(NOT_FOUND, "사용자를 찾을 수 없습니다."),

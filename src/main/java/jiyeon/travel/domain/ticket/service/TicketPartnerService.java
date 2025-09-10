@@ -51,6 +51,9 @@ public class TicketPartnerService {
                                            String phone, String address, Integer basePrice, String description,
                                            List<TicketOptionCreateReqDto> options, List<TicketScheduleCreateReqDto> schedules,
                                            List<MultipartFile> files) {
+        LocalDateTime now = LocalDateTime.now();
+        validateSaleRange(saleStartDate, saleEndDate, now);
+
         if (basePrice == null && (options == null || options.isEmpty())) {
             throw new CustomException(ErrorCode.BASE_PRICE_EMPTY);
         }
@@ -121,13 +124,16 @@ public class TicketPartnerService {
             throw new CustomException(ErrorCode.TICKET_READY_ONLY);
         }
 
+        LocalDateTime now = LocalDateTime.now();
+        validateSaleRange(saleStartDate, saleEndDate, now);
+
         boolean isOption = ticket.getTicketOptions().stream().anyMatch(option -> option.getName() != null);
         if (basePrice != null && isOption) {
             throw new CustomException(ErrorCode.TICKET_OPTION_PRESENT);
         }
 
         if (name != null) ticket.changeName(name);
-        if (saleStartDate != null) ticket.changeSaleStartDate(saleStartDate, LocalDateTime.now());
+        if (saleStartDate != null) ticket.changeSaleStartDate(saleStartDate);
         if (saleEndDate != null) ticket.changeSaleEndDate(saleEndDate);
         if (basePrice != null) ticket.changeBasePrice(basePrice);
         if (phone != null) ticket.changePhone(phone);
@@ -279,6 +285,16 @@ public class TicketPartnerService {
         ticketImage.changeImageMain(true);
 
         return new TicketImageDetailResDto(ticketImage);
+    }
+
+    private void validateSaleRange(LocalDateTime saleStartDate, LocalDateTime saleEndDate, LocalDateTime referenceTime) {
+        if (saleStartDate.isBefore(referenceTime)) {
+            throw new CustomException(ErrorCode.INVALID_SALE_START_DATE);
+        }
+
+        if (saleEndDate.isBefore(saleStartDate)) {
+            throw new CustomException(ErrorCode.INVALID_SALE_END_DATE);
+        }
     }
 
     private List<TicketOption> saveTicketOptions(Ticket ticket, List<TicketOptionCreateReqDto> options) {
