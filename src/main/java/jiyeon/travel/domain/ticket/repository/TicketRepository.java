@@ -6,9 +6,11 @@ import jiyeon.travel.global.common.enums.TicketSaleStatus;
 import jiyeon.travel.global.exception.CustomException;
 import jiyeon.travel.global.exception.ErrorCode;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface TicketRepository extends JpaRepository<Ticket, Long>, CustomTicketRepository {
@@ -22,6 +24,9 @@ public interface TicketRepository extends JpaRepository<Ticket, Long>, CustomTic
         return this.findByIdAndEmail(id, email)
                 .orElseThrow(() -> new CustomException(ErrorCode.TICKET_NOT_FOUND));
     }
+
+    @Query("select t from Ticket t inner join fetch t.user u where t.id = :id and u.email = :email")
+    Optional<Ticket> findByIdAndEmail(Long id, String email);
 
     List<Ticket> findBySaleStatus(TicketSaleStatus saleStatus);
 }

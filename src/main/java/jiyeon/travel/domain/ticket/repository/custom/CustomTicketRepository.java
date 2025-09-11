@@ -10,7 +10,5 @@ public interface CustomTicketRepository {
 
     Optional<Ticket> findByIdAndEmailWithUserAndOption(Long id, String email);
 
-    Optional<Ticket> findByIdAndEmail(Long id, String email);
-
     TicketListResDto findAllByEmail(Pageable pageable, String email);
 }
