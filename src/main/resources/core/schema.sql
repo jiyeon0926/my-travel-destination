@@ -143,8 +143,11 @@ create table my_travel_destination.blog_image (
 	id bigint primary key auto_increment,
 	blog_id bigint not null,
 	image_url varchar(500) not null,
-	file_name varchar(255) not null,
-	created_at datetime not null
+    image_key varchar(500) not null,
+    file_name varchar(255) not null,
+    is_main boolean not null default false,
+    created_at datetime not null,
+    updated_at datetime not null
 );
 
 alter table my_travel_destination.blog_image add foreign key (blog_id) references my_travel_destination.blog (id);
