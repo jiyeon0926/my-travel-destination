@@ -12,8 +12,10 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 @Entity
 @Table(name = "reservation")
@@ -33,8 +35,11 @@ public class Reservation extends BaseEntity {
     @JoinColumn(name = "ticket_schedule_id", nullable = false)
     private TicketSchedule ticketSchedule;
 
-    @Column(length = 20, nullable = false)
+    @Column(unique = true, length = 20, nullable = false)
     private String reservationNumber;
+
+    @Column(nullable = false)
+    private int totalQuantity;
 
     @Column(nullable = false)
     private int totalAmount;
@@ -60,13 +65,21 @@ public class Reservation extends BaseEntity {
     @OneToMany(mappedBy = "reservation")
     private List<BlogTicketItem> blogTicketItems = new ArrayList<>();
 
-    public Reservation(User user, TicketSchedule ticketSchedule, String reservationNumber, int totalAmount, String reservationName, String reservationPhone) {
+    public Reservation(User user, TicketSchedule ticketSchedule, int totalQuantity, int totalAmount, String reservationName, String reservationPhone) {
         this.user = user;
         this.ticketSchedule = ticketSchedule;
-        this.reservationNumber = reservationNumber;
+        this.reservationNumber = createReservationNumber();
+        this.totalQuantity = totalQuantity;
         this.totalAmount = totalAmount;
         this.reservationName = reservationName;
         this.reservationPhone = reservationPhone;
         this.status = ReservationStatus.UNPAID;
+    }
+
+    private String createReservationNumber() {
+        String now = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd"));
+        String uuid = UUID.randomUUID().toString().substring(0, 8);
+
+        return now + "-" + uuid;
     }
 }

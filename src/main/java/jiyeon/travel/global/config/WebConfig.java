@@ -39,7 +39,7 @@ public class WebConfig {
                                 .requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll()
                                 .dispatcherTypeMatchers(DispatcherType.FORWARD, DispatcherType.INCLUDE, DispatcherType.ERROR).permitAll()
                                 .requestMatchers("/api/admin/**").hasRole(UserRole.ADMIN.name())
-                                .requestMatchers("/api/users/**", "/api/tickets/**").hasRole(UserRole.USER.name())
+                                .requestMatchers("/api/users/**", "/api/tickets/**", "/api/reservations/**").hasRole(UserRole.USER.name())
                                 .requestMatchers("/api/partners/**").hasRole(UserRole.PARTNER.name())
                                 .anyRequest().authenticated())
                 .exceptionHandling(handler -> handler

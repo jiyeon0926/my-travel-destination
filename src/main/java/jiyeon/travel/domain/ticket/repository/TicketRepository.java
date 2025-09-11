@@ -29,4 +29,7 @@ public interface TicketRepository extends JpaRepository<Ticket, Long>, CustomTic
     Optional<Ticket> findByIdAndEmail(Long id, String email);
 
     List<Ticket> findBySaleStatus(TicketSaleStatus saleStatus);
+
+    @Query("select t from Ticket t inner join TicketSchedule s on t.id = s.ticket.id where s.id = :scheduleId")
+    Optional<Ticket> findByScheduleId(Long scheduleId);
 }
