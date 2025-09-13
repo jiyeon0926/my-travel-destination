@@ -11,4 +11,6 @@ public interface CustomTicketRepository {
     Optional<Ticket> findByIdAndEmailWithUserAndOption(Long id, String email);
 
     TicketListResDto findAllByEmail(Pageable pageable, String email);
+
+    Ticket getTicketByReservationId(Long reservationId);
 }

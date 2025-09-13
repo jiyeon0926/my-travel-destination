@@ -5,7 +5,6 @@ import jiyeon.travel.domain.reservation.entity.Reservation;
 import jiyeon.travel.global.common.entity.BaseEntity;
 import jiyeon.travel.global.common.enums.PaymentStatus;
 import lombok.AccessLevel;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -28,29 +27,32 @@ public class Payment extends BaseEntity {
     @Column(nullable = false)
     private int amount;
 
-    @Column(length = 50, nullable = false)
+    @Column(nullable = false)
+    private int quantity;
+
+    @Column(length = 50)
     private String paymentMethod;
 
-    @Column(length = 50, nullable = false)
-    private String paymentGateway;
-
     @Column(length = 100, nullable = false)
-    private String transactionId;
+    private String tid;
 
     @Column(length = 30, nullable = false)
     @Enumerated(value = EnumType.STRING)
     private PaymentStatus status;
 
-    private LocalDateTime paidAt;
+    private LocalDateTime approvedAt;
 
-    @Builder
-    public Payment(Reservation reservation, int amount, String paymentMethod, String paymentGateway, String transactionId, LocalDateTime paidAt) {
+    public Payment(Reservation reservation, int amount, int quantity, String tid) {
         this.reservation = reservation;
         this.amount = amount;
-        this.paymentMethod = paymentMethod;
-        this.paymentGateway = paymentGateway;
-        this.transactionId = transactionId;
+        this.quantity = quantity;
+        this.tid = tid;
         this.status = PaymentStatus.READY;
-        this.paidAt = paidAt;
+    }
+
+    public void completedPayment(String paymentMethod, LocalDateTime approvedAt) {
+        this.paymentMethod = paymentMethod;
+        this.approvedAt = approvedAt;
+        this.status = PaymentStatus.COMPLETED;
     }
 }

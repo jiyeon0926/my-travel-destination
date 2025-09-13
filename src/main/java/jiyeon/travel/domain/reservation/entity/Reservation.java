@@ -76,6 +76,10 @@ public class Reservation extends BaseEntity {
         this.status = ReservationStatus.UNPAID;
     }
 
+    public void changeStatus(ReservationStatus status) {
+        this.status = status;
+    }
+
     private String createReservationNumber() {
         String now = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd"));
         String uuid = UUID.randomUUID().toString().substring(0, 8);

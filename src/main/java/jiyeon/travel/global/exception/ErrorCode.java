@@ -42,6 +42,8 @@ public enum ErrorCode {
     TICKET_IMAGE_NOT_FOUND(NOT_FOUND, "티켓 이미지를 찾을 수 없습니다."),
     TICKET_SCHEDULE_NOT_FOUND(NOT_FOUND, "티켓 일정을 찾을 수 없습니다."),
     TICKET_OPTION_NOT_FOUND(NOT_FOUND, "티켓 옵션을 찾을 수 없습니다."),
+    RESERVATION_NOT_FOUND(NOT_FOUND, "예약을 찾을 수 없습니다."),
+    PAYMENT_NOT_FOUND(NOT_FOUND, "결제를 찾을 수 없습니다."),
 
     // 409 CONFLICT
     EMAIL_ALREADY_EXISTS(CONFLICT, "이미 존재하는 이메일입니다."),
