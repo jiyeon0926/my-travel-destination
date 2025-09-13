@@ -44,3 +44,13 @@ cloud:
     credentials:
       access-key: ${AWS_ACCESS_KEY}
       secret-key: ${AWS_SECRET_KEY}
+
+kakao:
+  pay:
+    secret-key: ${KAKAO_PAY_SECRET_KEY}
+    cid: TC0ONETIME
+    ready-url: https://open-api.kakaopay.com/online/v1/payment/ready
+    approve-url: https://open-api.kakaopay.com/online/v1/payment/approve
+    approval-redirect-url: ${KAKAO_PAY_APPROVAL_REDIRECT_URL}
+    cancel-redirect-url: ${KAKAO_PAY_CANCEL_REDIRECT_URL}
+    fail-redirect-url: ${KAKAO_PAY_FAIL_REDIRECT_URL}
