@@ -33,7 +33,7 @@ public class PaymentService {
             throw new CustomException(ErrorCode.ALREADY_PAID_RESERVATION);
         }
 
-        Optional<Payment> readyPayment = paymentRepository.getByReservationIdAndStatus(reservationId, PaymentStatus.READY);
+        Optional<Payment> readyPayment = paymentRepository.findByReservationIdAndStatus(reservationId, PaymentStatus.READY);
         readyPayment.ifPresent(paymentRepository::delete);
 
         Ticket ticket = ticketRepository.getTicketByReservationId(reservationId);
