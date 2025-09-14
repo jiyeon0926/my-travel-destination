@@ -113,11 +113,11 @@ create table my_travel_destination.payment (
 	id bigint primary key auto_increment,
 	reservation_id bigint not null,
 	amount int not null,
-	payment_method varchar(50) not null,
-	payment_gateway varchar(50) not null,
-	transaction_id varchar(100) not null,
+	quantity int not null,
+	payment_method varchar(50),
+	tid varchar(100) not null,
 	status varchar(30) not null,
-	paid_at datetime,
+	approved_at datetime,
 	created_at datetime not null,
 	updated_at datetime not null
 );

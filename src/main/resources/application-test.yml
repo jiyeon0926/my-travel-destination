@@ -38,3 +38,13 @@ cloud:
     credentials:
       access-key: AAAAAAAAAAAAAAAAAAAAA
       secret-key: AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+
+kakao:
+  pay:
+    secret-key: AAAAAAAAAAAAAAAAAAAAAAAAAA
+    cid: TC0ONETIME
+    ready-url: https://open-api.kakaopay.com/online/v1/payment/ready
+    approve-url: https://open-api.kakaopay.com/online/v1/payment/approve
+    approval-redirect-url: https://developers.kakao.com/success
+    cancel-redirect-url: https://developers.kakao.com/cancel
+    fail-redirect-url: https://developers.kakao.com/fail

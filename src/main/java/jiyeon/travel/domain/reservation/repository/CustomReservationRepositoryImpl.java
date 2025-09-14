@@ -1,0 +1,30 @@
+package jiyeon.travel.domain.reservation.repository;
+
+import com.querydsl.jpa.impl.JPAQueryFactory;
+import jiyeon.travel.domain.reservation.entity.QReservation;
+import jiyeon.travel.domain.reservation.entity.Reservation;
+import jiyeon.travel.domain.ticket.entity.QTicket;
+import jiyeon.travel.domain.ticket.entity.QTicketSchedule;
+import lombok.RequiredArgsConstructor;
+
+import java.util.Optional;
+
+@RequiredArgsConstructor
+public class CustomReservationRepositoryImpl implements CustomReservationRepository {
+
+    private final JPAQueryFactory jpaQueryFactory;
+
+    @Override
+    public Optional<Reservation> findByIdWithTicketAndSchedule(Long id) {
+        QReservation reservation = QReservation.reservation;
+        QTicket ticket = QTicket.ticket;
+        QTicketSchedule ticketSchedule = QTicketSchedule.ticketSchedule;
+
+        return Optional.ofNullable(jpaQueryFactory
+                .selectFrom(reservation)
+                .innerJoin(ticketSchedule).on(reservation.ticketSchedule.id.eq(ticketSchedule.id)).fetchJoin()
+                .innerJoin(ticket).on(ticketSchedule.ticket.id.eq(ticket.id)).fetchJoin()
+                .where(reservation.id.eq(id))
+                .fetchOne());
+    }
+}

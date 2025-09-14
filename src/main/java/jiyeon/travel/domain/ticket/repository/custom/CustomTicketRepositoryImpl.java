@@ -2,11 +2,13 @@ package jiyeon.travel.domain.ticket.repository.custom;
 
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import jiyeon.travel.domain.reservation.entity.QReservation;
 import jiyeon.travel.domain.ticket.dto.QTicketSimpleResDto;
 import jiyeon.travel.domain.ticket.dto.TicketListResDto;
 import jiyeon.travel.domain.ticket.dto.TicketSimpleResDto;
 import jiyeon.travel.domain.ticket.entity.QTicket;
 import jiyeon.travel.domain.ticket.entity.QTicketOption;
+import jiyeon.travel.domain.ticket.entity.QTicketSchedule;
 import jiyeon.travel.domain.ticket.entity.Ticket;
 import jiyeon.travel.domain.user.entity.QUser;
 import lombok.RequiredArgsConstructor;
@@ -72,5 +74,19 @@ public class CustomTicketRepositoryImpl implements CustomTicketRepository {
                 .fetch();
 
         return new TicketListResDto(total, tickets);
+    }
+
+    @Override
+    public Ticket getTicketByReservationId(Long reservationId) {
+        QTicket ticket = QTicket.ticket;
+        QTicketSchedule ticketSchedule = QTicketSchedule.ticketSchedule;
+        QReservation reservation = QReservation.reservation;
+
+        return jpaQueryFactory
+                .selectFrom(ticket)
+                .innerJoin(ticketSchedule).on(ticket.id.eq(ticketSchedule.ticket.id)).fetchJoin()
+                .innerJoin(reservation).on(ticketSchedule.id.eq(reservation.ticketSchedule.id)).fetchJoin()
+                .where(reservation.id.eq(reservationId))
+                .fetchOne();
     }
 }
