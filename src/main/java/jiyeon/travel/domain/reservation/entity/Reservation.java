@@ -76,6 +76,10 @@ public class Reservation extends BaseEntity {
         this.status = ReservationStatus.UNPAID;
     }
 
+    public boolean isPaidStatus() {
+        return this.status == ReservationStatus.PAID;
+    }
+
     public void changeStatus(ReservationStatus status) {
         this.status = status;
     }

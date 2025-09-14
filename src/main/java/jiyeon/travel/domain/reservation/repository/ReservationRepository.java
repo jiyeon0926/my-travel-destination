@@ -10,7 +10,7 @@ import org.springframework.stereotype.Repository;
 import java.util.Optional;
 
 @Repository
-public interface ReservationRepository extends JpaRepository<Reservation, Long> {
+public interface ReservationRepository extends JpaRepository<Reservation, Long>, CustomReservationRepository {
 
     default Reservation findByIdOrElseThrow(Long id) {
         return this.findById(id)
@@ -24,4 +24,7 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
 
     @Query("select r from Reservation r inner join fetch r.user u where r.id = :id and u.email = :email")
     Optional<Reservation> findByIdAndEmail(Long id, String email);
+
+    @Query("select r from Reservation r inner join fetch r.ticketSchedule s where r.id = :id")
+    Optional<Reservation> findByIdWithSchedule(Long id);
 }

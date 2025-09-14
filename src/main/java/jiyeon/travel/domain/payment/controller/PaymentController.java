@@ -3,11 +3,9 @@ package jiyeon.travel.domain.payment.controller;
 import jiyeon.travel.domain.payment.dto.KakaopayCompletedResDto;
 import jiyeon.travel.domain.payment.dto.KakaopayReadyResDto;
 import jiyeon.travel.domain.payment.service.PaymentService;
-import jiyeon.travel.global.auth.UserDetailsImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -18,10 +16,8 @@ public class PaymentController {
     private final PaymentService paymentService;
 
     @PostMapping("/ready")
-    public ResponseEntity<KakaopayReadyResDto> readyPayment(@AuthenticationPrincipal UserDetailsImpl userDetails,
-                                                            @PathVariable Long reservationId) {
-        String email = userDetails.getUsername();
-        KakaopayReadyResDto kakaopayReadyResDto = paymentService.readyPayment(email, reservationId);
+    public ResponseEntity<KakaopayReadyResDto> readyPayment(@PathVariable Long reservationId) {
+        KakaopayReadyResDto kakaopayReadyResDto = paymentService.readyPayment(reservationId);
 
         return new ResponseEntity<>(kakaopayReadyResDto, HttpStatus.OK);
     }

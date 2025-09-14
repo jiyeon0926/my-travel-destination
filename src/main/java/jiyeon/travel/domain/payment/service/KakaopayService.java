@@ -1,12 +1,14 @@
 package jiyeon.travel.domain.payment.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jiyeon.travel.domain.payment.dto.KakaopayCompletedResDto;
 import jiyeon.travel.domain.payment.dto.KakaopayReadyResDto;
-import jiyeon.travel.domain.payment.entity.Payment;
 import jiyeon.travel.domain.reservation.entity.Reservation;
 import jiyeon.travel.domain.ticket.entity.Ticket;
+import jiyeon.travel.global.exception.CustomException;
+import jiyeon.travel.global.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
@@ -53,65 +55,63 @@ public class KakaopayService {
         HttpEntity<Map<String, String>> request = new HttpEntity<>(body, headers);
         ResponseEntity<String> response = restTemplate.exchange(readyUrl, HttpMethod.POST, request, String.class);
 
-        if (response.getStatusCode() == HttpStatus.OK) {
-            try {
-                ObjectMapper objectMapper = new ObjectMapper();
-                JsonNode root = objectMapper.readTree(response.getBody());
-                String tid = root.path("tid").asText();
-                String nextRedirectPcUrl = root.path("next_redirect_pc_url").asText();
-                String createdAtStr = root.path("created_at").asText();
+        if (response.getStatusCode() != HttpStatus.OK) {
+            throw new CustomException(ErrorCode.PAYMENT_READY_API_ERROR);
+        }
 
-                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss");
-                LocalDateTime createdAt = LocalDateTime.parse(createdAtStr, formatter);
+        try {
+            ObjectMapper objectMapper = new ObjectMapper();
+            JsonNode root = objectMapper.readTree(response.getBody());
+            String tid = root.path("tid").asText();
+            String nextRedirectPcUrl = root.path("next_redirect_pc_url").asText();
+            String createdAtStr = root.path("created_at").asText();
 
-                return new KakaopayReadyResDto(tid, nextRedirectPcUrl, createdAt);
-            } catch (Exception e) {
-                throw new RuntimeException("카카오페이 결제 준비 응답 처리 중 오류가 발생하였습니다.");
-            }
-        } else {
-            throw new RuntimeException("카카오페이 결제 준비 요청을 실패하였습니다.");
+            LocalDateTime createdAt = LocalDateTime.parse(createdAtStr, DateTimeFormatter.ISO_DATE_TIME);
+
+            return new KakaopayReadyResDto(tid, nextRedirectPcUrl, createdAt);
+        } catch (JsonProcessingException e) {
+            throw new CustomException(ErrorCode.PAYMENT_READY_RESPONSE_ERROR);
         }
     }
 
-    public KakaopayCompletedResDto approvePayment(Payment payment, Reservation reservation, String pgToken) {
-        Map<String, String> body = approvePaymentBody(payment, reservation, pgToken);
+    public KakaopayCompletedResDto approvePayment(String requestTid, Reservation reservation, String pgToken) {
+        Map<String, String> body = approvePaymentBody(requestTid, reservation, pgToken);
         HttpHeaders headers = httpHeaders();
         HttpEntity<Map<String, String>> request = new HttpEntity<>(body, headers);
         ResponseEntity<String> response = restTemplate.exchange(approveUrl, HttpMethod.POST, request, String.class);
 
-        if (response.getStatusCode() == HttpStatus.OK) {
-            try {
-                ObjectMapper objectMapper = new ObjectMapper();
-                JsonNode root = objectMapper.readTree(response.getBody());
-                String tid = root.path("tid").asText();
-                String cid = root.path("cid").asText();
-                String reservationName = root.path("partner_order_id").asText();
-                String userId = root.path("partner_user_id").asText();
-                String paymentMethod = root.path("payment_method_type").asText();
-                Integer amount = root.path("amount").path("total").asInt();
-                String ticketName = root.path("item_name").asText();
-                Integer quantity = root.path("quantity").asInt();
-                String approvedAtStr = root.path("approved_at").asText();
+        if (response.getStatusCode() != HttpStatus.OK) {
+            throw new CustomException(ErrorCode.PAYMENT_APPROVE_API_ERROR);
+        }
 
-                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss");
-                LocalDateTime approvedAt = LocalDateTime.parse(approvedAtStr, formatter);
+        try {
+            ObjectMapper objectMapper = new ObjectMapper();
+            JsonNode root = objectMapper.readTree(response.getBody());
+            String tid = root.path("tid").asText();
+            String cid = root.path("cid").asText();
+            String reservationName = root.path("partner_order_id").asText();
+            String userId = root.path("partner_user_id").asText();
+            String paymentMethod = root.path("payment_method_type").asText();
+            Integer amount = root.path("amount").path("total").asInt();
+            String ticketName = root.path("item_name").asText();
+            Integer quantity = root.path("quantity").asInt();
+            String approvedAtStr = root.path("approved_at").asText();
 
-                return new KakaopayCompletedResDto(
-                        tid,
-                        cid,
-                        reservationName,
-                        userId,
-                        paymentMethod,
-                        amount,
-                        ticketName,
-                        quantity,
-                        approvedAt
-                );
-            } catch (Exception e) {
-                throw new RuntimeException("카카오페이 결제 승인 응답 처리 중 오류가 발생하였습니다.");
-            }
-        } else {
-            throw new RuntimeException("카카오페이 결제 승인 요청을 실패하였습니다.");
+            LocalDateTime approvedAt = LocalDateTime.parse(approvedAtStr, DateTimeFormatter.ISO_DATE_TIME);
+
+            return new KakaopayCompletedResDto(
+                    tid,
+                    cid,
+                    reservationName,
+                    userId,
+                    paymentMethod,
+                    amount,
+                    ticketName,
+                    quantity,
+                    approvedAt
+            );
+        } catch (JsonProcessingException e) {
+            throw new CustomException(ErrorCode.PAYMENT_APPROVE_RESPONSE_ERROR);
         }
     }
 
@@ -131,10 +131,10 @@ public class KakaopayService {
         return body;
     }
 
-    private Map<String, String> approvePaymentBody(Payment payment, Reservation reservation, String pgToken) {
+    private Map<String, String> approvePaymentBody(String requestTid, Reservation reservation, String pgToken) {
         Map<String, String> body = new HashMap<>();
         body.put("cid", cid);
-        body.put("tid", payment.getTid());
+        body.put("tid", requestTid);
         body.put("partner_order_id", reservation.getReservationNumber());
         body.put("partner_user_id", reservation.getUser().getId().toString());
         body.put("pg_token", pgToken);

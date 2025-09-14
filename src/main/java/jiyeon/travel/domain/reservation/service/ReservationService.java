@@ -14,6 +14,8 @@ import jiyeon.travel.domain.ticket.repository.TicketRepository;
 import jiyeon.travel.domain.ticket.repository.TicketScheduleRepository;
 import jiyeon.travel.domain.user.entity.User;
 import jiyeon.travel.domain.user.repository.UserRepository;
+import jiyeon.travel.global.common.enums.ReservationStatus;
+import jiyeon.travel.global.common.enums.TicketSaleStatus;
 import jiyeon.travel.global.exception.CustomException;
 import jiyeon.travel.global.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
@@ -54,6 +56,27 @@ public class ReservationService {
         return baseQuantity != null
                 ? saveBaseTicketReservation(baseQuantity, reservationName, reservationPhone, ticket, user, ticketSchedule)
                 : saveOptionTicketReservation(reservationName, reservationPhone, options, user, ticketSchedule);
+    }
+
+    public void paidReservation(Long reservationId) {
+        Reservation reservation = reservationRepository.findByIdWithTicketAndSchedule(reservationId)
+                .orElseThrow(() -> new CustomException(ErrorCode.RESERVATION_NOT_FOUND));
+
+        TicketSchedule ticketSchedule = reservation.getTicketSchedule();
+        ticketSchedule.decreaseRemainingQuantity(reservation.getTotalQuantity());
+        reservation.changeStatus(ReservationStatus.PAID);
+
+        Ticket ticket = ticketSchedule.getTicket();
+        List<TicketSchedule> ticketSchedules = ticketScheduleRepository.findByTicketIdAndIsActiveTrue(ticket.getId());
+
+        boolean isSoldOut = ticketSchedules.stream().allMatch(TicketSchedule::isSoldOut);
+        if (isSoldOut) {
+            ticket.changeSaleStatus(TicketSaleStatus.SOLD_OUT);
+        }
+    }
+
+    public Reservation getReservationById(Long reservationId) {
+        return reservationRepository.findByIdOrElseThrow(reservationId);
     }
 
     private void validateBaseTicketReservation(Integer baseQuantity, List<ReservationOptionCreateReqDto> options, Ticket ticket) {

@@ -61,6 +61,10 @@ public class TicketSchedule extends BaseEntity {
         return !isReadyStatus();
     }
 
+    public boolean isSoldOut() {
+        return this.remainingQuantity == 0;
+    }
+
     public void changeIsActive(boolean isActive) {
         this.isActive = isActive;
     }
@@ -80,6 +84,14 @@ public class TicketSchedule extends BaseEntity {
 
         this.remainingQuantity += (newQuantity - this.quantity);
         this.quantity = newQuantity;
+    }
+
+    public void decreaseRemainingQuantity(int totalQuantity) {
+        if (this.remainingQuantity < totalQuantity) {
+            throw new IllegalArgumentException("남은 수량보다 큰 수량을 감소시킬 수 없습니다.");
+        }
+
+        this.remainingQuantity -= totalQuantity;
     }
 
     private boolean hasSaleStatus(TicketSaleStatus status) {
