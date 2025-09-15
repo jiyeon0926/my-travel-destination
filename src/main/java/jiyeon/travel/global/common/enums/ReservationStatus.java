@@ -21,6 +21,6 @@ public enum ReservationStatus {
             }
         }
 
-        throw new IllegalArgumentException("해당하는 이름의 판매 상태를 찾을 수 없습니다: " + status);
+        throw new IllegalArgumentException("해당하는 이름의 예약 상태를 찾을 수 없습니다: " + status);
     }
 }
