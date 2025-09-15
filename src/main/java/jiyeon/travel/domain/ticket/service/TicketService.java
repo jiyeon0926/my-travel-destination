@@ -77,4 +77,16 @@ public class TicketService {
         return ticketRepository.findByScheduleId(scheduleId)
                 .orElseThrow(() -> new CustomException(ErrorCode.TICKET_NOT_FOUND));
     }
+
+    public TicketOption getOptionById(Long optionId) {
+        return ticketOptionService.getOptionById(optionId);
+    }
+
+    public TicketSchedule getActiveSchedule(Long scheduleId) {
+        return ticketScheduleService.getActiveSchedule(scheduleId);
+    }
+
+    public List<TicketSchedule> findActiveSchedulesByTicketId(Long ticketId) {
+        return ticketScheduleService.findActiveSchedulesByTicketId(ticketId);
+    }
 }
