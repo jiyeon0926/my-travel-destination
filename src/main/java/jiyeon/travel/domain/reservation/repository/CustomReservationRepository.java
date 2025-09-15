@@ -10,4 +10,6 @@ public interface CustomReservationRepository {
     Optional<Reservation> findByIdWithTicketAndSchedule(Long id);
 
     List<Reservation> findAllByTicketIdWithTicketAndSchedule(Long ticketId);
+
+    Optional<Reservation> findByIdAndEmailWithTicketAndSchedule(Long id, String email);
 }

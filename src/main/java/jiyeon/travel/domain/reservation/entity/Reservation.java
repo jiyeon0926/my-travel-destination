@@ -80,6 +80,15 @@ public class Reservation extends BaseEntity {
         return this.status == ReservationStatus.PAID;
     }
 
+    public boolean isNotPaidStatus() {
+        return !isPaidStatus();
+    }
+
+    public boolean isNotUsedOrNoShow(ReservationStatus status) {
+        return ReservationStatus.USED != status
+                && ReservationStatus.NO_SHOW != status;
+    }
+
     public void changeStatus(ReservationStatus status) {
         this.status = status;
     }

@@ -34,6 +34,7 @@ public enum ErrorCode {
     RESERVATION_ONLY_WHEN_ON_SALE(BAD_REQUEST, "판매 중일 때만 예약할 수 있습니다."),
     DUPLICATE_OPTION(BAD_REQUEST, "동일한 옵션이 존재합니다."),
     RESERVATION_EXISTS_INACTIVE_NOT_ALLOWED(BAD_REQUEST, "예약이 존재하는 티켓은 판매 중지할 수 없습니다."),
+    INVALID_RESERVATION_STATUS_CHANGE(BAD_REQUEST, "예약 상태는 결제 완료 또는 노쇼로만 변경할 수 있습니다."),
 
     // 404 NOT_FOUND
     USER_NOT_FOUND(NOT_FOUND, "사용자를 찾을 수 없습니다."),

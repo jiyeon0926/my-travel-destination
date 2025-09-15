@@ -1,10 +1,12 @@
 package jiyeon.travel.domain.reservation.repository;
 
+import com.querydsl.core.BooleanBuilder;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import jiyeon.travel.domain.reservation.entity.QReservation;
 import jiyeon.travel.domain.reservation.entity.Reservation;
 import jiyeon.travel.domain.ticket.entity.QTicket;
 import jiyeon.travel.domain.ticket.entity.QTicketSchedule;
+import jiyeon.travel.domain.user.entity.QUser;
 import lombok.RequiredArgsConstructor;
 
 import java.util.List;
@@ -41,5 +43,25 @@ public class CustomReservationRepositoryImpl implements CustomReservationReposit
                 .innerJoin(ticket).on(ticketSchedule.ticket.id.eq(ticket.id)).fetchJoin()
                 .where(ticket.id.eq(ticketId))
                 .fetch();
+    }
+
+    @Override
+    public Optional<Reservation> findByIdAndEmailWithTicketAndSchedule(Long id, String email) {
+        QReservation reservation = QReservation.reservation;
+        QTicket ticket = QTicket.ticket;
+        QTicketSchedule ticketSchedule = QTicketSchedule.ticketSchedule;
+        QUser user = QUser.user;
+
+        BooleanBuilder conditions = new BooleanBuilder();
+        conditions.and(reservation.id.eq(id));
+        conditions.and(user.email.eq(email));
+
+        return Optional.ofNullable(jpaQueryFactory
+                .selectFrom(reservation)
+                .innerJoin(ticketSchedule).on(reservation.ticketSchedule.id.eq(ticketSchedule.id)).fetchJoin()
+                .innerJoin(ticket).on(ticketSchedule.ticket.id.eq(ticket.id)).fetchJoin()
+                .innerJoin(user).on(ticket.user.id.eq(user.id)).fetchJoin()
+                .where(conditions)
+                .fetchOne());
     }
 }
