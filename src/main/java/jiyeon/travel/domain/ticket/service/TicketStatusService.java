@@ -30,7 +30,7 @@ public class TicketStatusService {
 
     @Transactional
     public void closedSaleStatus() {
-        List<Ticket> tickets = ticketRepository.findAll();
+        List<Ticket> tickets = ticketRepository.findBySaleStatus(TicketSaleStatus.ACTIVE);
 
         tickets.forEach(ticket -> {
             LocalDateTime now = LocalDateTime.now();

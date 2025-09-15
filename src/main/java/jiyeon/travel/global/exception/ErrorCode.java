@@ -26,14 +26,14 @@ public enum ErrorCode {
     TICKET_IMAGE_UPDATE_NOT_ALLOWED(BAD_REQUEST, "티켓이 판매 중지/판매 종료/매진일 경우, 이미지 추가/삭제/대표 이미지 변경이 불가합니다."),
     INVALID_SALE_START_DATE(BAD_REQUEST, "판매 시작일은 현재 시간 이후여야 합니다."),
     INVALID_SALE_END_DATE(BAD_REQUEST, "판매 종료일은 시작일 이후여야 합니다."),
-    INVALID_STATUS_CHANGE(BAD_REQUEST, "다른 판매 상태로 변경할 수 없습니다."),
-    INVALID_TICKET_INACTIVE_CHANGE(BAD_REQUEST, "판매 중 상태일 때만 판매 중지 상태로 변경할 수 있습니다."),
+    INVALID_STATUS_CHANGE(BAD_REQUEST, "다른 상태로 변경할 수 없습니다."),
     BASE_TICKET_QUANTITY_REQUIRED(BAD_REQUEST, "옵션이 없는 티켓은 기본 수량이 필요합니다."),
     BASE_TICKET_QUANTITY_NOT_ALLOWED(BAD_REQUEST, "옵션이 있는 티켓은 기본 수량이 필요 없습니다."),
     NO_OPTION_TICKET(BAD_REQUEST, "옵션이 없는 티켓입니다."),
     HAS_OPTION_TICKET(BAD_REQUEST, "옵션이 포함된 티켓입니다."),
     RESERVATION_ONLY_WHEN_ON_SALE(BAD_REQUEST, "판매 중일 때만 예약할 수 있습니다."),
     DUPLICATE_OPTION(BAD_REQUEST, "동일한 옵션이 존재합니다."),
+    RESERVATION_EXISTS_INACTIVE_NOT_ALLOWED(BAD_REQUEST, "예약이 존재하는 티켓은 판매 중지할 수 없습니다."),
 
     // 404 NOT_FOUND
     USER_NOT_FOUND(NOT_FOUND, "사용자를 찾을 수 없습니다."),

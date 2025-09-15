@@ -1,5 +1,7 @@
 package jiyeon.travel.domain.ticket.service;
 
+import jiyeon.travel.domain.reservation.entity.Reservation;
+import jiyeon.travel.domain.reservation.repository.ReservationRepository;
 import jiyeon.travel.domain.ticket.dto.*;
 import jiyeon.travel.domain.ticket.entity.Ticket;
 import jiyeon.travel.domain.ticket.entity.TicketImage;
@@ -45,6 +47,7 @@ public class TicketPartnerService {
     private final TicketScheduleRepository ticketScheduleRepository;
     private final TicketImageRepository ticketImageRepository;
     private final UserRepository userRepository;
+    private final ReservationRepository reservationRepository;
     private final S3Service s3Service;
 
     @Transactional
@@ -144,23 +147,20 @@ public class TicketPartnerService {
         return new TicketInfoDetailResDto(ticket);
     }
 
-    /**
-     * TODO: 상태 변경 예외 처리
-     * - 현재 티켓 상태가 "판매 중"이면서 예약이 없을 경우에만 "판매 중지"로 변경 가능
-     * - "판매 중지" 외 다른 상태로 변경 불가
-     */
     @Transactional
     public TicketInfoDetailResDto changeTicketStatusById(String email, Long ticketId, String saleStatus) {
         Ticket ticket = ticketRepository.findByIdAndEmailOrElseThrow(ticketId, email);
         TicketSaleStatus currentStatus = TicketSaleStatus.of(saleStatus);
 
-        boolean isNotInactive = !TicketSaleStatus.INACTIVE.equals(currentStatus);
-        if (isNotInactive) {
+        if (ticket.isSoldOutStatus() || ticket.isClosedStatus()) {
             throw new CustomException(ErrorCode.INVALID_STATUS_CHANGE);
         }
 
-        if (ticket.isNotActiveStatus()) {
-            throw new CustomException(ErrorCode.INVALID_TICKET_INACTIVE_CHANGE);
+        List<Reservation> reservations = reservationRepository.findAllByTicketIdWithTicketAndSchedule(ticketId);
+        boolean isPaidReservation = reservations.stream().allMatch(Reservation::isPaidStatus);
+
+        if (ticket.isActiveStatus() && isPaidReservation) {
+            throw new CustomException(ErrorCode.RESERVATION_EXISTS_INACTIVE_NOT_ALLOWED);
         }
 
         ticket.changeSaleStatus(currentStatus);

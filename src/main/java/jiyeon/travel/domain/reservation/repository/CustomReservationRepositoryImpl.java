@@ -7,6 +7,7 @@ import jiyeon.travel.domain.ticket.entity.QTicket;
 import jiyeon.travel.domain.ticket.entity.QTicketSchedule;
 import lombok.RequiredArgsConstructor;
 
+import java.util.List;
 import java.util.Optional;
 
 @RequiredArgsConstructor
@@ -26,5 +27,19 @@ public class CustomReservationRepositoryImpl implements CustomReservationReposit
                 .innerJoin(ticket).on(ticketSchedule.ticket.id.eq(ticket.id)).fetchJoin()
                 .where(reservation.id.eq(id))
                 .fetchOne());
+    }
+
+    @Override
+    public List<Reservation> findAllByTicketIdWithTicketAndSchedule(Long ticketId) {
+        QReservation reservation = QReservation.reservation;
+        QTicket ticket = QTicket.ticket;
+        QTicketSchedule ticketSchedule = QTicketSchedule.ticketSchedule;
+
+        return jpaQueryFactory
+                .selectFrom(reservation)
+                .innerJoin(ticketSchedule).on(reservation.ticketSchedule.id.eq(ticketSchedule.id)).fetchJoin()
+                .innerJoin(ticket).on(ticketSchedule.ticket.id.eq(ticket.id)).fetchJoin()
+                .where(ticket.id.eq(ticketId))
+                .fetch();
     }
 }

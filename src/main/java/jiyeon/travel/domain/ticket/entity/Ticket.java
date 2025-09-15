@@ -74,7 +74,7 @@ public class Ticket extends BaseEntity {
     }
 
     public boolean isReadyStatus() {
-        return saleStatus == (TicketSaleStatus.READY);
+        return saleStatus == TicketSaleStatus.READY;
     }
 
     public boolean isNotReadyStatus() {
@@ -82,11 +82,19 @@ public class Ticket extends BaseEntity {
     }
 
     public boolean isActiveStatus() {
-        return saleStatus == (TicketSaleStatus.ACTIVE);
+        return saleStatus == TicketSaleStatus.ACTIVE;
     }
 
     public boolean isNotActiveStatus() {
         return !isActiveStatus();
+    }
+
+    public boolean isSoldOutStatus() {
+        return saleStatus == TicketSaleStatus.SOLD_OUT;
+    }
+
+    public boolean isClosedStatus() {
+        return saleStatus == TicketSaleStatus.CLOSED;
     }
 
     public boolean canUpdateImage() {
