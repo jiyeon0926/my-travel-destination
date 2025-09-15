@@ -9,11 +9,11 @@ import jiyeon.travel.domain.reservation.repository.ReservationRepository;
 import jiyeon.travel.domain.ticket.entity.Ticket;
 import jiyeon.travel.domain.ticket.entity.TicketOption;
 import jiyeon.travel.domain.ticket.entity.TicketSchedule;
-import jiyeon.travel.domain.ticket.repository.TicketOptionRepository;
-import jiyeon.travel.domain.ticket.repository.TicketRepository;
-import jiyeon.travel.domain.ticket.repository.TicketScheduleRepository;
+import jiyeon.travel.domain.ticket.service.TicketOptionService;
+import jiyeon.travel.domain.ticket.service.TicketScheduleService;
+import jiyeon.travel.domain.ticket.service.TicketService;
 import jiyeon.travel.domain.user.entity.User;
-import jiyeon.travel.domain.user.repository.UserRepository;
+import jiyeon.travel.domain.user.service.UserService;
 import jiyeon.travel.global.common.enums.ReservationStatus;
 import jiyeon.travel.global.common.enums.TicketSaleStatus;
 import jiyeon.travel.global.exception.CustomException;
@@ -31,20 +31,18 @@ public class ReservationService {
 
     private final ReservationRepository reservationRepository;
     private final ReservationOptionRepository reservationOptionRepository;
-    private final UserRepository userRepository;
-    private final TicketRepository ticketRepository;
-    private final TicketOptionRepository ticketOptionRepository;
-    private final TicketScheduleRepository ticketScheduleRepository;
+    private final UserService userService;
+    private final TicketService ticketService;
+    private final TicketOptionService ticketOptionService;
+    private final TicketScheduleService ticketScheduleService;
 
     @Transactional
     public ReservationDetailResDto createReservation(String email, Long scheduleId, Integer baseQuantity,
                                                      String reservationName, String reservationPhone,
                                                      List<ReservationOptionCreateReqDto> options) {
-        User user = userRepository.findActiveByEmailOrElseThrow(email);
-        TicketSchedule ticketSchedule = ticketScheduleRepository.findByIdAndIsActiveTrue(scheduleId)
-                .orElseThrow(() -> new CustomException(ErrorCode.TICKET_SCHEDULE_NOT_FOUND));
-        Ticket ticket = ticketRepository.findByScheduleId(scheduleId)
-                .orElseThrow(() -> new CustomException(ErrorCode.TICKET_NOT_FOUND));
+        User user = userService.getActiveUserByEmail(email);
+        TicketSchedule ticketSchedule = ticketScheduleService.getActiveSchedule(scheduleId);
+        Ticket ticket = ticketService.getTicketByScheduleId(scheduleId);
 
         if (ticket.isNotActiveStatus()) {
             throw new CustomException(ErrorCode.RESERVATION_ONLY_WHEN_ON_SALE);
@@ -67,7 +65,7 @@ public class ReservationService {
         reservation.changeStatus(ReservationStatus.PAID);
 
         Ticket ticket = ticketSchedule.getTicket();
-        List<TicketSchedule> ticketSchedules = ticketScheduleRepository.findByTicketIdAndIsActiveTrue(ticket.getId());
+        List<TicketSchedule> ticketSchedules = ticketScheduleService.findActiveSchedulesByTicketId(ticket.getId());
 
         boolean isSoldOut = ticketSchedules.stream().allMatch(TicketSchedule::isSoldOut);
         if (isSoldOut) {
@@ -138,7 +136,7 @@ public class ReservationService {
 
         int totalAmount = options.stream()
                 .mapToInt(option -> {
-                    TicketOption ticketOption = ticketOptionRepository.findByIdOrElseThrow(option.getOptionId());
+                    TicketOption ticketOption = ticketOptionService.getOptionById(option.getOptionId());
 
                     return ticketOption.getPrice() * option.getQuantity();
                 })
@@ -151,7 +149,7 @@ public class ReservationService {
 
         List<ReservationOption> reservationOptions = options.stream()
                 .map(option -> {
-                    TicketOption ticketOption = ticketOptionRepository.findByIdOrElseThrow(option.getOptionId());
+                    TicketOption ticketOption = ticketOptionService.getOptionById(option.getOptionId());
                     ReservationOption reservationOption = new ReservationOption(savedReservation, ticketOption, option.getQuantity(), ticketOption.getPrice());
 
                     return reservationOptionRepository.save(reservationOption);

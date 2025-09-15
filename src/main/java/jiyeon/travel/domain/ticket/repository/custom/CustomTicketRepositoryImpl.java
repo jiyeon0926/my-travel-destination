@@ -77,7 +77,7 @@ public class CustomTicketRepositoryImpl implements CustomTicketRepository {
     }
 
     @Override
-    public Ticket getTicketByReservationId(Long reservationId) {
+    public Ticket getByReservationId(Long reservationId) {
         QTicket ticket = QTicket.ticket;
         QTicketSchedule ticketSchedule = QTicketSchedule.ticketSchedule;
         QReservation reservation = QReservation.reservation;

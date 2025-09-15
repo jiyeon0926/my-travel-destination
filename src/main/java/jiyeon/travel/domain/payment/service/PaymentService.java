@@ -7,7 +7,7 @@ import jiyeon.travel.domain.payment.repository.PaymentRepository;
 import jiyeon.travel.domain.reservation.entity.Reservation;
 import jiyeon.travel.domain.reservation.service.ReservationService;
 import jiyeon.travel.domain.ticket.entity.Ticket;
-import jiyeon.travel.domain.ticket.repository.TicketRepository;
+import jiyeon.travel.domain.ticket.service.TicketService;
 import jiyeon.travel.global.common.enums.PaymentStatus;
 import jiyeon.travel.global.exception.CustomException;
 import jiyeon.travel.global.exception.ErrorCode;
@@ -24,7 +24,7 @@ public class PaymentService {
     private final PaymentRepository paymentRepository;
     private final KakaopayService kakaopayService;
     private final ReservationService reservationService;
-    private final TicketRepository ticketRepository;
+    private final TicketService ticketService;
 
     @Transactional
     public KakaopayReadyResDto readyPayment(Long reservationId) {
@@ -36,7 +36,7 @@ public class PaymentService {
         Optional<Payment> readyPayment = paymentRepository.findByReservationIdAndStatus(reservationId, PaymentStatus.READY);
         readyPayment.ifPresent(paymentRepository::delete);
 
-        Ticket ticket = ticketRepository.getTicketByReservationId(reservationId);
+        Ticket ticket = ticketService.getTicketByReservationId(reservationId);
 
         KakaopayReadyResDto kakaopayReadyResDto = kakaopayService.readyPayment(reservation, ticket);
 

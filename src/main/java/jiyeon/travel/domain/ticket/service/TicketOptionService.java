@@ -61,6 +61,10 @@ public class TicketOptionService {
         return ticketOption;
     }
 
+    public TicketOption getOptionById(Long optionId) {
+        return ticketOptionRepository.findByIdOrElseThrow(optionId);
+    }
+
     public List<TicketOption> findOptionsByTicketId(Long ticketId) {
         return ticketOptionRepository.findAllByTicketIdOrderByPriceAsc(ticketId);
     }

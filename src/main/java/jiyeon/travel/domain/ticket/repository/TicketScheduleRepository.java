@@ -22,6 +22,4 @@ public interface TicketScheduleRepository extends JpaRepository<TicketSchedule, 
     List<TicketSchedule> findAllByTicketIdAndIsActiveTrueOrderByStartDateAsc(Long ticketId);
 
     Optional<TicketSchedule> findByIdAndIsActiveTrue(Long id);
-
-    List<TicketSchedule> findByTicketIdAndIsActiveTrue(Long ticketId);
 }

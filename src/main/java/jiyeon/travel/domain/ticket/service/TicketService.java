@@ -8,6 +8,8 @@ import jiyeon.travel.domain.ticket.entity.TicketOption;
 import jiyeon.travel.domain.ticket.entity.TicketSchedule;
 import jiyeon.travel.domain.ticket.repository.TicketRepository;
 import jiyeon.travel.global.common.enums.TicketSaleStatus;
+import jiyeon.travel.global.exception.CustomException;
+import jiyeon.travel.global.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -65,5 +67,14 @@ public class TicketService {
                 ticket.changeSaleStatus(TicketSaleStatus.CLOSED);
             }
         });
+    }
+
+    public Ticket getTicketByReservationId(Long reservationId) {
+        return ticketRepository.getByReservationId(reservationId);
+    }
+
+    public Ticket getTicketByScheduleId(Long scheduleId) {
+        return ticketRepository.findByScheduleId(scheduleId)
+                .orElseThrow(() -> new CustomException(ErrorCode.TICKET_NOT_FOUND));
     }
 }

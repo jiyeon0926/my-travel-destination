@@ -62,7 +62,7 @@ public class TicketScheduleService {
 
     @Transactional
     public TicketSchedule updateSchedule(String email, Long ticketId, Long scheduleId, LocalDate startDate,
-                                             LocalTime startTime, Boolean isActive, Integer quantity) {
+                                         LocalTime startTime, Boolean isActive, Integer quantity) {
         TicketSchedule ticketSchedule = ticketScheduleRepository.findByIdAndTicketIdAndEmail(scheduleId, ticketId, email)
                 .orElseThrow(() -> new CustomException(ErrorCode.TICKET_SCHEDULE_NOT_FOUND));
 
@@ -79,6 +79,11 @@ public class TicketScheduleService {
         if (quantity != null) ticketSchedule.increaseQuantity(quantity);
 
         return ticketSchedule;
+    }
+
+    public TicketSchedule getActiveSchedule(Long scheduleId) {
+        return ticketScheduleRepository.findByIdAndIsActiveTrue(scheduleId)
+                .orElseThrow(() -> new CustomException(ErrorCode.TICKET_SCHEDULE_NOT_FOUND));
     }
 
     public List<TicketSchedule> findActiveSchedulesByTicketId(Long ticketId) {

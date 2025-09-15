@@ -12,5 +12,5 @@ public interface CustomTicketRepository {
 
     TicketListResDto findAllByEmail(Pageable pageable, String email);
 
-    Ticket getTicketByReservationId(Long reservationId);
+    Ticket getByReservationId(Long reservationId);
 }
