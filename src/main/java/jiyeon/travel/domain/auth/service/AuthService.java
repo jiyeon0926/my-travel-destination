@@ -47,6 +47,19 @@ public class AuthService {
         return new UserSignupResDto(savedUser);
     }
 
+    @Transactional
+    public User signupPartner(String email, String password, String name, String phone) {
+        userRepository.findByEmail(email)
+                .ifPresent(user -> {
+                    throw new CustomException(ErrorCode.EMAIL_ALREADY_EXISTS);
+                });
+
+        String encodedPassword = passwordEncoder.encode(password);
+        User user = new User(email, encodedPassword, name, phone, UserRole.PARTNER);
+
+        return userRepository.save(user);
+    }
+
     public LoginResDto login(String email, String password) {
         User user = userRepository.findActiveByEmailOrElseThrow(email);
         validatePassword(password, user.getPassword());

@@ -1,19 +1,18 @@
 package jiyeon.travel.domain.partner.service;
 
+import jiyeon.travel.domain.auth.service.AuthService;
 import jiyeon.travel.domain.partner.dto.PartnerProfileResDto;
 import jiyeon.travel.domain.partner.dto.PartnerSignupResDto;
 import jiyeon.travel.domain.partner.dto.PartnerSimpleResDto;
 import jiyeon.travel.domain.partner.entity.Partner;
 import jiyeon.travel.domain.partner.repository.PartnerRepository;
 import jiyeon.travel.domain.user.entity.User;
-import jiyeon.travel.domain.user.repository.UserRepository;
-import jiyeon.travel.global.common.enums.UserRole;
+import jiyeon.travel.domain.user.service.UserAdminService;
 import jiyeon.travel.global.exception.CustomException;
 import jiyeon.travel.global.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,26 +22,18 @@ import java.util.List;
 @RequiredArgsConstructor
 public class PartnerAdminService {
 
-    private final UserRepository userRepository;
     private final PartnerRepository partnerRepository;
-    private final PasswordEncoder passwordEncoder;
+    private final AuthService authService;
+    private final UserAdminService userAdminService;
 
     @Transactional
     public PartnerSignupResDto signupPartner(String email, String password, String name, String businessNumber, String address, String phone) {
-        userRepository.findByEmail(email)
-                .ifPresent(user -> {
-                    throw new CustomException(ErrorCode.EMAIL_ALREADY_EXISTS);
-                });
-
         partnerRepository.findByBusinessNumber(businessNumber)
                 .ifPresent(partner -> {
                     throw new CustomException(ErrorCode.BUSINESS_NUMBER_ALREADY_EXISTS);
                 });
 
-        String encodedPassword = passwordEncoder.encode(password);
-        User user = new User(email, encodedPassword, name, phone, UserRole.PARTNER);
-        User savedUser = userRepository.save(user);
-
+        User savedUser = authService.signupPartner(email, password, name, phone);
         Partner partner = new Partner(savedUser, businessNumber, address);
         Partner savedPartner = partnerRepository.save(partner);
 
@@ -71,7 +62,7 @@ public class PartnerAdminService {
     public void deletePartnerById(Long partnerId) {
         Partner partner = partnerRepository.findByIdOrElseThrow(partnerId);
         partnerRepository.delete(partner);
-        userRepository.delete(partner.getUser());
+        userAdminService.deletePartner(partner.getUser());
     }
 
     @Transactional(readOnly = true)
