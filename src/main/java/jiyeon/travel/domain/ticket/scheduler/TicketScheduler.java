@@ -1,6 +1,6 @@
 package jiyeon.travel.domain.ticket.scheduler;
 
-import jiyeon.travel.domain.ticket.service.TicketStatusService;
+import jiyeon.travel.domain.ticket.service.TicketService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -8,13 +8,13 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class TicketScheduler {
 
-    private final TicketStatusService ticketStatusService;
+    private final TicketService ticketService;
 
     public void activeSaleStatus() {
-        ticketStatusService.activeSaleStatus();
+        ticketService.activeSaleStatus();
     }
 
     public void closedSaleStatus() {
-        ticketStatusService.closedSaleStatus();
+        ticketService.closedSaleStatus();
     }
 }

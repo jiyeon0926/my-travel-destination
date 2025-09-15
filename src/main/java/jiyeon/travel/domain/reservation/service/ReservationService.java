@@ -79,6 +79,10 @@ public class ReservationService {
         return reservationRepository.findByIdOrElseThrow(reservationId);
     }
 
+    public List<Reservation> findReservationsByTicketIdWithTicketAndSchedule(Long ticketId) {
+        return reservationRepository.findAllByTicketIdWithTicketAndSchedule(ticketId);
+    }
+
     private void validateBaseTicketReservation(Integer baseQuantity, List<ReservationOptionCreateReqDto> options, Ticket ticket) {
         boolean isBaseTicket = ticket.getBasePrice() != null;
 

@@ -35,4 +35,8 @@ public class UserService {
 
         return new UserProfileResDto(user);
     }
+
+    public User getActiveUserByEmail(String email) {
+        return userRepository.findActiveByEmailOrElseThrow(email);
+    }
 }
