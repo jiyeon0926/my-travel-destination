@@ -71,6 +71,18 @@ public class ReservationService {
                 .toList();
     }
 
+    @Transactional(readOnly = true)
+    public ReservationDetailResDto findMyReservationById(String email, Long reservationId) {
+        Reservation reservation = reservationRepository.findByIdAndUserEmailWithSchedule(reservationId, email)
+                .orElseThrow(() -> new CustomException(ErrorCode.RESERVATION_NOT_FOUND));
+
+        List<ReservationOption> reservationOptions = reservation.getReservationOptions();
+        TicketSchedule ticketSchedule = reservation.getTicketSchedule();
+        Ticket ticket = ticketSchedule.getTicket();
+
+        return new ReservationDetailResDto(reservation, ticket, ticketSchedule, reservationOptions);
+    }
+
     public void paidReservation(Long reservationId) {
         Reservation reservation = reservationRepository.findByIdWithTicketAndSchedule(reservationId)
                 .orElseThrow(() -> new CustomException(ErrorCode.RESERVATION_NOT_FOUND));

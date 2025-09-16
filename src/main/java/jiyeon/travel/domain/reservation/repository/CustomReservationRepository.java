@@ -14,4 +14,6 @@ public interface CustomReservationRepository {
     Optional<Reservation> findByIdAndPartnerEmailWithTicketAndSchedule(Long id, String email);
 
     List<Reservation> findAllByPartnerEmailWithoutUnpaid(String email);
+
+    Optional<Reservation> findByIdAndUserEmailWithSchedule(Long id, String email);
 }

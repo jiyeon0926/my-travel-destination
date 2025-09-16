@@ -45,6 +45,15 @@ public class ReservationController {
         return new ResponseEntity<>(reservationSimpleResDtos, HttpStatus.OK);
     }
 
+    @GetMapping("/{reservationId}")
+    public ResponseEntity<ReservationDetailResDto> findMyReservationById(@AuthenticationPrincipal UserDetailsImpl userDetails,
+                                                                         @PathVariable Long reservationId) {
+        String email = userDetails.getUsername();
+        ReservationDetailResDto reservationDetailResDto = reservationService.findMyReservationById(email, reservationId);
+
+        return new ResponseEntity<>(reservationDetailResDto, HttpStatus.OK);
+    }
+
     @GetMapping("/used")
     public ResponseEntity<List<ReservationSimpleResDto>> findMyUsedReservations(@AuthenticationPrincipal UserDetailsImpl userDetails) {
         String email = userDetails.getUsername();
