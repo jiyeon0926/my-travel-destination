@@ -20,7 +20,7 @@ public class ReservationPartnerService {
 
     @Transactional(readOnly = true)
     public List<ReservationSimpleResDto> findAllWithoutUnpaid(String email) {
-        List<Reservation> reservations = reservationRepository.findAllWithoutUnpaid(email);
+        List<Reservation> reservations = reservationRepository.findAllByPartnerEmailWithoutUnpaid(email);
 
         return reservations.stream()
                 .map(ReservationSimpleResDto::new)
@@ -29,7 +29,7 @@ public class ReservationPartnerService {
 
     @Transactional
     public ReservationSimpleResDto changeReservationStatusById(String email, Long reservationId, String status) {
-        Reservation reservation = reservationRepository.findByIdAndEmailWithTicketAndSchedule(reservationId, email)
+        Reservation reservation = reservationRepository.findByIdAndPartnerEmailWithTicketAndSchedule(reservationId, email)
                 .orElseThrow(() -> new CustomException(ErrorCode.RESERVATION_NOT_FOUND));
 
         if (reservation.isNotPaidStatus()) {

@@ -47,7 +47,7 @@ public class CustomReservationRepositoryImpl implements CustomReservationReposit
     }
 
     @Override
-    public Optional<Reservation> findByIdAndEmailWithTicketAndSchedule(Long id, String email) {
+    public Optional<Reservation> findByIdAndPartnerEmailWithTicketAndSchedule(Long id, String email) {
         QReservation reservation = QReservation.reservation;
         QTicket ticket = QTicket.ticket;
         QTicketSchedule ticketSchedule = QTicketSchedule.ticketSchedule;
@@ -67,7 +67,7 @@ public class CustomReservationRepositoryImpl implements CustomReservationReposit
     }
 
     @Override
-    public List<Reservation> findAllWithoutUnpaid(String email) {
+    public List<Reservation> findAllByPartnerEmailWithoutUnpaid(String email) {
         QReservation reservation = QReservation.reservation;
         QTicket ticket = QTicket.ticket;
         QTicketSchedule ticketSchedule = QTicketSchedule.ticketSchedule;
