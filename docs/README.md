@@ -8,20 +8,32 @@
 ## 📅 프로젝트 기간
 - 총 기간 : 2025-08-16 ~
 - 설계 : 2025-08-16 ~ 2025-08-23
-- BE 개발 : 2025-08-23 ~ 
-- FE 개발 : 
+- BE 개발 : 2025-08-23 ~
+
+## 🛠️ 기술 스택
+- Java 21
+- Spring Boot 3.5.4
+- Spring Security
+- Querydsl
+- Kakaopay Open API
+- Redis
+- MySQL
+- AWS S3
 
 ## 🖌️ 와이어프레임
 - 1️⃣[사용자](https://www.figma.com/design/pz5HnNQ6CbxfQP8pICnl6K/my-travel-service?node-id=2-153&p=f&t=nUCVQhWyv5rZqjOm-0)
 - 2️⃣[관리자](https://www.figma.com/design/pz5HnNQ6CbxfQP8pICnl6K/my-travel-service?node-id=94-839&p=f&t=nUCVQhWyv5rZqjOm-0)
 - 3️⃣[업체](https://www.figma.com/design/pz5HnNQ6CbxfQP8pICnl6K/my-travel-service?node-id=94-838&p=f&t=nUCVQhWyv5rZqjOm-0)
 
+## 📍 핵심 기능
+- 여행지 검색
+- 블로그
+
 ## 🏷️ 도메인별 기능
 - 사용자 관리
 - 업체 관리
 - 티켓 관리
 - 블로그
-- 지도 기반 장소 검색
 - 예약 및 결제
 
 ## 🗂️ 역할별 기능
@@ -33,26 +45,21 @@
 ### 1️⃣ 사용자
 - 회원가입
 - 회원탈퇴
-- 비밀번호 찾기
+- 프로필 변경
 - 비밀번호 변경
-- 장소 검색
 - 여행지 검색
 - 여행 티켓 검색
 - 여행 티켓 예약 및 결제
-- 프로필 변경
-- 블로그 작성/수정/삭제
+- 블로그
 - 예약 내역 확인
 
 ### 2️⃣ 관리자
-- 업체 관리: 업체 등록/수정/삭제
-- 실시간 지표: 사용자 수, 업체 수, 판매 티켓 수, 블로그 수
-- 인기 티켓 확인
+- 업체 관리
 
 ### 3️⃣ 업체
-- 티켓 관리: 티켓 등록/수정/삭제, 옵션 등록/수정/삭제, 일정 등록/수정/삭제
-- 예약 내역 확인
-- 비밀번호 찾기
 - 비밀번호 변경
+- 티켓 관리
+- 예약 내역 확인
 
 ## 🧩 [ERD](https://dbdiagram.io/d/My-Travel-Destination-686676f8f413ba3508206ce6)
 
@@ -60,5 +67,9 @@
 
 ## 🔒 로그인 및 로그아웃
 이 프로젝트의 핵심은 인증 기능이 아니므로, 로그인 연장 기능은 구현하지 않았습니다. <br/>
-로그인 연장을 구현하려면 Refresh Token이 필요하지만, 현재 프로젝트에서는 해당 기능이 없으므로 Access Token만 발급하도록 설계했습니다. <br/>
-로그아웃 시에는 Access Token을 Redis에 저장하여 즉시 무력화하도록 처리했습니다.
+로그인 연장을 구현하려면 Refresh Token이 필요하지만, 현재 프로젝트에서는 해당 기능이 없으므로 Access Token만 발급하도록 설계하였습니다. <br/>
+로그아웃 시에는 Access Token을 Redis에 저장하여, 이후 해당 토큰이 사용될 경우 유효하지 않은 것으로 판별되도록 처리하였습니다. <br/>
+만료되기 전 토큰이어도 로그아웃 직후라면 인증이 불가능합니다.
+
+## 🔗 참고
+- [카카오페이 단건 결제 공식 문서](https://developers.kakaopay.com/docs/payment/online/single-payment)
