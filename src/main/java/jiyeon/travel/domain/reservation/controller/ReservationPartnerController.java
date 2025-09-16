@@ -11,12 +11,22 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/partners/reservations")
 @RequiredArgsConstructor
 public class ReservationPartnerController {
 
     private final ReservationPartnerService reservationPartnerService;
+
+    @GetMapping
+    public ResponseEntity<List<ReservationSimpleResDto>> findAllWithoutUnpaid(@AuthenticationPrincipal UserDetailsImpl userDetails) {
+        String email = userDetails.getUsername();
+        List<ReservationSimpleResDto> reservationSimpleResDtos = reservationPartnerService.findAllWithoutUnpaid(email);
+
+        return new ResponseEntity<>(reservationSimpleResDtos, HttpStatus.OK);
+    }
 
     @PatchMapping("/{reservationId}/status")
     public ResponseEntity<ReservationSimpleResDto> changeReservationStatusById(@AuthenticationPrincipal UserDetailsImpl userDetails,

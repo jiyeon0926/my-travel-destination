@@ -10,11 +10,22 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class ReservationPartnerService {
 
     private final ReservationRepository reservationRepository;
+
+    @Transactional(readOnly = true)
+    public List<ReservationSimpleResDto> findAllWithoutUnpaid(String email) {
+        List<Reservation> reservations = reservationRepository.findAllWithoutUnpaid(email);
+
+        return reservations.stream()
+                .map(ReservationSimpleResDto::new)
+                .toList();
+    }
 
     @Transactional
     public ReservationSimpleResDto changeReservationStatusById(String email, Long reservationId, String status) {
