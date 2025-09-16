@@ -50,7 +50,7 @@ public class ReservationService {
 
         return baseQuantity != null
                 ? saveBaseTicketReservation(baseQuantity, reservationName, reservationPhone, ticket, user, ticketSchedule)
-                : saveOptionTicketReservation(reservationName, reservationPhone, options, user, ticketSchedule);
+                : saveOptionTicketReservation(reservationName, reservationPhone, options, ticket, user, ticketSchedule);
     }
 
     @Transactional(readOnly = true)
@@ -132,10 +132,11 @@ public class ReservationService {
         Reservation reservation = new Reservation(user, ticketSchedule, baseQuantity, totalAmount, reservationName, phone);
         Reservation savedReservation = reservationRepository.save(reservation);
 
-        return new ReservationDetailResDto(savedReservation, List.of());
+        return new ReservationDetailResDto(savedReservation, ticket, ticketSchedule, List.of());
     }
 
-    private ReservationDetailResDto saveOptionTicketReservation(String reservationName, String reservationPhone, List<ReservationOptionCreateReqDto> options, User user, TicketSchedule ticketSchedule) {
+    private ReservationDetailResDto saveOptionTicketReservation(String reservationName, String reservationPhone, List<ReservationOptionCreateReqDto> options,
+                                                                Ticket ticket, User user, TicketSchedule ticketSchedule) {
         long uniqueCount = options.stream()
                 .map(ReservationOptionCreateReqDto::getOptionId)
                 .distinct()
@@ -171,6 +172,6 @@ public class ReservationService {
                 })
                 .toList();
 
-        return new ReservationDetailResDto(savedReservation, reservationOptions);
+        return new ReservationDetailResDto(savedReservation, ticket, ticketSchedule, reservationOptions);
     }
 }
