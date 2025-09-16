@@ -54,6 +54,15 @@ public class ReservationService {
     }
 
     @Transactional(readOnly = true)
+    public List<ReservationSimpleResDto> findAll(String email) {
+        List<Reservation> reservations = reservationRepository.findAllByEmail(email);
+
+        return reservations.stream()
+                .map(ReservationSimpleResDto::new)
+                .toList();
+    }
+
+    @Transactional(readOnly = true)
     public List<ReservationSimpleResDto> findMyUsedReservations(String email) {
         List<Reservation> reservations = reservationRepository.findAllByEmailAndStatus(email, ReservationStatus.USED);
 

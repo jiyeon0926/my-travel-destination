@@ -32,4 +32,7 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long>,
 
     @Query("select r from Reservation r inner join fetch r.user u where u.email = :email and r.status = :status")
     List<Reservation> findAllByEmailAndStatus(String email, ReservationStatus status);
+
+    @Query("select r from Reservation r inner join fetch r.user u where u.email = :email")
+    List<Reservation> findAllByEmail(String email);
 }

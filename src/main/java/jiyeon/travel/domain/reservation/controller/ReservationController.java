@@ -37,6 +37,14 @@ public class ReservationController {
         return new ResponseEntity<>(reservationDetailResDto, HttpStatus.CREATED);
     }
 
+    @GetMapping
+    public ResponseEntity<List<ReservationSimpleResDto>> findAll(@AuthenticationPrincipal UserDetailsImpl userDetails) {
+        String email = userDetails.getUsername();
+        List<ReservationSimpleResDto> reservationSimpleResDtos = reservationService.findAll(email);
+
+        return new ResponseEntity<>(reservationSimpleResDtos, HttpStatus.OK);
+    }
+
     @GetMapping("/used")
     public ResponseEntity<List<ReservationSimpleResDto>> findMyUsedReservations(@AuthenticationPrincipal UserDetailsImpl userDetails) {
         String email = userDetails.getUsername();
