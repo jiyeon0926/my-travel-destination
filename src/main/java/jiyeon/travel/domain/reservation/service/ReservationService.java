@@ -2,6 +2,7 @@ package jiyeon.travel.domain.reservation.service;
 
 import jiyeon.travel.domain.reservation.dto.ReservationDetailResDto;
 import jiyeon.travel.domain.reservation.dto.ReservationOptionCreateReqDto;
+import jiyeon.travel.domain.reservation.dto.ReservationSimpleResDto;
 import jiyeon.travel.domain.reservation.entity.Reservation;
 import jiyeon.travel.domain.reservation.entity.ReservationOption;
 import jiyeon.travel.domain.reservation.repository.ReservationOptionRepository;
@@ -50,6 +51,15 @@ public class ReservationService {
         return baseQuantity != null
                 ? saveBaseTicketReservation(baseQuantity, reservationName, reservationPhone, ticket, user, ticketSchedule)
                 : saveOptionTicketReservation(reservationName, reservationPhone, options, user, ticketSchedule);
+    }
+
+    @Transactional(readOnly = true)
+    public List<ReservationSimpleResDto> findMyUsedReservations(String email) {
+        List<Reservation> reservations = reservationRepository.findAllByEmailAndStatus(email, ReservationStatus.USED);
+
+        return reservations.stream()
+                .map(ReservationSimpleResDto::new)
+                .toList();
     }
 
     public void paidReservation(Long reservationId) {
