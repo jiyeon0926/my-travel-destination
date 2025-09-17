@@ -28,8 +28,8 @@ public class CustomTicketImageRepositoryImpl implements CustomTicketImageReposit
 
         return Optional.ofNullable(jpaQueryFactory
                 .selectFrom(ticketImage)
-                .innerJoin(ticket).on(ticketImage.ticket.id.eq(ticket.id)).fetchJoin()
-                .innerJoin(user).on(ticket.user.id.eq(user.id)).fetchJoin()
+                .innerJoin(ticketImage.ticket, ticket).fetchJoin()
+                .innerJoin(user).on(ticket.user.id.eq(user.id))
                 .where(conditions)
                 .fetchOne());
     }

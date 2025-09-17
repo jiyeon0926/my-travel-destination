@@ -47,7 +47,7 @@ public class TicketService {
 
     @Transactional
     public void activeSaleStatus() {
-        List<Ticket> tickets = ticketRepository.findBySaleStatus(TicketSaleStatus.READY);
+        List<Ticket> tickets = ticketRepository.findAllBySaleStatus(TicketSaleStatus.READY);
 
         tickets.forEach(ticket -> {
             LocalDateTime now = LocalDateTime.now();
@@ -59,7 +59,7 @@ public class TicketService {
 
     @Transactional
     public void closedSaleStatus() {
-        List<Ticket> tickets = ticketRepository.findBySaleStatus(TicketSaleStatus.ACTIVE);
+        List<Ticket> tickets = ticketRepository.findAllBySaleStatus(TicketSaleStatus.ACTIVE);
 
         tickets.forEach(ticket -> {
             LocalDateTime now = LocalDateTime.now();
@@ -67,10 +67,6 @@ public class TicketService {
                 ticket.changeSaleStatus(TicketSaleStatus.CLOSED);
             }
         });
-    }
-
-    public Ticket getTicketByReservationId(Long reservationId) {
-        return ticketRepository.getByReservationId(reservationId);
     }
 
     public Ticket getTicketByScheduleId(Long scheduleId) {

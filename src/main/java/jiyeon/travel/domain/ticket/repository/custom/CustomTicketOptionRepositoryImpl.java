@@ -28,8 +28,8 @@ public class CustomTicketOptionRepositoryImpl implements CustomTicketOptionRepos
 
         return Optional.ofNullable(jpaQueryFactory
                 .selectFrom(ticketOption)
-                .innerJoin(ticket).on(ticketOption.ticket.id.eq(ticket.id)).fetchJoin()
-                .innerJoin(user).on(ticket.user.id.eq(user.id)).fetchJoin()
+                .innerJoin(ticketOption.ticket, ticket).fetchJoin()
+                .innerJoin(ticket.user, user).fetchJoin()
                 .where(conditions)
                 .fetchOne());
     }

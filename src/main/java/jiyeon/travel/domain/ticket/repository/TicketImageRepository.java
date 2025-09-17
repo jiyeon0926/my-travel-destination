@@ -11,9 +11,9 @@ import java.util.Optional;
 @Repository
 public interface TicketImageRepository extends JpaRepository<TicketImage, Long>, CustomTicketImageRepository {
 
+    Optional<TicketImage> findByTicketIdAndIsMainTrue(Long ticketId);
+
     List<TicketImage> findAllByTicketId(Long ticketId);
 
     int countByTicketId(Long ticketId);
-
-    Optional<TicketImage> findByTicketIdAndIsMainTrue(Long ticketId);
 }

@@ -104,7 +104,7 @@ public class TicketPartnerService {
     public TicketInfoDetailResDto updateTicketInfoById(Long ticketId, String email, String name,
                                                        LocalDateTime saleStartDate, LocalDateTime saleEndDate, String phone,
                                                        String address, Integer basePrice, String description) {
-        Ticket ticket = ticketRepository.findByIdAndEmailWithUserAndOption(ticketId, email)
+        Ticket ticket = ticketRepository.findByIdAndEmailWithOption(ticketId, email)
                 .orElseThrow(() -> new CustomException(ErrorCode.TICKET_NOT_FOUND));
 
         if (ticket.isNotReadyStatus()) {
@@ -114,7 +114,8 @@ public class TicketPartnerService {
         LocalDateTime now = LocalDateTime.now();
         validateSaleRange(saleStartDate, saleEndDate, now);
 
-        boolean isOption = ticket.getTicketOptions().stream().anyMatch(option -> option.getName() != null);
+        List<TicketOption> ticketOptions = ticket.getTicketOptions();
+        boolean isOption = ticketOptions.stream().anyMatch(option -> option.getName() != null);
         if (basePrice != null && isOption) {
             throw new CustomException(ErrorCode.TICKET_OPTION_PRESENT);
         }
@@ -228,11 +229,11 @@ public class TicketPartnerService {
     }
 
     private void validateSaleRange(LocalDateTime saleStartDate, LocalDateTime saleEndDate, LocalDateTime referenceTime) {
-        if (saleStartDate.isBefore(referenceTime)) {
+        if (saleStartDate != null && saleStartDate.isBefore(referenceTime)) {
             throw new CustomException(ErrorCode.INVALID_SALE_START_DATE);
         }
 
-        if (saleEndDate.isBefore(saleStartDate)) {
+        if (saleEndDate != null && saleEndDate.isBefore(saleStartDate)) {
             throw new CustomException(ErrorCode.INVALID_SALE_END_DATE);
         }
     }

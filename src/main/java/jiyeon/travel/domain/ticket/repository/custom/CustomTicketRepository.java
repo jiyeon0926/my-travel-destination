@@ -8,9 +8,7 @@ import java.util.Optional;
 
 public interface CustomTicketRepository {
 
-    Optional<Ticket> findByIdAndEmailWithUserAndOption(Long id, String email);
+    Optional<Ticket> findByIdAndEmailWithOption(Long id, String email);
 
     TicketListResDto findAllByEmail(Pageable pageable, String email);
-
-    Ticket getByReservationId(Long reservationId);
 }

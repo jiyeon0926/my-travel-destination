@@ -7,15 +7,13 @@ import jiyeon.travel.domain.payment.repository.PaymentRepository;
 import jiyeon.travel.domain.reservation.entity.Reservation;
 import jiyeon.travel.domain.reservation.service.ReservationService;
 import jiyeon.travel.domain.ticket.entity.Ticket;
-import jiyeon.travel.domain.ticket.service.TicketService;
+import jiyeon.travel.domain.ticket.entity.TicketSchedule;
 import jiyeon.travel.global.common.enums.PaymentStatus;
 import jiyeon.travel.global.exception.CustomException;
 import jiyeon.travel.global.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -24,20 +22,19 @@ public class PaymentService {
     private final PaymentRepository paymentRepository;
     private final KakaopayService kakaopayService;
     private final ReservationService reservationService;
-    private final TicketService ticketService;
 
     @Transactional
     public KakaopayReadyResDto readyPayment(Long reservationId) {
-        Reservation reservation = reservationService.getReservationById(reservationId);
+        Reservation reservation = reservationService.getReservationByIdWithTicketAndSchedule(reservationId);
         if (reservation.isPaidStatus()) {
             throw new CustomException(ErrorCode.ALREADY_PAID_RESERVATION);
         }
 
-        Optional<Payment> readyPayment = paymentRepository.findByReservationIdAndStatus(reservationId, PaymentStatus.READY);
-        readyPayment.ifPresent(paymentRepository::delete);
+        paymentRepository.findByReservationIdAndStatus(reservationId, PaymentStatus.READY)
+                .ifPresent(paymentRepository::delete);
 
-        Ticket ticket = ticketService.getTicketByReservationId(reservationId);
-
+        TicketSchedule ticketSchedule = reservation.getTicketSchedule();
+        Ticket ticket = ticketSchedule.getTicket();
         KakaopayReadyResDto kakaopayReadyResDto = kakaopayService.readyPayment(reservation, ticket);
 
         Payment payment = new Payment(

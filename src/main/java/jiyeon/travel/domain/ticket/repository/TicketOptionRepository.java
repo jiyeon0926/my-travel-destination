@@ -12,10 +12,10 @@ import java.util.List;
 @Repository
 public interface TicketOptionRepository extends JpaRepository<TicketOption, Long>, CustomTicketOptionRepository {
 
+    List<TicketOption> findAllByTicketIdOrderByPriceAsc(Long ticketId);
+
     default TicketOption findByIdOrElseThrow(Long id) {
         return this.findById(id)
                 .orElseThrow(() -> new CustomException(ErrorCode.TICKET_OPTION_NOT_FOUND));
     }
-
-    List<TicketOption> findAllByTicketIdOrderByPriceAsc(Long ticketId);
 }

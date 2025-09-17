@@ -2,13 +2,11 @@ package jiyeon.travel.domain.ticket.repository.custom;
 
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import jiyeon.travel.domain.reservation.entity.QReservation;
 import jiyeon.travel.domain.ticket.dto.QTicketSimpleResDto;
 import jiyeon.travel.domain.ticket.dto.TicketListResDto;
 import jiyeon.travel.domain.ticket.dto.TicketSimpleResDto;
 import jiyeon.travel.domain.ticket.entity.QTicket;
 import jiyeon.travel.domain.ticket.entity.QTicketOption;
-import jiyeon.travel.domain.ticket.entity.QTicketSchedule;
 import jiyeon.travel.domain.ticket.entity.Ticket;
 import jiyeon.travel.domain.user.entity.QUser;
 import lombok.RequiredArgsConstructor;
@@ -23,7 +21,7 @@ public class CustomTicketRepositoryImpl implements CustomTicketRepository {
     private final JPAQueryFactory jpaQueryFactory;
 
     @Override
-    public Optional<Ticket> findByIdAndEmailWithUserAndOption(Long id, String email) {
+    public Optional<Ticket> findByIdAndEmailWithOption(Long id, String email) {
         QUser user = QUser.user;
         QTicket ticket = QTicket.ticket;
         QTicketOption ticketOption = QTicketOption.ticketOption;
@@ -34,9 +32,8 @@ public class CustomTicketRepositoryImpl implements CustomTicketRepository {
 
         return Optional.ofNullable(jpaQueryFactory
                 .selectFrom(ticket)
-                .from(ticket)
-                .innerJoin(user).on(ticket.user.id.eq(user.id)).fetchJoin()
-                .leftJoin(ticketOption).on(ticket.id.eq(ticketOption.ticket.id)).fetchJoin()
+                .innerJoin(ticket.user, user).fetchJoin()
+                .leftJoin(ticket.ticketOptions, ticketOption).fetchJoin()
                 .where(conditions)
                 .fetchOne());
     }
@@ -50,7 +47,7 @@ public class CustomTicketRepositoryImpl implements CustomTicketRepository {
                         jpaQueryFactory
                                 .select(ticket.count())
                                 .from(ticket)
-                                .innerJoin(user).on(ticket.user.id.eq(user.id)).fetchJoin()
+                                .innerJoin(ticket.user, user).fetchJoin()
                                 .where(user.email.eq(email))
                                 .fetchOne())
                 .orElse(0L);
@@ -66,7 +63,7 @@ public class CustomTicketRepositoryImpl implements CustomTicketRepository {
                         ticket.updatedAt
                 ))
                 .from(ticket)
-                .innerJoin(user).on(ticket.user.id.eq(user.id)).fetchJoin()
+                .innerJoin(ticket.user, user).fetchJoin()
                 .where(user.email.eq(email))
                 .orderBy(ticket.createdAt.desc())
                 .offset(pageable.getOffset())
@@ -74,19 +71,5 @@ public class CustomTicketRepositoryImpl implements CustomTicketRepository {
                 .fetch();
 
         return new TicketListResDto(total, tickets);
-    }
-
-    @Override
-    public Ticket getByReservationId(Long reservationId) {
-        QTicket ticket = QTicket.ticket;
-        QTicketSchedule ticketSchedule = QTicketSchedule.ticketSchedule;
-        QReservation reservation = QReservation.reservation;
-
-        return jpaQueryFactory
-                .selectFrom(ticket)
-                .innerJoin(ticketSchedule).on(ticket.id.eq(ticketSchedule.ticket.id)).fetchJoin()
-                .innerJoin(reservation).on(ticketSchedule.id.eq(reservation.ticketSchedule.id)).fetchJoin()
-                .where(reservation.id.eq(reservationId))
-                .fetchOne();
     }
 }

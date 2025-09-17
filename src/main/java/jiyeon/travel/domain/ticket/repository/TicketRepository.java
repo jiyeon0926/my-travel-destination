@@ -15,6 +15,14 @@ import java.util.Optional;
 @Repository
 public interface TicketRepository extends JpaRepository<Ticket, Long>, CustomTicketRepository {
 
+    @Query("select t from Ticket t inner join fetch t.user u where t.id = :id and u.email = :email")
+    Optional<Ticket> findByIdAndEmail(Long id, String email);
+
+    @Query("select t from Ticket t inner join TicketSchedule s on t.id = s.ticket.id where s.id = :scheduleId")
+    Optional<Ticket> findByScheduleId(Long scheduleId);
+
+    List<Ticket> findAllBySaleStatus(TicketSaleStatus saleStatus);
+
     default Ticket findByIdOrElseThrow(Long id) {
         return this.findById(id)
                 .orElseThrow(() -> new CustomException(ErrorCode.TICKET_NOT_FOUND));
@@ -24,12 +32,4 @@ public interface TicketRepository extends JpaRepository<Ticket, Long>, CustomTic
         return this.findByIdAndEmail(id, email)
                 .orElseThrow(() -> new CustomException(ErrorCode.TICKET_NOT_FOUND));
     }
-
-    @Query("select t from Ticket t inner join fetch t.user u where t.id = :id and u.email = :email")
-    Optional<Ticket> findByIdAndEmail(Long id, String email);
-
-    List<Ticket> findBySaleStatus(TicketSaleStatus saleStatus);
-
-    @Query("select t from Ticket t inner join TicketSchedule s on t.id = s.ticket.id where s.id = :scheduleId")
-    Optional<Ticket> findByScheduleId(Long scheduleId);
 }

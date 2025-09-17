@@ -28,8 +28,8 @@ public class CustomTicketScheduleRepositoryImpl implements CustomTicketScheduleR
 
         return Optional.ofNullable(jpaQueryFactory
                 .selectFrom(ticketSchedule)
-                .innerJoin(ticket).on(ticketSchedule.ticket.id.eq(ticket.id)).fetchJoin()
-                .innerJoin(user).on(ticket.user.id.eq(user.id)).fetchJoin()
+                .innerJoin(ticketSchedule.ticket, ticket).fetchJoin()
+                .innerJoin(ticket.user, user).fetchJoin()
                 .where(conditions)
                 .fetchOne());
     }
