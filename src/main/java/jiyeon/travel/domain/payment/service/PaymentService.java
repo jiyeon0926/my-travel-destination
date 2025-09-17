@@ -56,7 +56,7 @@ public class PaymentService {
         KakaopayCompletedResDto kakaopayCompletedResDto = kakaopayService.approvePayment(payment.getTid(), payment.getReservation(), pgToken);
 
         payment.completedPayment(kakaopayCompletedResDto.getPaymentMethod(), kakaopayCompletedResDto.getApprovedAt());
-        reservationService.paidReservation(reservationId);
+        reservationService.confirmReservationPayment(reservationId);
 
         return kakaopayCompletedResDto;
     }

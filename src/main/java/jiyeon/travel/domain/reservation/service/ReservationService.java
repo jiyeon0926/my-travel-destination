@@ -83,11 +83,10 @@ public class ReservationService {
         return new ReservationDetailResDto(reservation, ticket, ticketSchedule, reservationOptions);
     }
 
-    public void paidReservation(Long reservationId) {
-        Reservation reservation = reservationRepository.findByIdWithTicketAndSchedule(reservationId)
-                .orElseThrow(() -> new CustomException(ErrorCode.RESERVATION_NOT_FOUND));
-
+    public void confirmReservationPayment(Long reservationId) {
+        Reservation reservation = getReservationByIdWithTicketAndSchedule(reservationId);
         TicketSchedule ticketSchedule = reservation.getTicketSchedule();
+
         ticketSchedule.decreaseRemainingQuantity(reservation.getTotalQuantity());
         reservation.changeStatus(ReservationStatus.PAID);
 
@@ -100,8 +99,9 @@ public class ReservationService {
         }
     }
 
-    public Reservation getReservationById(Long reservationId) {
-        return reservationRepository.findByIdOrElseThrow(reservationId);
+    public Reservation getReservationByIdWithTicketAndSchedule(Long reservationId) {
+        return reservationRepository.findByIdWithTicketAndSchedule(reservationId)
+                .orElseThrow(() -> new CustomException(ErrorCode.RESERVATION_NOT_FOUND));
     }
 
     public List<Reservation> findReservationsByTicketIdWithTicketAndSchedule(Long ticketId) {
