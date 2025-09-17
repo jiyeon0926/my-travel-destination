@@ -42,7 +42,7 @@ public class CustomPartnerRepositoryImpl implements CustomPartnerRepository {
                         user.createdAt
                 ))
                 .from(partner)
-                .innerJoin(user).on(partner.user.id.eq(user.id)).fetchJoin()
+                .innerJoin(user).on(partner.user.id.eq(user.id))
                 .where(conditions)
                 .orderBy(user.displayName.asc(), partner.businessNumber.asc())
                 .offset(pageable.getOffset())
