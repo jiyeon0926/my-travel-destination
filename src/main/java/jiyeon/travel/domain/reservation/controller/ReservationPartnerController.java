@@ -1,6 +1,7 @@
 package jiyeon.travel.domain.reservation.controller;
 
 import jakarta.validation.Valid;
+import jiyeon.travel.domain.reservation.dto.ReservationDetailResDto;
 import jiyeon.travel.domain.reservation.dto.ReservationSimpleResDto;
 import jiyeon.travel.domain.reservation.dto.ReservationStatusReqDto;
 import jiyeon.travel.domain.reservation.service.ReservationPartnerService;
@@ -26,6 +27,15 @@ public class ReservationPartnerController {
         List<ReservationSimpleResDto> reservationSimpleResDtos = reservationPartnerService.findAllWithoutUnpaid(email);
 
         return new ResponseEntity<>(reservationSimpleResDtos, HttpStatus.OK);
+    }
+
+    @GetMapping("/{reservationId}")
+    public ResponseEntity<ReservationDetailResDto> findReservationById(@AuthenticationPrincipal UserDetailsImpl userDetails,
+                                                                       @PathVariable Long reservationId) {
+        String email = userDetails.getUsername();
+        ReservationDetailResDto reservationDetailResDto = reservationPartnerService.findReservationById(email, reservationId);
+
+        return new ResponseEntity<>(reservationDetailResDto, HttpStatus.OK);
     }
 
     @PatchMapping("/{reservationId}/status")

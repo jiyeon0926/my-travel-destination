@@ -36,6 +36,7 @@ public class CustomReservationRepositoryImpl implements CustomReservationReposit
     @Override
     public Optional<Reservation> findByIdAndPartnerEmailWithTicketAndSchedule(Long id, String email) {
         QReservation reservation = QReservation.reservation;
+        QReservationOption reservationOption = QReservationOption.reservationOption;
         QTicket ticket = QTicket.ticket;
         QTicketSchedule ticketSchedule = QTicketSchedule.ticketSchedule;
         QUser user = QUser.user;
@@ -46,6 +47,7 @@ public class CustomReservationRepositoryImpl implements CustomReservationReposit
 
         return Optional.ofNullable(jpaQueryFactory
                 .selectFrom(reservation)
+                .leftJoin(reservation.reservationOptions, reservationOption).fetchJoin()
                 .innerJoin(reservation.ticketSchedule, ticketSchedule).fetchJoin()
                 .innerJoin(ticketSchedule.ticket, ticket).fetchJoin()
                 .innerJoin(ticket.user, user).fetchJoin()
