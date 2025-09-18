@@ -36,7 +36,6 @@ public class CustomReservationRepositoryImpl implements CustomReservationReposit
     @Override
     public Optional<Reservation> findByIdAndPartnerEmailWithTicketAndSchedule(Long id, String email) {
         QReservation reservation = QReservation.reservation;
-        QReservationOption reservationOption = QReservationOption.reservationOption;
         QTicket ticket = QTicket.ticket;
         QTicketSchedule ticketSchedule = QTicketSchedule.ticketSchedule;
         QUser user = QUser.user;
@@ -47,7 +46,6 @@ public class CustomReservationRepositoryImpl implements CustomReservationReposit
 
         return Optional.ofNullable(jpaQueryFactory
                 .selectFrom(reservation)
-                .leftJoin(reservation.reservationOptions, reservationOption).fetchJoin()
                 .innerJoin(reservation.ticketSchedule, ticketSchedule).fetchJoin()
                 .innerJoin(ticketSchedule.ticket, ticket).fetchJoin()
                 .innerJoin(ticket.user, user).fetchJoin()
@@ -71,6 +69,29 @@ public class CustomReservationRepositoryImpl implements CustomReservationReposit
                 .leftJoin(reservation.reservationOptions, reservationOption).fetchJoin()
                 .innerJoin(reservation.user, user).fetchJoin()
                 .innerJoin(reservation.ticketSchedule, ticketSchedule).fetchJoin()
+                .where(conditions)
+                .fetchOne());
+    }
+
+    @Override
+    public Optional<Reservation> findByIdAndPartnerEmailWithTicketAndScheduleWithoutUnpaid(Long id, String email) {
+        QReservation reservation = QReservation.reservation;
+        QReservationOption reservationOption = QReservationOption.reservationOption;
+        QTicket ticket = QTicket.ticket;
+        QTicketSchedule ticketSchedule = QTicketSchedule.ticketSchedule;
+        QUser user = QUser.user;
+
+        BooleanBuilder conditions = new BooleanBuilder();
+        conditions.and(reservation.id.eq(id));
+        conditions.and(user.email.eq(email));
+        conditions.and(reservation.status.ne(ReservationStatus.UNPAID));
+
+        return Optional.ofNullable(jpaQueryFactory
+                .selectFrom(reservation)
+                .leftJoin(reservation.reservationOptions, reservationOption).fetchJoin()
+                .innerJoin(reservation.ticketSchedule, ticketSchedule).fetchJoin()
+                .innerJoin(ticketSchedule.ticket, ticket).fetchJoin()
+                .innerJoin(ticket.user, user).fetchJoin()
                 .where(conditions)
                 .fetchOne());
     }

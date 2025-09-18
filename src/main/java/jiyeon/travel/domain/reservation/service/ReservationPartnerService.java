@@ -33,7 +33,7 @@ public class ReservationPartnerService {
 
     @Transactional(readOnly = true)
     public ReservationDetailResDto findReservationById(String email, Long reservationId) {
-        Reservation reservation = reservationRepository.findByIdAndPartnerEmailWithTicketAndSchedule(reservationId, email)
+        Reservation reservation = reservationRepository.findByIdAndPartnerEmailWithTicketAndScheduleWithoutUnpaid(reservationId, email)
                 .orElseThrow(() -> new CustomException(ErrorCode.RESERVATION_NOT_FOUND));
 
         TicketSchedule ticketSchedule = reservation.getTicketSchedule();
