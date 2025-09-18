@@ -10,11 +10,7 @@ public class TicketScheduler {
 
     private final TicketService ticketService;
 
-    public void activeSaleStatus() {
-        ticketService.activeSaleStatus();
-    }
-
-    public void closedSaleStatus() {
-        ticketService.closedSaleStatus();
+    public void activeOrClosedSaleStatus() {
+        ticketService.activeOrClosedSaleStatus();
     }
 }

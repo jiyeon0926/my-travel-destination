@@ -46,23 +46,16 @@ public class TicketService {
     }
 
     @Transactional
-    public void activeSaleStatus() {
+    public void activeOrClosedSaleStatus() {
         List<Ticket> tickets = ticketRepository.findAllBySaleStatus(TicketSaleStatus.READY);
 
         tickets.forEach(ticket -> {
             LocalDateTime now = LocalDateTime.now();
+
             if (ticket.hasSaleStarted(now)) {
                 ticket.changeSaleStatus(TicketSaleStatus.ACTIVE);
             }
-        });
-    }
 
-    @Transactional
-    public void closedSaleStatus() {
-        List<Ticket> tickets = ticketRepository.findAllBySaleStatus(TicketSaleStatus.ACTIVE);
-
-        tickets.forEach(ticket -> {
-            LocalDateTime now = LocalDateTime.now();
             if (ticket.hasSaleEnded(now)) {
                 ticket.changeSaleStatus(TicketSaleStatus.CLOSED);
             }

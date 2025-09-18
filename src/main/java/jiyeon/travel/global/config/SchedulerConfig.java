@@ -14,12 +14,7 @@ public class SchedulerConfig {
     private final TicketScheduler ticketScheduler;
 
     @Scheduled(fixedRate = 60_000)
-    public void ticketActiveStatus() {
-        ticketScheduler.activeSaleStatus();
-    }
-
-    @Scheduled(fixedRate = 60_000)
-    public void ticketClosedStatus() {
-        ticketScheduler.closedSaleStatus();
+    public void ticketActiveOrClosedStatus() {
+        ticketScheduler.activeOrClosedSaleStatus();
     }
 }
