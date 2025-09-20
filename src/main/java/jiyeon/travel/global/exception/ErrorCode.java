@@ -53,7 +53,7 @@ public enum ErrorCode {
     ALREADY_TICKET_MAIN_IMAGE(CONFLICT, "이미 대표 이미지입니다."),
     TICKET_SCHEDULE_ALREADY_EXISTS(CONFLICT, "동일한 일정이 존재합니다."),
     ALREADY_PAID_RESERVATION(CONFLICT, "이미 결제 완료된 예약입니다."),
-    TICKET_SCHEDULE_SOLD_OUT(CONFLICT, "해당 일정의 티켓이 모두 매진되었습니다."),
+    DUPLICATE_RESERVATION_ID(CONFLICT, "동일한 예약 아이디가 존재합니다."),
 
     // 500
     FILE_UPLOAD_FAILED(INTERNAL_SERVER_ERROR, "파일 업로드를 실패하였습니다."),

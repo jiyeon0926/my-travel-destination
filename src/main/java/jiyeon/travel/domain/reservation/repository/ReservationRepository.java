@@ -7,9 +7,13 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface ReservationRepository extends JpaRepository<Reservation, Long>, CustomReservationRepository {
+
+    @Query("select r from Reservation r inner join fetch r.user u where r.id = :id and u.email = :email and r.status = :status")
+    Optional<Reservation> findByIdAndEmailAndStatus(Long id, String email, ReservationStatus status);
 
     @Query("select r from Reservation r inner join fetch r.user u where u.email = :email and r.status = :status")
     List<Reservation> findAllByEmailAndStatus(String email, ReservationStatus status);

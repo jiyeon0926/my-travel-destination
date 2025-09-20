@@ -104,6 +104,11 @@ public class ReservationService {
                 .orElseThrow(() -> new CustomException(ErrorCode.RESERVATION_NOT_FOUND));
     }
 
+    public Reservation getReservationByIdAndEmailAndStatus(Long reservationId, String email, ReservationStatus status) {
+        return reservationRepository.findByIdAndEmailAndStatus(reservationId, email, status)
+                .orElseThrow(() -> new CustomException(ErrorCode.RESERVATION_NOT_FOUND));
+    }
+
     public List<Reservation> findReservationsByTicketIdWithTicketAndSchedule(Long ticketId) {
         return reservationRepository.findAllByTicketIdWithTicketAndSchedule(ticketId);
     }
