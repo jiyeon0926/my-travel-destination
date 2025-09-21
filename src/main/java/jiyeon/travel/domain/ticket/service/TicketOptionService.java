@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.function.Consumer;
 
 @Service
 @RequiredArgsConstructor
@@ -55,8 +56,8 @@ public class TicketOptionService {
             throw new CustomException(ErrorCode.TICKET_READY_ONLY);
         }
 
-        if (name != null) ticketOption.changeName(name);
-        if (price != null) ticketOption.changePrice(price);
+        acceptIfNotNull(name, ticketOption::changeName);
+        acceptIfNotNull(price, ticketOption::changePrice);
 
         return ticketOption;
     }
@@ -67,5 +68,9 @@ public class TicketOptionService {
 
     public List<TicketOption> findOptionsByTicketId(Long ticketId) {
         return ticketOptionRepository.findAllByTicketIdOrderByPriceAsc(ticketId);
+    }
+
+    private <T> void acceptIfNotNull(T t, Consumer<T> consumer) {
+        if (t != null) consumer.accept(t);
     }
 }

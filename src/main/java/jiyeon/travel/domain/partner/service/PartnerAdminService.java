@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.function.Consumer;
 
 @Service
 @RequiredArgsConstructor
@@ -43,10 +44,9 @@ public class PartnerAdminService {
     @Transactional
     public PartnerProfileResDto updatePartnerById(Long partnerId, String name, String phone, String address) {
         Partner partner = partnerRepository.findByIdOrElseThrow(partnerId);
-
-        if (name != null) partner.changeName(name);
-        if (name != null) partner.changePhone(phone);
-        if (name != null) partner.changeAddress(address);
+        acceptIfNotNull(name, partner::changeName);
+        acceptIfNotNull(phone, partner::changePhone);
+        acceptIfNotNull(address, partner::changeAddress);
 
         return new PartnerProfileResDto(partner.getUser(), partner);
     }
@@ -70,5 +70,9 @@ public class PartnerAdminService {
         Pageable pageable = PageRequest.of(page - 1, size);
 
         return partnerRepository.searchPartners(pageable, name).stream().toList();
+    }
+
+    private <T> void acceptIfNotNull(T t, Consumer<T> consumer) {
+        if (t != null) consumer.accept(t);
     }
 }

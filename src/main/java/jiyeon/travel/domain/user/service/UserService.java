@@ -7,6 +7,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.function.Consumer;
+
 @Service
 @RequiredArgsConstructor
 public class UserService {
@@ -29,14 +31,17 @@ public class UserService {
     @Transactional
     public UserProfileResDto updateProfile(String email, String nickname, String phone) {
         User user = userRepository.findActiveByEmailOrElseThrow(email);
-
-        if (nickname != null) user.changeName(nickname);
-        if (phone != null) user.changePhone(phone);
+        acceptIfNotNull(nickname, user::changeName);
+        acceptIfNotNull(phone, user::changePhone);
 
         return new UserProfileResDto(user);
     }
 
     public User getActiveUserByEmail(String email) {
         return userRepository.findActiveByEmailOrElseThrow(email);
+    }
+
+    private <T> void acceptIfNotNull(T t, Consumer<T> consumer) {
+        if (t != null) consumer.accept(t);
     }
 }

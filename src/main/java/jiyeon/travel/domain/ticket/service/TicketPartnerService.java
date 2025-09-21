@@ -25,6 +25,7 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.Collections;
 import java.util.List;
+import java.util.function.Consumer;
 
 @Service
 @RequiredArgsConstructor
@@ -120,13 +121,13 @@ public class TicketPartnerService {
             throw new CustomException(ErrorCode.TICKET_OPTION_PRESENT);
         }
 
-        if (name != null) ticket.changeName(name);
-        if (saleStartDate != null) ticket.changeSaleStartDate(saleStartDate);
-        if (saleEndDate != null) ticket.changeSaleEndDate(saleEndDate);
-        if (basePrice != null) ticket.changeBasePrice(basePrice);
-        if (phone != null) ticket.changePhone(phone);
-        if (address != null) ticket.changeAddress(address);
-        if (description != null) ticket.changeDescription(description);
+        acceptIfNotNull(name, ticket::changeName);
+        acceptIfNotNull(saleStartDate, ticket::changeSaleStartDate);
+        acceptIfNotNull(saleEndDate, ticket::changeSaleEndDate);
+        acceptIfNotNull(basePrice, ticket::changeBasePrice);
+        acceptIfNotNull(phone, ticket::changePhone);
+        acceptIfNotNull(address, ticket::changeAddress);
+        acceptIfNotNull(description, ticket::changeDescription);
 
         return new TicketInfoDetailResDto(ticket);
     }
@@ -236,5 +237,9 @@ public class TicketPartnerService {
         if (saleEndDate != null && saleEndDate.isBefore(saleStartDate)) {
             throw new CustomException(ErrorCode.INVALID_SALE_END_DATE);
         }
+    }
+
+    private <T> void acceptIfNotNull(T t, Consumer<T> consumer) {
+        if (t != null) consumer.accept(t);
     }
 }

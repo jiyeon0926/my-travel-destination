@@ -13,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 @Service
@@ -73,10 +74,10 @@ public class TicketScheduleService {
         validateDuplicateDateAndTime(ticketId, startDate, startTime);
         validateScheduleBySaleDateTime(ticketSchedule.getTicket(), startDate, startTime);
 
-        if (isActive != null) ticketSchedule.changeIsActive(isActive);
-        if (startDate != null) ticketSchedule.changeStartDate(startDate);
-        if (startTime != null) ticketSchedule.changeStartTime(startTime);
-        if (quantity != null) ticketSchedule.increaseQuantity(quantity);
+        acceptIfNotNull(isActive, ticketSchedule::changeIsActive);
+        acceptIfNotNull(startDate, ticketSchedule::changeStartDate);
+        acceptIfNotNull(startTime, ticketSchedule::changeStartTime);
+        acceptIfNotNull(quantity, ticketSchedule::increaseQuantity);
 
         return ticketSchedule;
     }
@@ -131,10 +132,16 @@ public class TicketScheduleService {
         }
 
         if (startTime != null) {
-            if (startDate.isEqual(saleStartDate) && !startTime.isAfter(saleStartTime)
-                    || startDate.isEqual(saleEndDate) && !startTime.isBefore(saleEndTime)) {
+            boolean isEqualOrBeforeSaleStart = startDate.isEqual(saleStartDate) && (startTime.equals(saleStartTime) || startTime.isBefore(saleStartTime));
+            boolean isEqualOrAfterSaleEnd = startDate.isEqual(saleEndDate) && (startTime.equals(saleEndTime) || startTime.isAfter(saleEndTime));
+
+            if (isEqualOrBeforeSaleStart || isEqualOrAfterSaleEnd) {
                 throw new CustomException(ErrorCode.SCHEDULE_OUT_OF_SALE_RANGE);
             }
         }
+    }
+
+    private <T> void acceptIfNotNull(T t, Consumer<T> consumer) {
+        if (t != null) consumer.accept(t);
     }
 }

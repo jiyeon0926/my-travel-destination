@@ -73,3 +73,4 @@
 
 ## 🔗 참고
 - [카카오페이 단건 결제 공식 문서](https://developers.kakaopay.com/docs/payment/online/single-payment)
+- [Java 8 Consumer accept() 공식 문서](https://docs.oracle.com/javase/8/docs/api/java/util/function/Consumer.html)
