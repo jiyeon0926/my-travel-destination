@@ -28,28 +28,57 @@ public class BlogImageService {
 
     @Transactional
     public List<BlogImage> saveImages(Blog blog, List<MultipartFile> files) {
-        boolean isImage = files.stream()
-                .allMatch(file -> Objects.requireNonNull(file.getContentType()).startsWith("image"));
-        if (!isImage) {
-            throw new CustomException(ErrorCode.IMAGE_ONLY_ALLOWED);
-        }
+        return uploadAndSaveBlogImages(blog, files);
+    }
+
+    @Transactional
+    public List<BlogImage> addImages(Blog blog, List<MultipartFile> files) {
+        int imageCount = blogImageRepository.countByBlogId(blog.getId());
+
+        return (imageCount == 0)
+                ? uploadAndSaveBlogImages(blog, files)
+                : addImagesWithLimit(blog, files);
+    }
+
+    private List<BlogImage> uploadAndSaveBlogImages(Blog blog, List<MultipartFile> files) {
+        validateFiles(files);
 
         return IntStream.range(0, files.size())
                 .mapToObj(i -> {
                     MultipartFile file = files.get(i);
 
-                    try {
-                        String fileName = file.getOriginalFilename();
-                        String folderName = "blog/" + LocalDate.now().format(DateTimeFormatter.ofPattern("yyyyMMdd"));
-                        S3UploadDto s3UploadDto = s3Service.uploadFileToFolder(file, folderName);
+                    return uploadToS3AndSaveImage(blog, file, i == 0);
+                })
+                .toList();
+    }
 
-                        boolean isMain = i == 0;
-                        BlogImage image = new BlogImage(blog, s3UploadDto.getUrl(), s3UploadDto.getKey(), fileName, isMain);
+    private void validateFiles(List<MultipartFile> files) {
+        boolean isImage = files.stream()
+                .allMatch(file -> Objects.requireNonNull(file.getContentType()).startsWith("image"));
+        if (!isImage) {
+            throw new CustomException(ErrorCode.IMAGE_ONLY_ALLOWED);
+        }
+    }
 
-                        return blogImageRepository.save(image);
-                    } catch (IOException e) {
-                        throw new CustomException(ErrorCode.FILE_UPLOAD_FAILED);
-                    }
-                }).toList();
+    private List<BlogImage> addImagesWithLimit(Blog blog, List<MultipartFile> files) {
+        validateFiles(files);
+
+        return files.stream()
+                .map(file -> uploadToS3AndSaveImage(blog, file, false))
+                .toList();
+    }
+
+    private BlogImage uploadToS3AndSaveImage(Blog blog, MultipartFile file, boolean isMain) {
+        try {
+            String fileName = file.getOriginalFilename();
+            String folderName = "blog/" + LocalDate.now().format(DateTimeFormatter.ofPattern("yyyyMMdd"));
+            S3UploadDto s3UploadDto = s3Service.uploadFileToFolder(file, folderName);
+
+            BlogImage image = new BlogImage(blog, s3UploadDto.getUrl(), s3UploadDto.getKey(), fileName, isMain);
+
+            return blogImageRepository.save(image);
+        } catch (IOException e) {
+            throw new CustomException(ErrorCode.FILE_UPLOAD_FAILED);
+        }
     }
 }

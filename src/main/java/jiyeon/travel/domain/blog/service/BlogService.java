@@ -1,6 +1,7 @@
 package jiyeon.travel.domain.blog.service;
 
 import jiyeon.travel.domain.blog.dto.BlogDetailResDto;
+import jiyeon.travel.domain.blog.dto.BlogImageDetailsResDto;
 import jiyeon.travel.domain.blog.dto.BlogTicketItemReqDto;
 import jiyeon.travel.domain.blog.entity.Blog;
 import jiyeon.travel.domain.blog.entity.BlogImage;
@@ -46,5 +47,13 @@ public class BlogService {
         List<BlogTicketItem> savedBlogTicketItems = (items != null) ? blogTicketItemService.saveTicketItem(email, savedBlog, items) : Collections.emptyList();
 
         return new BlogDetailResDto(savedBlog, savedBlogImages, savedBlogTicketItems);
+    }
+
+    @Transactional
+    public BlogImageDetailsResDto addImageById(String email, Long blogId, List<MultipartFile> files) {
+        Blog blog = blogRepository.findByIdAndEmailOrElseThrow(blogId, email);
+        List<BlogImage> blogImages = blogImageService.addImages(blog, files);
+
+        return new BlogImageDetailsResDto(blog, blogImages);
     }
 }

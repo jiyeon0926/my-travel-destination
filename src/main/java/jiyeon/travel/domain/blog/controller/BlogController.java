@@ -3,16 +3,14 @@ package jiyeon.travel.domain.blog.controller;
 import jakarta.validation.Valid;
 import jiyeon.travel.domain.blog.dto.BlogCreateReqDto;
 import jiyeon.travel.domain.blog.dto.BlogDetailResDto;
+import jiyeon.travel.domain.blog.dto.BlogImageDetailsResDto;
 import jiyeon.travel.domain.blog.service.BlogService;
 import jiyeon.travel.global.auth.UserDetailsImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestPart;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
@@ -42,5 +40,15 @@ public class BlogController {
         );
 
         return new ResponseEntity<>(blogDetailResDto, HttpStatus.CREATED);
+    }
+
+    @PostMapping("/{blogId}/images")
+    public ResponseEntity<BlogImageDetailsResDto> addImageById(@AuthenticationPrincipal UserDetailsImpl userDetails,
+                                                               @PathVariable Long blogId,
+                                                               @RequestParam("images") List<MultipartFile> files) {
+        String email = userDetails.getUsername();
+        BlogImageDetailsResDto blogImageDetailsResDto = blogService.addImageById(email, blogId, files);
+
+        return new ResponseEntity<>(blogImageDetailsResDto, HttpStatus.CREATED);
     }
 }

@@ -6,4 +6,6 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface BlogImageRepository extends JpaRepository<BlogImage, Long> {
+
+    int countByBlogId(Long id);
 }
