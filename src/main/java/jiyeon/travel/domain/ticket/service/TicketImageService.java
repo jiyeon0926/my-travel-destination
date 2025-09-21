@@ -30,33 +30,7 @@ public class TicketImageService {
 
     @Transactional
     public List<TicketImage> saveImages(Ticket ticket, List<MultipartFile> files) {
-        if (files.size() > IMAGE_MAX_SIZE) {
-            throw new CustomException(ErrorCode.IMAGE_MAX_COUNT_EXCEEDED);
-        }
-
-        boolean isImage = files.stream()
-                .allMatch(file -> Objects.requireNonNull(file.getContentType()).startsWith("image"));
-        if (!isImage) {
-            throw new CustomException(ErrorCode.IMAGE_ONLY_ALLOWED);
-        }
-
-        return IntStream.range(0, files.size())
-                .mapToObj(i -> {
-                    MultipartFile file = files.get(i);
-
-                    try {
-                        String fileName = file.getOriginalFilename();
-                        String folderName = "ticket/" + LocalDate.now().format(DateTimeFormatter.ofPattern("yyyyMMdd"));
-                        S3UploadDto s3UploadDto = s3Service.uploadFileToFolder(file, folderName);
-
-                        boolean isMain = i == 0;
-                        TicketImage image = new TicketImage(ticket, s3UploadDto.getUrl(), s3UploadDto.getKey(), fileName, isMain);
-
-                        return ticketImageRepository.save(image);
-                    } catch (IOException e) {
-                        throw new CustomException(ErrorCode.FILE_UPLOAD_FAILED);
-                    }
-                }).toList();
+        return uploadAndSaveTicketImages(ticket, files);
     }
 
     @Transactional
@@ -65,7 +39,7 @@ public class TicketImageService {
         int imageCount = ticketImageRepository.countByTicketId(ticket.getId());
 
         return (imageCount == 0)
-                ? saveImages(ticket, files)
+                ? uploadAndSaveTicketImages(ticket, files)
                 : addImagesWithLimit(ticket, files, imageCount);
     }
 
@@ -112,6 +86,18 @@ public class TicketImageService {
         return ticketImage;
     }
 
+    private List<TicketImage> uploadAndSaveTicketImages(Ticket ticket, List<MultipartFile> files) {
+        validateFiles(files.size(), files);
+
+        return IntStream.range(0, files.size())
+                .mapToObj(i -> {
+                    MultipartFile file = files.get(i);
+
+                    return uploadToS3AndSaveImage(ticket, file, i == 0);
+                })
+                .toList();
+    }
+
     private void validateImageUpdateAllowed(Ticket ticket) {
         if (ticket.cannotUpdateImage()) {
             throw new CustomException(ErrorCode.TICKET_IMAGE_UPDATE_NOT_ALLOWED);
@@ -119,7 +105,15 @@ public class TicketImageService {
     }
 
     private List<TicketImage> addImagesWithLimit(Ticket ticket, List<MultipartFile> files, int count) {
-        if (count + files.size() > IMAGE_MAX_SIZE) {
+        validateFiles(count + files.size(), files);
+
+        return files.stream()
+                .map(file -> uploadToS3AndSaveImage(ticket, file, false))
+                .toList();
+    }
+
+    private void validateFiles(int size, List<MultipartFile> files) {
+        if (size > IMAGE_MAX_SIZE) {
             throw new CustomException(ErrorCode.IMAGE_MAX_COUNT_EXCEEDED);
         }
 
@@ -128,20 +122,19 @@ public class TicketImageService {
         if (!isImage) {
             throw new CustomException(ErrorCode.IMAGE_ONLY_ALLOWED);
         }
+    }
 
-        return files.stream()
-                .map(file -> {
-                    try {
-                        String fileName = file.getOriginalFilename();
-                        String folderName = "ticket/" + LocalDate.now().format(DateTimeFormatter.ofPattern("yyyyMMdd"));
-                        S3UploadDto s3UploadDto = s3Service.uploadFileToFolder(file, folderName);
+    private TicketImage uploadToS3AndSaveImage(Ticket ticket, MultipartFile file, boolean isMain) {
+        try {
+            String fileName = file.getOriginalFilename();
+            String folderName = "ticket/" + LocalDate.now().format(DateTimeFormatter.ofPattern("yyyyMMdd"));
+            S3UploadDto s3UploadDto = s3Service.uploadFileToFolder(file, folderName);
 
-                        TicketImage image = new TicketImage(ticket, s3UploadDto.getUrl(), s3UploadDto.getKey(), fileName, false);
+            TicketImage image = new TicketImage(ticket, s3UploadDto.getUrl(), s3UploadDto.getKey(), fileName, isMain);
 
-                        return ticketImageRepository.save(image);
-                    } catch (IOException e) {
-                        throw new CustomException(ErrorCode.FILE_UPLOAD_FAILED);
-                    }
-                }).toList();
+            return ticketImageRepository.save(image);
+        } catch (IOException e) {
+            throw new CustomException(ErrorCode.FILE_UPLOAD_FAILED);
+        }
     }
 }
