@@ -48,6 +48,14 @@ public class BlogService {
         return new BlogDetailResDto(savedBlog, savedBlogImages, blogTicketItems);
     }
 
+    @Transactional(readOnly = true)
+    public BlogDetailResDto findBlogById(String email, Long blogId) {
+        Blog blog = blogRepository.findByIdAndEmailOrElseThrow(blogId, email);
+        List<BlogTicketItemDto> blogTicketItems = blogTicketItemService.findTicketItemsByIdAndEmail(blogId);
+
+        return new BlogDetailResDto(blog, blog.getBlogImages(), blogTicketItems);
+    }
+
     @Transactional
     public void deleteBlogById(String email, Long blogId) {
         Blog blog = blogRepository.findByIdAndEmailOrElseThrow(blogId, email);
@@ -73,13 +81,5 @@ public class BlogService {
         BlogImage blogImage = blogImageService.changeImageMain(email, blogId, imageId);
 
         return new BlogImageDetailResDto(blogImage.getBlog(), blogImage);
-    }
-
-    @Transactional(readOnly = true)
-    public BlogDetailResDto findBlogById(String email, Long blogId) {
-        Blog blog = blogRepository.findByIdAndEmailOrElseThrow(blogId, email);
-        List<BlogTicketItemDto> blogTicketItems = blogTicketItemService.findTicketItemsByIdAndEmail(blogId);
-
-        return new BlogDetailResDto(blog, blog.getBlogImages(), blogTicketItems);
     }
 }
