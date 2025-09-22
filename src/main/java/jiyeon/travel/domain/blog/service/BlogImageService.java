@@ -40,6 +40,19 @@ public class BlogImageService {
                 : addImagesWithLimit(blog, files);
     }
 
+    @Transactional
+    public void deleteImage(String email, Long blogId, Long imageId) {
+        BlogImage blogImage = blogImageRepository.findByIdAndBlogIdAndEmail(imageId, blogId, email)
+                .orElseThrow(() -> new CustomException(ErrorCode.BLOG_IMAGE_NOT_FOUND));
+
+        if (blogImage.isMain()) {
+            throw new CustomException(ErrorCode.CANNOT_DELETE_MAIN_IMAGE);
+        }
+
+        s3Service.deleteFile(blogImage.getImageKey());
+        blogImageRepository.delete(blogImage);
+    }
+
     private List<BlogImage> uploadAndSaveBlogImages(Blog blog, List<MultipartFile> files) {
         validateFiles(files);
 

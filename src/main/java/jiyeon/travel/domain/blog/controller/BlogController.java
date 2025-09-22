@@ -51,4 +51,14 @@ public class BlogController {
 
         return new ResponseEntity<>(blogImageDetailsResDto, HttpStatus.CREATED);
     }
+
+    @DeleteMapping("/{blogId}/images/{imageId}")
+    public ResponseEntity<Void> deleteImageById(@AuthenticationPrincipal UserDetailsImpl userDetails,
+                                                @PathVariable Long blogId,
+                                                @PathVariable Long imageId) {
+        String email = userDetails.getUsername();
+        blogService.deleteImageById(email, blogId, imageId);
+
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
 }

@@ -46,6 +46,7 @@ public enum ErrorCode {
     RESERVATION_NOT_FOUND(NOT_FOUND, "예약을 찾을 수 없습니다."),
     PAYMENT_NOT_FOUND(NOT_FOUND, "결제를 찾을 수 없습니다."),
     BLOG_NOT_FOUND(NOT_FOUND, "블로그를 찾을 수 없습니다."),
+    BLOG_IMAGE_NOT_FOUND(NOT_FOUND, "블로그 이미지를 찾을 수 없습니다."),
 
     // 409 CONFLICT
     EMAIL_ALREADY_EXISTS(CONFLICT, "이미 존재하는 이메일입니다."),

@@ -56,4 +56,9 @@ public class BlogService {
 
         return new BlogImageDetailsResDto(blog, blogImages);
     }
+
+    @Transactional
+    public void deleteImageById(String email, Long blogId, Long imageId) {
+        blogImageService.deleteImage(email, blogId, imageId);
+    }
 }
