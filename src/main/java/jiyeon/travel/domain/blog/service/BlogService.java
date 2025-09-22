@@ -43,17 +43,17 @@ public class BlogService {
         List<BlogImage> savedBlogImages = (files != null) ? blogImageService.saveImages(savedBlog, files) : Collections.emptyList();
         if (items != null) blogTicketItemService.saveTicketItem(email, savedBlog, items);
 
-        List<BlogTicketItemDto> blogTicketItems = blogTicketItemService.findTicketItemsByIdAndEmail(savedBlog.getId());
+        List<BlogTicketItemDto> blogTicketItemDtos = blogTicketItemService.findTicketItemsByBlogId(savedBlog.getId());
 
-        return new BlogDetailResDto(savedBlog, savedBlogImages, blogTicketItems);
+        return new BlogDetailResDto(savedBlog, savedBlogImages, blogTicketItemDtos);
     }
 
     @Transactional(readOnly = true)
     public BlogDetailResDto findBlogById(String email, Long blogId) {
         Blog blog = blogRepository.findByIdAndEmailOrElseThrow(blogId, email);
-        List<BlogTicketItemDto> blogTicketItems = blogTicketItemService.findTicketItemsByIdAndEmail(blogId);
+        List<BlogTicketItemDto> blogTicketItemDtos = blogTicketItemService.findTicketItemsByBlogId(blogId);
 
-        return new BlogDetailResDto(blog, blog.getBlogImages(), blogTicketItems);
+        return new BlogDetailResDto(blog, blog.getBlogImages(), blogTicketItemDtos);
     }
 
     @Transactional

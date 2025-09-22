@@ -46,7 +46,7 @@ public class BlogTicketItemService {
         return blogTicketItemRepository.saveAll(blogTicketItems);
     }
 
-    public List<BlogTicketItemDto> findTicketItemsByIdAndEmail(Long blogId) {
+    public List<BlogTicketItemDto> findTicketItemsByBlogId(Long blogId) {
         return blogTicketItemRepository.findDetailsByBlogId(blogId);
     }
 }
