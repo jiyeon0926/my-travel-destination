@@ -50,6 +50,13 @@ public class BlogService {
     }
 
     @Transactional
+    public void deleteBlogById(String email, Long blogId) {
+        Blog blog = blogRepository.findByIdAndEmailOrElseThrow(blogId, email);
+        blogImageService.deleteImagesFromS3(blogId);
+        blogRepository.delete(blog);
+    }
+
+    @Transactional
     public BlogImageDetailsResDto addImageById(String email, Long blogId, List<MultipartFile> files) {
         Blog blog = blogRepository.findByIdAndEmailOrElseThrow(blogId, email);
         List<BlogImage> blogImages = blogImageService.addImages(blog, files);

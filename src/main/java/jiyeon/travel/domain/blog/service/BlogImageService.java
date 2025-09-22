@@ -53,6 +53,15 @@ public class BlogImageService {
         blogImageRepository.delete(blogImage);
     }
 
+    @Transactional
+    public void deleteImagesFromS3(Long blogId) {
+        List<BlogImage> blogImages = blogImageRepository.findAllByBlogId(blogId);
+
+        if (!blogImages.isEmpty()) {
+            blogImages.forEach(image -> s3Service.deleteFile(image.getImageKey()));
+        }
+    }
+
     private List<BlogImage> uploadAndSaveBlogImages(Blog blog, List<MultipartFile> files) {
         validateFiles(files);
 

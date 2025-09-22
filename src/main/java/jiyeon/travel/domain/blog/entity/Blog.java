@@ -43,10 +43,10 @@ public class Blog extends BaseEntity {
     @Column(nullable = false)
     private int totalExpense;
 
-    @OneToMany(mappedBy = "blog")
+    @OneToMany(mappedBy = "blog", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<BlogImage> blogImages = new ArrayList<>();
 
-    @OneToMany(mappedBy = "blog")
+    @OneToMany(mappedBy = "blog", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<BlogTicketItem> blogTicketItems = new ArrayList<>();
 
     public Blog(User user, String title, String content, LocalDate travelStartDate, LocalDate travelEndDate, int estimatedExpense, int totalExpense) {

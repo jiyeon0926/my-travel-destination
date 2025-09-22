@@ -42,6 +42,15 @@ public class BlogController {
         return new ResponseEntity<>(blogDetailResDto, HttpStatus.CREATED);
     }
 
+    @DeleteMapping("/{blogId}")
+    public ResponseEntity<Void> deleteBlogById(@AuthenticationPrincipal UserDetailsImpl userDetails,
+                                               @PathVariable Long blogId) {
+        String email = userDetails.getUsername();
+        blogService.deleteBlogById(email, blogId);
+
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
     @PostMapping("/{blogId}/images")
     public ResponseEntity<BlogImageDetailsResDto> addImageById(@AuthenticationPrincipal UserDetailsImpl userDetails,
                                                                @PathVariable Long blogId,
