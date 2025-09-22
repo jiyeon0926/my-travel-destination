@@ -6,5 +6,5 @@ import java.util.List;
 
 public interface CustomBlogTicketItemRepository {
 
-    List<BlogTicketItemDto> findDetailsByBlogIdAndEmail(Long blogId, String email);
+    List<BlogTicketItemDto> findDetailsByBlogId(Long blogId);
 }
