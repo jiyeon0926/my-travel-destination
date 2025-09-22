@@ -51,7 +51,7 @@ public class TicketImageService {
         validateImageUpdateAllowed(ticketImage.getTicket());
 
         if (ticketImage.isMain()) {
-            throw new CustomException(ErrorCode.CANNOT_DELETE_TICKET_MAIN_IMAGE);
+            throw new CustomException(ErrorCode.CANNOT_DELETE_MAIN_IMAGE);
         }
 
         s3Service.deleteFile(ticketImage.getImageKey());

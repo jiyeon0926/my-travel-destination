@@ -19,7 +19,7 @@ public enum ErrorCode {
     IMAGE_ONLY_ALLOWED(BAD_REQUEST, "이미지 파일만 업로드할 수 있습니다."),
     FILE_UPLOAD_SIZE_EXCEEDED(BAD_REQUEST, "파일 업로드 크기는 최대 10MB까지 가능합니다."),
     TICKET_OPTION_PRESENT(BAD_REQUEST, "옵션이 존재할 경우, 기본 가격을 설정할 수 없습니다."),
-    CANNOT_DELETE_TICKET_MAIN_IMAGE(BAD_REQUEST, "티켓 대표 이미지는 삭제할 수 없습니다."),
+    CANNOT_DELETE_MAIN_IMAGE(BAD_REQUEST, "대표 이미지는 삭제할 수 없습니다."),
     NULL_TIME_SCHEDULE_DUPLICATE(BAD_REQUEST, "하루 기준으로 시간 없는 일정은 중복 등록할 수 없습니다."),
     SCHEDULE_OUT_OF_SALE_RANGE(BAD_REQUEST, "일정은 판매 시작일부터 종료일까지의 범위 내에서만 등록 가능합니다."),
     TICKET_READY_ONLY(BAD_REQUEST, "티켓이 판매 전일 때만 추가/수정/삭제 할 수 있습니다."),
