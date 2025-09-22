@@ -4,17 +4,40 @@ import com.querydsl.core.BooleanBuilder;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import jiyeon.travel.domain.blog.dto.BlogTicketItemDto;
 import jiyeon.travel.domain.blog.dto.QBlogTicketItemDto;
+import jiyeon.travel.domain.blog.entity.BlogTicketItem;
+import jiyeon.travel.domain.blog.entity.QBlog;
 import jiyeon.travel.domain.blog.entity.QBlogTicketItem;
 import jiyeon.travel.domain.reservation.entity.QReservation;
 import jiyeon.travel.domain.ticket.entity.QTicket;
 import jiyeon.travel.domain.ticket.entity.QTicketSchedule;
+import jiyeon.travel.domain.user.entity.QUser;
 import lombok.RequiredArgsConstructor;
 
 import java.util.List;
+import java.util.Optional;
 
 @RequiredArgsConstructor
 public class CustomBlogTicketItemRepositoryImpl implements CustomBlogTicketItemRepository {
     private final JPAQueryFactory jpaQueryFactory;
+
+    @Override
+    public Optional<BlogTicketItem> findByIdAndBlogIdAndEmail(Long id, Long blogId, String email) {
+        QBlogTicketItem blogTicketItem = QBlogTicketItem.blogTicketItem;
+        QBlog blog = QBlog.blog;
+        QUser user = QUser.user;
+
+        BooleanBuilder conditions = new BooleanBuilder();
+        conditions.and(blogTicketItem.id.eq(id));
+        conditions.and(blog.id.eq(blogId));
+        conditions.and(user.email.eq(email));
+
+        return Optional.ofNullable(jpaQueryFactory
+                .selectFrom(blogTicketItem)
+                .innerJoin(blogTicketItem.blog, blog).fetchJoin()
+                .innerJoin(blog.user, user).fetchJoin()
+                .where(conditions)
+                .fetchOne());
+    }
 
     @Override
     public List<BlogTicketItemDto> findDetailsByBlogId(Long blogId) {
@@ -22,9 +45,6 @@ public class CustomBlogTicketItemRepositoryImpl implements CustomBlogTicketItemR
         QReservation reservation = QReservation.reservation;
         QTicketSchedule ticketSchedule = QTicketSchedule.ticketSchedule;
         QTicket ticket = QTicket.ticket;
-
-        BooleanBuilder conditions = new BooleanBuilder();
-        conditions.and(blogTicketItem.blog.id.eq(blogId));
 
         return jpaQueryFactory
                 .select(new QBlogTicketItemDto(
@@ -41,7 +61,7 @@ public class CustomBlogTicketItemRepositoryImpl implements CustomBlogTicketItemR
                 .innerJoin(blogTicketItem.reservation, reservation)
                 .innerJoin(reservation.ticketSchedule, ticketSchedule)
                 .innerJoin(ticketSchedule.ticket, ticket)
-                .where(conditions)
+                .where(blogTicketItem.blog.id.eq(blogId))
                 .fetch();
     }
 }

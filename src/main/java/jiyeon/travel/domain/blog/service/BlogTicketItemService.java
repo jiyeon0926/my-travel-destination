@@ -47,7 +47,7 @@ public class BlogTicketItemService {
     }
 
     @Transactional
-    public void addTicketItems(String email, Blog blog, Long reservationId) {
+    public void addTicketItem(String email, Blog blog, Long reservationId) {
         boolean isTicketItem = blogTicketItemRepository.existsByBlogIdAndReservationId(blog.getId(), reservationId);
         if (isTicketItem) {
             throw new CustomException(ErrorCode.DUPLICATE_RESERVATION_ID);
@@ -56,6 +56,14 @@ public class BlogTicketItemService {
         Reservation reservation = reservationService.getReservationByIdAndEmailAndStatus(reservationId, email, ReservationStatus.USED);
         BlogTicketItem blogTicketItem = new BlogTicketItem(blog, reservation);
         blogTicketItemRepository.save(blogTicketItem);
+    }
+
+    @Transactional
+    public void deleteTicketItem(String email, Long blogId, Long itemId) {
+        BlogTicketItem blogTicketItem = blogTicketItemRepository.findByIdAndBlogIdAndEmail(itemId, blogId, email)
+                .orElseThrow(() -> new CustomException(ErrorCode.BLOG_TICKET_ITEM_NOT_FOUND));
+
+        blogTicketItemRepository.delete(blogTicketItem);
     }
 
     public List<BlogTicketItemDto> findTicketItemsByBlogId(Long blogId) {

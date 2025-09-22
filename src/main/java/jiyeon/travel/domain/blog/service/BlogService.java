@@ -84,12 +84,17 @@ public class BlogService {
     }
 
     @Transactional
-    public BlogTicketItemDetailsResDto addTicketItemsById(String email, Long blogId, Long reservationId) {
+    public BlogTicketItemDetailsResDto addTicketItemById(String email, Long blogId, Long reservationId) {
         Blog blog = blogRepository.findByIdAndEmailOrElseThrow(blogId, email);
-        blogTicketItemService.addTicketItems(email, blog, reservationId);
+        blogTicketItemService.addTicketItem(email, blog, reservationId);
 
         List<BlogTicketItemDto> blogTicketItemDtos = blogTicketItemService.findTicketItemsByBlogId(blogId);
 
         return new BlogTicketItemDetailsResDto(blog, blogTicketItemDtos);
+    }
+
+    @Transactional
+    public void deleteTicketItemById(String email, Long blogId, Long itemId) {
+        blogTicketItemService.deleteTicketItem(email, blogId, itemId);
     }
 }
