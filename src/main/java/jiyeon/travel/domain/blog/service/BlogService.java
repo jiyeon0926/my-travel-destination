@@ -1,6 +1,7 @@
 package jiyeon.travel.domain.blog.service;
 
 import jiyeon.travel.domain.blog.dto.BlogDetailResDto;
+import jiyeon.travel.domain.blog.dto.BlogImageDetailResDto;
 import jiyeon.travel.domain.blog.dto.BlogImageDetailsResDto;
 import jiyeon.travel.domain.blog.dto.BlogTicketItemReqDto;
 import jiyeon.travel.domain.blog.entity.Blog;
@@ -67,5 +68,12 @@ public class BlogService {
     @Transactional
     public void deleteImageById(String email, Long blogId, Long imageId) {
         blogImageService.deleteImage(email, blogId, imageId);
+    }
+
+    @Transactional
+    public BlogImageDetailResDto changeImageMainById(String email, Long blogId, Long imageId) {
+        BlogImage blogImage = blogImageService.changeImageMain(email, blogId, imageId);
+
+        return new BlogImageDetailResDto(blogImage.getBlog(), blogImage);
     }
 }

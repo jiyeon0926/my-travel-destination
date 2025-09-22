@@ -62,6 +62,23 @@ public class BlogImageService {
         }
     }
 
+    @Transactional
+    public BlogImage changeImageMain(String email, Long blogId, Long imageId) {
+        BlogImage blogImage = blogImageRepository.findByIdAndBlogIdAndEmail(imageId, blogId, email)
+                .orElseThrow(() -> new CustomException(ErrorCode.BLOG_IMAGE_NOT_FOUND));
+
+        if (blogImage.isMain()) {
+            throw new CustomException(ErrorCode.ALREADY_MAIN_IMAGE);
+        }
+
+        blogImageRepository.findByBlogIdAndIsMainTrue(blogId)
+                .ifPresent(image -> image.changeImageMain(false));
+
+        blogImage.changeImageMain(true);
+
+        return blogImage;
+    }
+
     private List<BlogImage> uploadAndSaveBlogImages(Blog blog, List<MultipartFile> files) {
         validateFiles(files);
 

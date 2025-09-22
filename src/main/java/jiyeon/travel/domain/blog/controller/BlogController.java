@@ -3,6 +3,7 @@ package jiyeon.travel.domain.blog.controller;
 import jakarta.validation.Valid;
 import jiyeon.travel.domain.blog.dto.BlogCreateReqDto;
 import jiyeon.travel.domain.blog.dto.BlogDetailResDto;
+import jiyeon.travel.domain.blog.dto.BlogImageDetailResDto;
 import jiyeon.travel.domain.blog.dto.BlogImageDetailsResDto;
 import jiyeon.travel.domain.blog.service.BlogService;
 import jiyeon.travel.global.auth.UserDetailsImpl;
@@ -69,5 +70,15 @@ public class BlogController {
         blogService.deleteImageById(email, blogId, imageId);
 
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
+    @PatchMapping("/{blogId}/images/{imageId}/main")
+    public ResponseEntity<BlogImageDetailResDto> changeImageMainById(@AuthenticationPrincipal UserDetailsImpl userDetails,
+                                                                @PathVariable Long blogId,
+                                                                @PathVariable Long imageId) {
+        String email = userDetails.getUsername();
+        BlogImageDetailResDto blogImageDetailResDto = blogService.changeImageMainById(email, blogId, imageId);
+
+        return new ResponseEntity<>(blogImageDetailResDto, HttpStatus.OK);
     }
 }
