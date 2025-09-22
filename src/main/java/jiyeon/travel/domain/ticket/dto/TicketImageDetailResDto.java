@@ -1,5 +1,6 @@
 package jiyeon.travel.domain.ticket.dto;
 
+import jiyeon.travel.domain.ticket.entity.Ticket;
 import jiyeon.travel.domain.ticket.entity.TicketImage;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -20,9 +21,9 @@ public class TicketImageDetailResDto {
     private final LocalDateTime createdAt;
     private final LocalDateTime updatedAt;
 
-    public TicketImageDetailResDto(TicketImage ticketImage) {
-        this.ticketId = ticketImage.getTicket().getId();
-        this.ticketName = ticketImage.getTicket().getName();
+    public TicketImageDetailResDto(Ticket ticket, TicketImage ticketImage) {
+        this.ticketId = ticket.getId();
+        this.ticketName = ticket.getName();
         this.imageId = ticketImage.getId();
         this.imageUrl = ticketImage.getImageUrl();
         this.imageKey = ticketImage.getImageKey();

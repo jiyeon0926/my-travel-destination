@@ -226,7 +226,7 @@ public class TicketPartnerService {
     public TicketImageDetailResDto changeImageMainById(String email, Long ticketId, Long imageId) {
         TicketImage ticketImage = ticketImageService.changeImageMain(email, ticketId, imageId);
 
-        return new TicketImageDetailResDto(ticketImage);
+        return new TicketImageDetailResDto(ticketImage.getTicket(), ticketImage);
     }
 
     private void validateSaleRange(LocalDateTime saleStartDate, LocalDateTime saleEndDate, LocalDateTime referenceTime) {

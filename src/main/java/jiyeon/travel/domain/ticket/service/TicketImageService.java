@@ -75,7 +75,7 @@ public class TicketImageService {
         validateImageUpdateAllowed(ticketImage.getTicket());
 
         if (ticketImage.isMain()) {
-            throw new CustomException(ErrorCode.ALREADY_TICKET_MAIN_IMAGE);
+            throw new CustomException(ErrorCode.ALREADY_MAIN_IMAGE);
         }
 
         ticketImageRepository.findByTicketIdAndIsMainTrue(ticketId)

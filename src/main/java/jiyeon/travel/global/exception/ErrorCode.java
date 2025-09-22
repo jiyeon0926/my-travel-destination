@@ -52,7 +52,7 @@ public enum ErrorCode {
     EMAIL_ALREADY_EXISTS(CONFLICT, "이미 존재하는 이메일입니다."),
     NICKNAME_ALREADY_EXISTS(CONFLICT, "이미 존재하는 별명입니다."),
     BUSINESS_NUMBER_ALREADY_EXISTS(CONFLICT, "동일한 사업장번호가 존재합니다."),
-    ALREADY_TICKET_MAIN_IMAGE(CONFLICT, "이미 대표 이미지입니다."),
+    ALREADY_MAIN_IMAGE(CONFLICT, "이미 대표 이미지입니다."),
     TICKET_SCHEDULE_ALREADY_EXISTS(CONFLICT, "동일한 일정이 존재합니다."),
     ALREADY_PAID_RESERVATION(CONFLICT, "이미 결제 완료된 예약입니다."),
     DUPLICATE_RESERVATION_ID(CONFLICT, "동일한 예약 아이디가 존재합니다."),
