@@ -2,7 +2,6 @@ package jiyeon.travel.domain.blog.dto;
 
 import jiyeon.travel.domain.blog.entity.Blog;
 import jiyeon.travel.domain.blog.entity.BlogImage;
-import jiyeon.travel.domain.blog.entity.BlogTicketItem;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
@@ -26,7 +25,7 @@ public class BlogDetailResDto {
     private final LocalDateTime createdAt;
     private final LocalDateTime updatedAt;
 
-    public BlogDetailResDto(Blog blog, List<BlogImage> images, List<BlogTicketItem> items) {
+    public BlogDetailResDto(Blog blog, List<BlogImage> images, List<BlogTicketItemDto> items) {
         this.id = blog.getId();
         this.title = blog.getTitle();
         this.content = blog.getContent();
@@ -35,7 +34,7 @@ public class BlogDetailResDto {
         this.estimatedExpense = blog.getEstimatedExpense();
         this.totalExpense = blog.getTotalExpense();
         this.images = images.stream().map(BlogImageDto::from).toList();
-        this.items = items.stream().map(BlogTicketItemDto::from).toList();
+        this.items = items;
         this.createdAt = blog.getCreatedAt();
         this.updatedAt = blog.getUpdatedAt();
     }

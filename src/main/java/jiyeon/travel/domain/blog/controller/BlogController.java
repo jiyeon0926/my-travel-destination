@@ -43,6 +43,15 @@ public class BlogController {
         return new ResponseEntity<>(blogDetailResDto, HttpStatus.CREATED);
     }
 
+    @GetMapping("/{blogId}")
+    public ResponseEntity<BlogDetailResDto> findBlogById(@AuthenticationPrincipal UserDetailsImpl userDetails,
+                                                         @PathVariable Long blogId) {
+        String email = userDetails.getUsername();
+        BlogDetailResDto blogDetailResDto = blogService.findBlogById(email, blogId);
+
+        return new ResponseEntity<>(blogDetailResDto, HttpStatus.OK);
+    }
+
     @DeleteMapping("/{blogId}")
     public ResponseEntity<Void> deleteBlogById(@AuthenticationPrincipal UserDetailsImpl userDetails,
                                                @PathVariable Long blogId) {
@@ -74,8 +83,8 @@ public class BlogController {
 
     @PatchMapping("/{blogId}/images/{imageId}/main")
     public ResponseEntity<BlogImageDetailResDto> changeImageMainById(@AuthenticationPrincipal UserDetailsImpl userDetails,
-                                                                @PathVariable Long blogId,
-                                                                @PathVariable Long imageId) {
+                                                                     @PathVariable Long blogId,
+                                                                     @PathVariable Long imageId) {
         String email = userDetails.getUsername();
         BlogImageDetailResDto blogImageDetailResDto = blogService.changeImageMainById(email, blogId, imageId);
 

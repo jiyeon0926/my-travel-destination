@@ -1,5 +1,6 @@
 package jiyeon.travel.domain.blog.service;
 
+import jiyeon.travel.domain.blog.dto.BlogTicketItemDto;
 import jiyeon.travel.domain.blog.dto.BlogTicketItemReqDto;
 import jiyeon.travel.domain.blog.entity.Blog;
 import jiyeon.travel.domain.blog.entity.BlogTicketItem;
@@ -43,5 +44,9 @@ public class BlogTicketItemService {
                 .toList();
 
         return blogTicketItemRepository.saveAll(blogTicketItems);
+    }
+
+    public List<BlogTicketItemDto> findTicketItemsByIdAndEmail(Long blogId, String email) {
+        return blogTicketItemRepository.findDetailsByBlogIdAndEmail(blogId, email);
     }
 }
