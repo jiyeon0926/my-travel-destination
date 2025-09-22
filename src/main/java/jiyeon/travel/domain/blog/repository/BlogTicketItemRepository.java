@@ -6,4 +6,6 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface BlogTicketItemRepository extends JpaRepository<BlogTicketItem, Long>, CustomBlogTicketItemRepository {
+
+    boolean existsByBlogIdAndReservationId(Long blogId, Long reservationId);
 }

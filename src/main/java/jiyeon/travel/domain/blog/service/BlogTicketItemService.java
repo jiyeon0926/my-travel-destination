@@ -46,6 +46,18 @@ public class BlogTicketItemService {
         return blogTicketItemRepository.saveAll(blogTicketItems);
     }
 
+    @Transactional
+    public void addTicketItems(String email, Blog blog, Long reservationId) {
+        boolean isTicketItem = blogTicketItemRepository.existsByBlogIdAndReservationId(blog.getId(), reservationId);
+        if (isTicketItem) {
+            throw new CustomException(ErrorCode.DUPLICATE_RESERVATION_ID);
+        }
+
+        Reservation reservation = reservationService.getReservationByIdAndEmailAndStatus(reservationId, email, ReservationStatus.USED);
+        BlogTicketItem blogTicketItem = new BlogTicketItem(blog, reservation);
+        blogTicketItemRepository.save(blogTicketItem);
+    }
+
     public List<BlogTicketItemDto> findTicketItemsByBlogId(Long blogId) {
         return blogTicketItemRepository.findDetailsByBlogId(blogId);
     }

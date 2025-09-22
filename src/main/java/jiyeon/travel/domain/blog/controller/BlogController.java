@@ -1,10 +1,7 @@
 package jiyeon.travel.domain.blog.controller;
 
 import jakarta.validation.Valid;
-import jiyeon.travel.domain.blog.dto.BlogCreateReqDto;
-import jiyeon.travel.domain.blog.dto.BlogDetailResDto;
-import jiyeon.travel.domain.blog.dto.BlogImageDetailResDto;
-import jiyeon.travel.domain.blog.dto.BlogImageDetailsResDto;
+import jiyeon.travel.domain.blog.dto.*;
 import jiyeon.travel.domain.blog.service.BlogService;
 import jiyeon.travel.global.auth.UserDetailsImpl;
 import lombok.RequiredArgsConstructor;
@@ -89,5 +86,19 @@ public class BlogController {
         BlogImageDetailResDto blogImageDetailResDto = blogService.changeImageMainById(email, blogId, imageId);
 
         return new ResponseEntity<>(blogImageDetailResDto, HttpStatus.OK);
+    }
+
+    @PostMapping("/{blogId}/ticket-items")
+    public ResponseEntity<BlogTicketItemDetailsResDto> addTicketItemsById(@AuthenticationPrincipal UserDetailsImpl userDetails,
+                                                                          @PathVariable Long blogId,
+                                                                          @Valid @RequestBody BlogTicketItemReqDto blogTicketItemReqDto) {
+        String email = userDetails.getUsername();
+        BlogTicketItemDetailsResDto blogTicketItemDetailsResDto = blogService.addTicketItemsById(
+                email,
+                blogId,
+                blogTicketItemReqDto.getReservationId()
+        );
+
+        return new ResponseEntity<>(blogTicketItemDetailsResDto, HttpStatus.CREATED);
     }
 }

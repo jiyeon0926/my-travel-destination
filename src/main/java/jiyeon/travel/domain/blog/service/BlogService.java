@@ -82,4 +82,14 @@ public class BlogService {
 
         return new BlogImageDetailResDto(blogImage.getBlog(), blogImage);
     }
+
+    @Transactional
+    public BlogTicketItemDetailsResDto addTicketItemsById(String email, Long blogId, Long reservationId) {
+        Blog blog = blogRepository.findByIdAndEmailOrElseThrow(blogId, email);
+        blogTicketItemService.addTicketItems(email, blog, reservationId);
+
+        List<BlogTicketItemDto> blogTicketItemDtos = blogTicketItemService.findTicketItemsByBlogId(blogId);
+
+        return new BlogTicketItemDetailsResDto(blog, blogTicketItemDtos);
+    }
 }
