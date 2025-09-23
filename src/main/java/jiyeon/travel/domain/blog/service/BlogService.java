@@ -16,6 +16,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.time.LocalDate;
 import java.util.Collections;
 import java.util.List;
+import java.util.function.Consumer;
 
 @Service
 @RequiredArgsConstructor
@@ -30,6 +31,8 @@ public class BlogService {
     public BlogDetailResDto createBlog(String email, String title, String content, LocalDate travelStartDate,
                                        LocalDate travelEndDate, int estimatedExpense, Integer totalExpense,
                                        List<BlogTicketItemReqDto> items, List<MultipartFile> files) {
+        validateTravelRange(travelStartDate, travelEndDate);
+
         User user = userService.getActiveUserByEmail(email);
         Blog blog = new Blog(
                 user,
@@ -72,6 +75,23 @@ public class BlogService {
     }
 
     @Transactional
+    public BlogSimpleResDto updateBlogById(String email, Long blogId, String title, String content,
+                                           LocalDate travelStartDate, LocalDate travelEndDate,
+                                           Integer estimatedExpense, Integer totalExpense) {
+        Blog blog = blogRepository.findByIdAndEmailOrElseThrow(blogId, email);
+        validateTravelRange(travelStartDate, travelEndDate);
+
+        acceptIfNotNull(title, blog::changeTitle);
+        acceptIfNotNull(content, blog::changeContent);
+        acceptIfNotNull(travelStartDate, blog::changeTravelStartDate);
+        acceptIfNotNull(travelEndDate, blog::changeTravelEndDate);
+        acceptIfNotNull(estimatedExpense, blog::changeEstimatedExpense);
+        acceptIfNotNull(totalExpense, blog::changeTotalExpense);
+
+        return new BlogSimpleResDto(blog);
+    }
+
+    @Transactional
     public BlogImageDetailsResDto addImageById(String email, Long blogId, List<MultipartFile> files) {
         Blog blog = blogRepository.findByIdAndEmailOrElseThrow(blogId, email);
         List<BlogImage> blogImages = blogImageService.addImages(blog, files);
@@ -104,5 +124,21 @@ public class BlogService {
     @Transactional
     public void deleteTicketItemById(String email, Long blogId, Long itemId) {
         blogTicketItemService.deleteTicketItem(email, blogId, itemId);
+    }
+
+    private void validateTravelRange(LocalDate travelStartDate, LocalDate travelEndDate) {
+        if (travelStartDate != null && travelEndDate != null) {
+            if (travelStartDate.isAfter(travelEndDate)) {
+                throw new CustomException(ErrorCode.INVALID_TRAVEL_START_DATE);
+            }
+
+            if (travelEndDate.isBefore(travelStartDate)) {
+                throw new CustomException(ErrorCode.INVALID_TRAVEL_END_DATE);
+            }
+        }
+    }
+
+    private <T> void acceptIfNotNull(T t, Consumer<T> consumer) {
+        if (t != null) consumer.accept(t);
     }
 }

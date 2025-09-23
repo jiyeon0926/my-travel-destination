@@ -58,4 +58,36 @@ public class Blog extends BaseEntity {
         this.estimatedExpense = estimatedExpense;
         this.totalExpense = totalExpense;
     }
+
+    public void changeTitle(String title) {
+        if (title.isBlank()) {
+            throw new IllegalArgumentException("제목이 비어있습니다.");
+        }
+
+        this.title = title;
+    }
+
+    public void changeContent(String content) {
+        if (content.isBlank()) {
+            throw new IllegalArgumentException("내용이 비어있습니다.");
+        }
+
+        this.content = content;
+    }
+
+    public void changeTravelStartDate(LocalDate travelStartDate) {
+        this.travelStartDate = travelStartDate;
+    }
+
+    public void changeTravelEndDate(LocalDate travelEndDate) {
+        this.travelEndDate = travelEndDate;
+    }
+
+    public void changeEstimatedExpense(int estimatedExpense) {
+        this.estimatedExpense = estimatedExpense;
+    }
+
+    public void changeTotalExpense(int totalExpense) {
+        this.totalExpense = totalExpense;
+    }
 }

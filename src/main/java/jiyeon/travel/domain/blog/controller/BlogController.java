@@ -64,6 +64,25 @@ public class BlogController {
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
+    @PatchMapping("/{blogId}")
+    public ResponseEntity<BlogSimpleResDto> updateBlogById(@AuthenticationPrincipal UserDetailsImpl userDetails,
+                                                           @PathVariable Long blogId,
+                                                           @RequestBody BlogUpdateReqDto blogUpdateReqDto) {
+        String email = userDetails.getUsername();
+        BlogSimpleResDto blogSimpleResDto = blogService.updateBlogById(
+                email,
+                blogId,
+                blogUpdateReqDto.getTitle(),
+                blogUpdateReqDto.getContent(),
+                blogUpdateReqDto.getTravelStartDate(),
+                blogUpdateReqDto.getTravelEndDate(),
+                blogUpdateReqDto.getEstimatedExpense(),
+                blogUpdateReqDto.getTotalExpense()
+        );
+
+        return new ResponseEntity<>(blogSimpleResDto, HttpStatus.OK);
+    }
+
     @PostMapping("/{blogId}/images")
     public ResponseEntity<BlogImageDetailsResDto> addImageById(@AuthenticationPrincipal UserDetailsImpl userDetails,
                                                                @PathVariable Long blogId,
