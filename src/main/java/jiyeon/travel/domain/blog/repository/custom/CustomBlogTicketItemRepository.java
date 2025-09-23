@@ -1,4 +1,4 @@
-package jiyeon.travel.domain.blog.repository;
+package jiyeon.travel.domain.blog.repository.custom;
 
 import jiyeon.travel.domain.blog.dto.BlogTicketItemDto;
 import jiyeon.travel.domain.blog.entity.BlogTicketItem;

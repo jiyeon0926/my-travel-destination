@@ -1,4 +1,4 @@
-package jiyeon.travel.domain.blog.repository;
+package jiyeon.travel.domain.blog.repository.custom;
 
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.jpa.impl.JPAQueryFactory;
