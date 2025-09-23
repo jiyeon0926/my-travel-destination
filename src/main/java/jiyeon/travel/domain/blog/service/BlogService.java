@@ -6,6 +6,8 @@ import jiyeon.travel.domain.blog.entity.BlogImage;
 import jiyeon.travel.domain.blog.repository.BlogRepository;
 import jiyeon.travel.domain.user.entity.User;
 import jiyeon.travel.domain.user.service.UserService;
+import jiyeon.travel.global.exception.CustomException;
+import jiyeon.travel.global.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -49,8 +51,9 @@ public class BlogService {
     }
 
     @Transactional(readOnly = true)
-    public BlogDetailResDto findBlogById(String email, Long blogId) {
-        Blog blog = blogRepository.findByIdAndEmailOrElseThrow(blogId, email);
+    public BlogDetailResDto findBlogById(Long blogId) {
+        Blog blog = blogRepository.findById(blogId)
+                .orElseThrow(() -> new CustomException(ErrorCode.BLOG_NOT_FOUND));
         List<BlogTicketItemDto> blogTicketItemDtos = blogTicketItemService.findTicketItemsByBlogId(blogId);
 
         return new BlogDetailResDto(blog, blog.getBlogImages(), blogTicketItemDtos);

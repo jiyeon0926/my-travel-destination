@@ -41,10 +41,8 @@ public class BlogController {
     }
 
     @GetMapping("/{blogId}")
-    public ResponseEntity<BlogDetailResDto> findBlogById(@AuthenticationPrincipal UserDetailsImpl userDetails,
-                                                         @PathVariable Long blogId) {
-        String email = userDetails.getUsername();
-        BlogDetailResDto blogDetailResDto = blogService.findBlogById(email, blogId);
+    public ResponseEntity<BlogDetailResDto> findBlogById(@PathVariable Long blogId) {
+        BlogDetailResDto blogDetailResDto = blogService.findBlogById(blogId);
 
         return new ResponseEntity<>(blogDetailResDto, HttpStatus.OK);
     }
