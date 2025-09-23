@@ -40,6 +40,14 @@ public class BlogController {
         return new ResponseEntity<>(blogDetailResDto, HttpStatus.CREATED);
     }
 
+    @GetMapping("/me")
+    public ResponseEntity<MyBlogListResDto> findAllMyBlogs(@AuthenticationPrincipal UserDetailsImpl userDetails) {
+        String email = userDetails.getUsername();
+        MyBlogListResDto myBlogListResDto = blogService.findAllMyBlogs(email);
+
+        return new ResponseEntity<>(myBlogListResDto, HttpStatus.OK);
+    }
+
     @GetMapping("/{blogId}")
     public ResponseEntity<BlogDetailResDto> findBlogById(@PathVariable Long blogId) {
         BlogDetailResDto blogDetailResDto = blogService.findBlogById(blogId);
@@ -88,8 +96,8 @@ public class BlogController {
 
     @PostMapping("/{blogId}/ticket-items")
     public ResponseEntity<BlogTicketItemDetailsResDto> addTicketItemById(@AuthenticationPrincipal UserDetailsImpl userDetails,
-                                                                          @PathVariable Long blogId,
-                                                                          @Valid @RequestBody BlogTicketItemReqDto blogTicketItemReqDto) {
+                                                                         @PathVariable Long blogId,
+                                                                         @Valid @RequestBody BlogTicketItemReqDto blogTicketItemReqDto) {
         String email = userDetails.getUsername();
         BlogTicketItemDetailsResDto blogTicketItemDetailsResDto = blogService.addTicketItemById(
                 email,
@@ -102,8 +110,8 @@ public class BlogController {
 
     @DeleteMapping("/{blogId}/ticket-items/{itemId}")
     public ResponseEntity<Void> deleteTicketItemById(@AuthenticationPrincipal UserDetailsImpl userDetails,
-                                                      @PathVariable Long blogId,
-                                                      @PathVariable Long itemId) {
+                                                     @PathVariable Long blogId,
+                                                     @PathVariable Long itemId) {
         String email = userDetails.getUsername();
         blogService.deleteTicketItemById(email, blogId, itemId);
 

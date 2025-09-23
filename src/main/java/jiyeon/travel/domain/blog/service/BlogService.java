@@ -51,6 +51,11 @@ public class BlogService {
     }
 
     @Transactional(readOnly = true)
+    public MyBlogListResDto findAllMyBlogs(String email) {
+        return blogRepository.findAllMyBlogs(email);
+    }
+
+    @Transactional(readOnly = true)
     public BlogDetailResDto findBlogById(Long blogId) {
         Blog blog = blogRepository.findById(blogId)
                 .orElseThrow(() -> new CustomException(ErrorCode.BLOG_NOT_FOUND));
