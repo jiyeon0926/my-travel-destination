@@ -9,6 +9,8 @@ import jiyeon.travel.domain.user.service.UserService;
 import jiyeon.travel.global.exception.CustomException;
 import jiyeon.travel.global.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -54,8 +56,15 @@ public class BlogService {
     }
 
     @Transactional(readOnly = true)
-    public MyBlogListResDto findAllMyBlogs(String email) {
+    public BlogListResDto findAllMyBlogs(String email) {
         return blogRepository.findAllMyBlogs(email);
+    }
+
+    @Transactional(readOnly = true)
+    public BlogListResDto searchBlogs(int page, int size, String title, LocalDate travelStartDate, LocalDate travelEndDate, Integer totalExpense) {
+        Pageable pageable = PageRequest.of(page - 1, size);
+
+        return blogRepository.searchBlogs(pageable, title, travelStartDate, travelEndDate, totalExpense);
     }
 
     @Transactional(readOnly = true)

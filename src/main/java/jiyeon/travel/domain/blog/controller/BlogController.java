@@ -11,6 +11,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @RestController
@@ -41,11 +42,23 @@ public class BlogController {
     }
 
     @GetMapping("/me")
-    public ResponseEntity<MyBlogListResDto> findAllMyBlogs(@AuthenticationPrincipal UserDetailsImpl userDetails) {
+    public ResponseEntity<BlogListResDto> findAllMyBlogs(@AuthenticationPrincipal UserDetailsImpl userDetails) {
         String email = userDetails.getUsername();
-        MyBlogListResDto myBlogListResDto = blogService.findAllMyBlogs(email);
+        BlogListResDto blogListResDto = blogService.findAllMyBlogs(email);
 
-        return new ResponseEntity<>(myBlogListResDto, HttpStatus.OK);
+        return new ResponseEntity<>(blogListResDto, HttpStatus.OK);
+    }
+
+    @GetMapping("/search")
+    public ResponseEntity<BlogListResDto> searchBlogs(@RequestParam(defaultValue = "1") int page,
+                                                      @RequestParam(defaultValue = "10") int size,
+                                                      @RequestParam(required = false) String title,
+                                                      @RequestParam(required = false) LocalDate travelStartDate,
+                                                      @RequestParam(required = false) LocalDate travelEndDate,
+                                                      @RequestParam(required = false) Integer totalExpense) {
+        BlogListResDto blogListResDto = blogService.searchBlogs(page, size, title, travelStartDate, travelEndDate, totalExpense);
+
+        return new ResponseEntity<>(blogListResDto, HttpStatus.OK);
     }
 
     @GetMapping("/{blogId}")

@@ -7,7 +7,7 @@ import java.util.List;
 
 @Getter
 @RequiredArgsConstructor
-public class MyBlogListResDto {
+public class BlogListResDto {
 
     private final Long total;
     private final List<BlogPreviewResDto> blogs;
