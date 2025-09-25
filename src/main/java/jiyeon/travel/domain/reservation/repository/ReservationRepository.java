@@ -15,6 +15,8 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long>,
     @Query("select r from Reservation r inner join fetch r.user u where r.id = :id and u.email = :email and r.status = :status")
     Optional<Reservation> findByIdAndEmailAndStatus(Long id, String email, ReservationStatus status);
 
+    List<Reservation> findAllByStatus(ReservationStatus status);
+
     @Query("select r from Reservation r inner join fetch r.user u where u.email = :email and r.status = :status")
     List<Reservation> findAllByEmailAndStatus(String email, ReservationStatus status);
 

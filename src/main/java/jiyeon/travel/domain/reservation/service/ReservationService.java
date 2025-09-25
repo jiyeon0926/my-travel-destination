@@ -22,6 +22,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -83,6 +84,7 @@ public class ReservationService {
         return new ReservationDetailResDto(reservation, ticket, ticketSchedule, reservationOptions);
     }
 
+    @Transactional
     public void confirmReservationPayment(Long reservationId) {
         Reservation reservation = getReservationByIdWithTicketAndSchedule(reservationId);
         TicketSchedule ticketSchedule = reservation.getTicketSchedule();
@@ -97,6 +99,18 @@ public class ReservationService {
         if (isSoldOut) {
             ticket.changeSaleStatus(TicketSaleStatus.SOLD_OUT);
         }
+    }
+
+    @Transactional
+    public void deleteExpiredReservations() {
+        List<Reservation> reservations = reservationRepository.findAllByStatus(ReservationStatus.UNPAID);
+        LocalDateTime now = LocalDateTime.now();
+
+        List<Reservation> expiredReservations = reservations.stream()
+                .filter(reservation -> reservation.getCreatedAt().plusMinutes(30).isBefore(now))
+                .toList();
+
+        reservationRepository.deleteAll(expiredReservations);
     }
 
     public Reservation getReservationByIdWithTicketAndSchedule(Long reservationId) {

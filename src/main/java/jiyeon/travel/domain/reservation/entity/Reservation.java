@@ -56,13 +56,13 @@ public class Reservation extends BaseEntity {
 
     private LocalDateTime cancelledAt;
 
-    @OneToMany(mappedBy = "reservation")
+    @OneToMany(mappedBy = "reservation", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ReservationOption> reservationOptions = new ArrayList<>();
 
-    @OneToMany(mappedBy = "reservation")
+    @OneToMany(mappedBy = "reservation", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Payment> payments = new ArrayList<>();
 
-    @OneToMany(mappedBy = "reservation")
+    @OneToMany(mappedBy = "reservation", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<BlogTicketItem> blogTicketItems = new ArrayList<>();
 
     public Reservation(User user, TicketSchedule ticketSchedule, int totalQuantity, int totalAmount, String reservationName, String reservationPhone) {
