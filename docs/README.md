@@ -71,6 +71,12 @@
 로그아웃 시에는 Access Token을 Redis에 저장하여, 이후 해당 토큰이 사용될 경우 유효하지 않은 것으로 판별되도록 처리하였습니다. <br/>
 만료되기 전 토큰이어도 로그아웃 직후라면 인증이 불가능합니다.
 
+## 🧾 문서
+프로젝트 진행 과정에서 학습한 내용과 문제 해결 과정을 기록한 문서입니다.
+- [AWS S3 이미지 업로드](https://blog.naver.com/yeondata)
+- [Querydsl을 적용한 Fetch Join](https://velog.io/@yeoni9094/%EB%AC%B8%EC%A0%9C%ED%95%B4%EA%B2%B0-Querydsl%EC%9D%84-%EC%A0%81%EC%9A%A9%ED%95%9C-Fetch-Join)
+- [동시성 제어](https://blog.naver.com/yeondata/224021426407)
+
 ## 🔗 참고
 - [카카오페이 단건 결제 공식 문서](https://developers.kakaopay.com/docs/payment/online/single-payment)
 - [Java 8 Consumer accept() 공식 문서](https://docs.oracle.com/javase/8/docs/api/java/util/function/Consumer.html)
