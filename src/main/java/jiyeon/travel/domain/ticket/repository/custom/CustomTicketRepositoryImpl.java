@@ -2,13 +2,15 @@ package jiyeon.travel.domain.ticket.repository.custom;
 
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import jiyeon.travel.domain.ticket.dto.QTicketSimpleResDto;
+import jiyeon.travel.domain.ticket.dto.QTicketPreviewResDto;
 import jiyeon.travel.domain.ticket.dto.TicketListResDto;
-import jiyeon.travel.domain.ticket.dto.TicketSimpleResDto;
+import jiyeon.travel.domain.ticket.dto.TicketPreviewResDto;
 import jiyeon.travel.domain.ticket.entity.QTicket;
+import jiyeon.travel.domain.ticket.entity.QTicketImage;
 import jiyeon.travel.domain.ticket.entity.QTicketOption;
 import jiyeon.travel.domain.ticket.entity.Ticket;
 import jiyeon.travel.domain.user.entity.QUser;
+import jiyeon.travel.global.common.enums.TicketSaleStatus;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 
@@ -39,33 +41,38 @@ public class CustomTicketRepositoryImpl implements CustomTicketRepository {
     }
 
     @Override
-    public TicketListResDto findAllByEmail(Pageable pageable, String email) {
+    public TicketListResDto searchMyTickets(Pageable pageable, TicketSaleStatus saleStatus, String email) {
         QUser user = QUser.user;
         QTicket ticket = QTicket.ticket;
+        QTicketImage ticketImage = QTicketImage.ticketImage;
+
+        BooleanBuilder conditions = new BooleanBuilder();
+        conditions.and(user.email.eq(email));
+        if (saleStatus != null) conditions.and(ticket.saleStatus.eq(saleStatus));
 
         Long total = Optional.ofNullable(
                         jpaQueryFactory
                                 .select(ticket.count())
                                 .from(ticket)
-                                .innerJoin(ticket.user, user).fetchJoin()
-                                .where(user.email.eq(email))
+                                .innerJoin(user).on(ticket.user.id.eq(user.id))
+                                .where(conditions)
                                 .fetchOne())
                 .orElse(0L);
 
-        List<TicketSimpleResDto> tickets = jpaQueryFactory
-                .select(new QTicketSimpleResDto(
+        List<TicketPreviewResDto> tickets = jpaQueryFactory
+                .select(new QTicketPreviewResDto(
                         ticket.id,
                         ticket.name,
-                        ticket.saleStartDate,
-                        ticket.saleEndDate,
                         ticket.saleStatus.stringValue(),
-                        ticket.createdAt,
-                        ticket.updatedAt
+                        ticketImage.imageUrl,
+                        ticketImage.fileName,
+                        ticketImage.isMain
                 ))
                 .from(ticket)
-                .innerJoin(ticket.user, user).fetchJoin()
-                .where(user.email.eq(email))
-                .orderBy(ticket.createdAt.desc())
+                .leftJoin(ticketImage).on(ticket.id.eq(ticketImage.ticket.id).and(ticketImage.isMain.eq(true)))
+                .innerJoin(user).on(ticket.user.id.eq(user.id))
+                .where(conditions)
+                .orderBy(ticket.saleStartDate.desc(), ticket.createdAt.desc())
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .fetch();

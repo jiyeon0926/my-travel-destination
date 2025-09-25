@@ -76,10 +76,11 @@ public class TicketPartnerService {
     }
 
     @Transactional(readOnly = true)
-    public TicketListResDto findAllMyTickets(int page, int size, String email) {
+    public TicketListResDto searchMyTickets(int page, int size, String saleStatus, String email) {
         Pageable pageable = PageRequest.of(page - 1, size);
+        TicketSaleStatus ticketSaleStatus = saleStatus != null ? TicketSaleStatus.of(saleStatus) : null;
 
-        return ticketRepository.findAllByEmail(pageable, email);
+        return ticketRepository.searchMyTickets(pageable, ticketSaleStatus, email);
     }
 
     @Transactional(readOnly = true)

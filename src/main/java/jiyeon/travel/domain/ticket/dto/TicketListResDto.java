@@ -10,5 +10,5 @@ import java.util.List;
 public class TicketListResDto {
 
     private final Long total;
-    private final List<TicketSimpleResDto> tickets;
+    private final List<TicketPreviewResDto> tickets;
 }

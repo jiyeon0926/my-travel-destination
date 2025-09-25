@@ -42,12 +42,13 @@ public class TicketPartnerController {
         return new ResponseEntity<>(ticketDetailResDto, HttpStatus.CREATED);
     }
 
-    @GetMapping
-    public ResponseEntity<TicketListResDto> findAllMyTickets(@RequestParam(defaultValue = "1") int page,
-                                                             @RequestParam(defaultValue = "10") int size,
-                                                             @AuthenticationPrincipal UserDetailsImpl userDetails) {
+    @GetMapping("/search")
+    public ResponseEntity<TicketListResDto> searchMyTickets(@RequestParam(defaultValue = "1") int page,
+                                                            @RequestParam(defaultValue = "10") int size,
+                                                            @RequestParam(required = false) String saleStatus,
+                                                            @AuthenticationPrincipal UserDetailsImpl userDetails) {
         String email = userDetails.getUsername();
-        TicketListResDto ticketListResDto = ticketPartnerService.findAllMyTickets(page, size, email);
+        TicketListResDto ticketListResDto = ticketPartnerService.searchMyTickets(page, size, saleStatus, email);
 
         return new ResponseEntity<>(ticketListResDto, HttpStatus.OK);
     }
