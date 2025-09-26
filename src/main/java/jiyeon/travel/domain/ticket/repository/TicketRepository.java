@@ -19,6 +19,9 @@ public interface TicketRepository extends JpaRepository<Ticket, Long>, CustomTic
     @Query("select t from Ticket t inner join TicketSchedule s on t.id = s.ticket.id where s.id = :scheduleId")
     Optional<Ticket> findByScheduleId(Long scheduleId);
 
+    @Query("select t from Ticket t left join fetch t.ticketImages i where t.id = :id and t.saleStatus not in ('READY', 'INACTIVE')")
+    Optional<Ticket> findByIdWithImage(Long id);
+
     default Ticket findByIdOrElseThrow(Long id) {
         return this.findById(id)
                 .orElseThrow(() -> new CustomException(ErrorCode.TICKET_NOT_FOUND));

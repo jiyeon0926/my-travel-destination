@@ -27,10 +27,10 @@ public class TicketController {
     }
 
     @GetMapping("/{ticketId}")
-    public ResponseEntity<TicketDetailWithBlogResDto> findActiveTicketById(@PathVariable Long ticketId,
+    public ResponseEntity<TicketDetailWithBlogResDto> findTicketById(@PathVariable Long ticketId,
                                                                            @RequestParam(defaultValue = "1") int page,
                                                                            @RequestParam(defaultValue = "10") int size) {
-        TicketDetailWithBlogResDto ticketDetailWithBlogResDto = ticketService.findActiveTicketById(page, size, ticketId);
+        TicketDetailWithBlogResDto ticketDetailWithBlogResDto = ticketService.findTicketById(page, size, ticketId);
 
         return new ResponseEntity<>(ticketDetailWithBlogResDto, HttpStatus.OK);
     }

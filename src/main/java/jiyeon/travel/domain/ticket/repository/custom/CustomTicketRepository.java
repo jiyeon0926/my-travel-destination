@@ -11,8 +11,6 @@ public interface CustomTicketRepository {
 
     Optional<Ticket> findByIdAndEmailWithOption(Long id, String email);
 
-    Optional<Ticket> findActiveTicketByIdWithOptionAndImage(Long id);
-
     TicketListResDto searchMyTickets(Pageable pageable, TicketSaleStatus saleStatus, String email);
 
     TicketListResDto searchTickets(Pageable pageable, String name);

@@ -34,12 +34,14 @@ public class TicketService {
     }
 
     @Transactional(readOnly = true)
-    public TicketDetailWithBlogResDto findActiveTicketById(int page, int size, Long ticketId) {
-        Ticket ticket = ticketRepository.findActiveTicketByIdWithOptionAndImage(ticketId)
+    public TicketDetailWithBlogResDto findTicketById(int page, int size, Long ticketId) {
+        Ticket ticket = ticketRepository.findByIdWithImage(ticketId)
                 .orElseThrow(() -> new CustomException(ErrorCode.TICKET_NOT_FOUND));
+
+        List<TicketOption> options = ticketQueryService.findOptionsByTicketId(ticketId);
         List<TicketBlogDto> ticketBlogDtos = blogService.findBlogsByTicketId(page, size, ticketId);
 
-        return new TicketDetailWithBlogResDto(ticket, ticket.getTicketOptions(), ticket.getTicketImages(), ticketBlogDtos);
+        return new TicketDetailWithBlogResDto(ticket, options, ticket.getTicketImages(), ticketBlogDtos);
     }
 
     @Transactional(readOnly = true)
