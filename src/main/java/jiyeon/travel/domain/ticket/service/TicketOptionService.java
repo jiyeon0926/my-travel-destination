@@ -62,14 +62,6 @@ public class TicketOptionService {
         return ticketOption;
     }
 
-    public TicketOption getOptionById(Long optionId) {
-        return ticketOptionRepository.findByIdOrElseThrow(optionId);
-    }
-
-    public List<TicketOption> findOptionsByTicketId(Long ticketId) {
-        return ticketOptionRepository.findAllByTicketIdOrderByPriceAsc(ticketId);
-    }
-
     private <T> void acceptIfNotNull(T t, Consumer<T> consumer) {
         if (t != null) consumer.accept(t);
     }

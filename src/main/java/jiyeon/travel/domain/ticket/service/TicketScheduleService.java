@@ -82,15 +82,6 @@ public class TicketScheduleService {
         return ticketSchedule;
     }
 
-    public TicketSchedule getActiveSchedule(Long scheduleId) {
-        return ticketScheduleRepository.findByIdAndIsActiveTrue(scheduleId)
-                .orElseThrow(() -> new CustomException(ErrorCode.TICKET_SCHEDULE_NOT_FOUND));
-    }
-
-    public List<TicketSchedule> findActiveSchedulesByTicketId(Long ticketId) {
-        return ticketScheduleRepository.findAllByTicketIdAndIsActiveTrueOrderByStartDateAsc(ticketId);
-    }
-
     private void validateNullTimeSchedules(List<TicketScheduleCreateReqDto> schedules) {
         schedules.stream()
                 .collect(Collectors.groupingBy(TicketScheduleCreateReqDto::getStartDate))

@@ -23,8 +23,7 @@ import java.util.List;
 public class TicketService {
 
     private final TicketRepository ticketRepository;
-    private final TicketOptionService ticketOptionService;
-    private final TicketScheduleService ticketScheduleService;
+    private final TicketQueryService ticketQueryService;
     private final BlogService blogService;
 
     @Transactional(readOnly = true)
@@ -46,7 +45,7 @@ public class TicketService {
     @Transactional(readOnly = true)
     public TicketScheduleDetailsResDto getScheduleById(Long ticketId) {
         Ticket ticket = ticketRepository.findByIdOrElseThrow(ticketId);
-        List<TicketSchedule> schedules = ticketScheduleService.findActiveSchedulesByTicketId(ticketId);
+        List<TicketSchedule> schedules = ticketQueryService.findActiveSchedulesByTicketId(ticketId);
 
         return new TicketScheduleDetailsResDto(ticket, schedules);
     }
@@ -54,7 +53,7 @@ public class TicketService {
     @Transactional(readOnly = true)
     public TicketOptionDetailsResDto getBaseOrOptionById(Long ticketId) {
         Ticket ticket = ticketRepository.findByIdOrElseThrow(ticketId);
-        List<TicketOption> options = ticketOptionService.findOptionsByTicketId(ticketId);
+        List<TicketOption> options = ticketQueryService.findOptionsByTicketId(ticketId);
 
         List<TicketOptionDto> optionDtos = options.isEmpty()
                 ? List.of(new TicketOptionDto(null, "기본", ticket.getBasePrice()))
@@ -78,22 +77,5 @@ public class TicketService {
                 ticket.changeSaleStatus(TicketSaleStatus.CLOSED);
             }
         });
-    }
-
-    public Ticket getTicketByScheduleId(Long scheduleId) {
-        return ticketRepository.findByScheduleId(scheduleId)
-                .orElseThrow(() -> new CustomException(ErrorCode.TICKET_NOT_FOUND));
-    }
-
-    public TicketOption getOptionById(Long optionId) {
-        return ticketOptionService.getOptionById(optionId);
-    }
-
-    public TicketSchedule getActiveSchedule(Long scheduleId) {
-        return ticketScheduleService.getActiveSchedule(scheduleId);
-    }
-
-    public List<TicketSchedule> findActiveSchedulesByTicketId(Long ticketId) {
-        return ticketScheduleService.findActiveSchedulesByTicketId(ticketId);
     }
 }

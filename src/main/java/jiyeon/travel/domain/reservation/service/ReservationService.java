@@ -10,7 +10,7 @@ import jiyeon.travel.domain.reservation.repository.ReservationRepository;
 import jiyeon.travel.domain.ticket.entity.Ticket;
 import jiyeon.travel.domain.ticket.entity.TicketOption;
 import jiyeon.travel.domain.ticket.entity.TicketSchedule;
-import jiyeon.travel.domain.ticket.service.TicketService;
+import jiyeon.travel.domain.ticket.service.TicketQueryService;
 import jiyeon.travel.domain.user.entity.User;
 import jiyeon.travel.domain.user.service.UserService;
 import jiyeon.travel.global.common.enums.ReservationStatus;
@@ -32,15 +32,15 @@ public class ReservationService {
     private final ReservationRepository reservationRepository;
     private final ReservationOptionRepository reservationOptionRepository;
     private final UserService userService;
-    private final TicketService ticketService;
+    private final TicketQueryService ticketQueryService;
 
     @Transactional
     public ReservationDetailResDto createReservation(String email, Long scheduleId, Integer baseQuantity,
                                                      String reservationName, String reservationPhone,
                                                      List<ReservationOptionCreateReqDto> options) {
         User user = userService.getActiveUserByEmail(email);
-        TicketSchedule ticketSchedule = ticketService.getActiveSchedule(scheduleId);
-        Ticket ticket = ticketService.getTicketByScheduleId(scheduleId);
+        TicketSchedule ticketSchedule = ticketQueryService.getActiveSchedule(scheduleId);
+        Ticket ticket = ticketQueryService.getTicketByScheduleId(scheduleId);
 
         if (ticket.isNotActiveStatus()) {
             throw new CustomException(ErrorCode.RESERVATION_ONLY_WHEN_ON_SALE);
@@ -93,7 +93,7 @@ public class ReservationService {
         reservation.changeStatus(ReservationStatus.PAID);
 
         Ticket ticket = ticketSchedule.getTicket();
-        List<TicketSchedule> ticketSchedules = ticketService.findActiveSchedulesByTicketId(ticket.getId());
+        List<TicketSchedule> ticketSchedules = ticketQueryService.findActiveSchedulesByTicketId(ticket.getId());
 
         boolean isSoldOut = ticketSchedules.stream().allMatch(TicketSchedule::isSoldOut);
         if (isSoldOut) {
@@ -183,7 +183,7 @@ public class ReservationService {
 
         int totalAmount = options.stream()
                 .mapToInt(option -> {
-                    TicketOption ticketOption = ticketService.getOptionById(option.getOptionId());
+                    TicketOption ticketOption = ticketQueryService.getOptionById(option.getOptionId());
 
                     return ticketOption.getPrice() * option.getQuantity();
                 })
@@ -196,7 +196,7 @@ public class ReservationService {
 
         List<ReservationOption> reservationOptions = options.stream()
                 .map(option -> {
-                    TicketOption ticketOption = ticketService.getOptionById(option.getOptionId());
+                    TicketOption ticketOption = ticketQueryService.getOptionById(option.getOptionId());
                     ReservationOption reservationOption = new ReservationOption(savedReservation, ticketOption, option.getQuantity(), ticketOption.getPrice());
 
                     return reservationOptionRepository.save(reservationOption);
