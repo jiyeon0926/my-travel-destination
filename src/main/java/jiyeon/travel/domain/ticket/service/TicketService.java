@@ -57,16 +57,16 @@ public class TicketService {
 
     @Transactional
     public void activeOrClosedSaleStatus() {
-        List<Ticket> tickets = ticketRepository.findAllBySaleStatus(TicketSaleStatus.READY);
+        List<Ticket> tickets = ticketRepository.findAll();
 
         tickets.forEach(ticket -> {
             LocalDateTime now = LocalDateTime.now();
 
-            if (ticket.hasSaleStarted(now)) {
+            if (ticket.isReadyStatus() && ticket.hasSaleStarted(now)) {
                 ticket.changeSaleStatus(TicketSaleStatus.ACTIVE);
             }
 
-            if (ticket.hasSaleEnded(now)) {
+            if (ticket.isActiveStatus() && ticket.hasSaleEnded(now)) {
                 ticket.changeSaleStatus(TicketSaleStatus.CLOSED);
             }
         });
