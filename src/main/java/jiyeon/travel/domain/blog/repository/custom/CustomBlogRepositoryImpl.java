@@ -7,6 +7,12 @@ import jiyeon.travel.domain.blog.dto.BlogPreviewResDto;
 import jiyeon.travel.domain.blog.dto.QBlogPreviewResDto;
 import jiyeon.travel.domain.blog.entity.QBlog;
 import jiyeon.travel.domain.blog.entity.QBlogImage;
+import jiyeon.travel.domain.blog.entity.QBlogTicketItem;
+import jiyeon.travel.domain.reservation.entity.QReservation;
+import jiyeon.travel.domain.ticket.dto.QTicketBlogDto;
+import jiyeon.travel.domain.ticket.dto.TicketBlogDto;
+import jiyeon.travel.domain.ticket.entity.QTicket;
+import jiyeon.travel.domain.ticket.entity.QTicketSchedule;
 import jiyeon.travel.domain.user.entity.QUser;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
@@ -88,5 +94,32 @@ public class CustomBlogRepositoryImpl implements CustomBlogRepository {
                 .fetch();
 
         return new BlogListResDto(total, blogs);
+    }
+
+    @Override
+    public List<TicketBlogDto> findAllByTicketId(Pageable pageable, Long ticketId) {
+        QBlog blog = QBlog.blog;
+        QBlogTicketItem blogTicketItem = QBlogTicketItem.blogTicketItem;
+        QReservation reservation = QReservation.reservation;
+        QTicketSchedule ticketSchedule = QTicketSchedule.ticketSchedule;
+        QTicket ticket = QTicket.ticket;
+
+        return jpaQueryFactory
+                .select(new QTicketBlogDto(
+                        blog.id,
+                        blog.title,
+                        blog.createdAt
+                ))
+                .from(blog)
+                .innerJoin(blog.blogTicketItems, blogTicketItem).fetchJoin()
+                .innerJoin(blogTicketItem.reservation, reservation).fetchJoin()
+                .innerJoin(reservation.ticketSchedule, ticketSchedule).fetchJoin()
+                .innerJoin(ticketSchedule.ticket, ticket).fetchJoin()
+                .where(ticket.id.eq(ticketId))
+                .groupBy(blog.id)
+                .orderBy(blog.createdAt.desc())
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
+                .fetch();
     }
 }

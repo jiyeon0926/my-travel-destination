@@ -4,6 +4,7 @@ import jiyeon.travel.domain.blog.dto.*;
 import jiyeon.travel.domain.blog.entity.Blog;
 import jiyeon.travel.domain.blog.entity.BlogImage;
 import jiyeon.travel.domain.blog.repository.BlogRepository;
+import jiyeon.travel.domain.ticket.dto.TicketBlogDto;
 import jiyeon.travel.domain.user.entity.User;
 import jiyeon.travel.domain.user.service.UserService;
 import jiyeon.travel.global.exception.CustomException;
@@ -133,6 +134,12 @@ public class BlogService {
     @Transactional
     public void deleteTicketItemById(String email, Long blogId, Long itemId) {
         blogTicketItemService.deleteTicketItem(email, blogId, itemId);
+    }
+
+    public List<TicketBlogDto> findBlogsByTicketId(int page, int size, Long ticketId) {
+        Pageable pageable = PageRequest.of(page - 1, size);
+
+        return blogRepository.findAllByTicketId(pageable, ticketId);
     }
 
     private void validateTravelRange(LocalDate travelStartDate, LocalDate travelEndDate) {

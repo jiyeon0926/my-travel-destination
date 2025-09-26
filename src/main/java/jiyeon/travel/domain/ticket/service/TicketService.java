@@ -1,9 +1,7 @@
 package jiyeon.travel.domain.ticket.service;
 
-import jiyeon.travel.domain.ticket.dto.TicketListResDto;
-import jiyeon.travel.domain.ticket.dto.TicketOptionDetailsResDto;
-import jiyeon.travel.domain.ticket.dto.TicketOptionDto;
-import jiyeon.travel.domain.ticket.dto.TicketScheduleDetailsResDto;
+import jiyeon.travel.domain.blog.service.BlogService;
+import jiyeon.travel.domain.ticket.dto.*;
 import jiyeon.travel.domain.ticket.entity.Ticket;
 import jiyeon.travel.domain.ticket.entity.TicketOption;
 import jiyeon.travel.domain.ticket.entity.TicketSchedule;
@@ -27,12 +25,22 @@ public class TicketService {
     private final TicketRepository ticketRepository;
     private final TicketOptionService ticketOptionService;
     private final TicketScheduleService ticketScheduleService;
+    private final BlogService blogService;
 
     @Transactional(readOnly = true)
     public TicketListResDto searchTickets(int page, int size, String name) {
         Pageable pageable = PageRequest.of(page - 1, size);
 
         return ticketRepository.searchTickets(pageable, name);
+    }
+
+    @Transactional(readOnly = true)
+    public TicketDetailWithBlogResDto findActiveTicketById(int page, int size, Long ticketId) {
+        Ticket ticket = ticketRepository.findActiveTicketByIdWithOptionAndImage(ticketId)
+                .orElseThrow(() -> new CustomException(ErrorCode.TICKET_NOT_FOUND));
+        List<TicketBlogDto> ticketBlogDtos = blogService.findBlogsByTicketId(page, size, ticketId);
+
+        return new TicketDetailWithBlogResDto(ticket, ticket.getTicketOptions(), ticket.getTicketImages(), ticketBlogDtos);
     }
 
     @Transactional(readOnly = true)

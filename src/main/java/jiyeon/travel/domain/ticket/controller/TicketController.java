@@ -1,5 +1,6 @@
 package jiyeon.travel.domain.ticket.controller;
 
+import jiyeon.travel.domain.ticket.dto.TicketDetailWithBlogResDto;
 import jiyeon.travel.domain.ticket.dto.TicketListResDto;
 import jiyeon.travel.domain.ticket.dto.TicketOptionDetailsResDto;
 import jiyeon.travel.domain.ticket.dto.TicketScheduleDetailsResDto;
@@ -23,6 +24,15 @@ public class TicketController {
         TicketListResDto ticketListResDto = ticketService.searchTickets(page, size, name);
 
         return new ResponseEntity<>(ticketListResDto, HttpStatus.OK);
+    }
+
+    @GetMapping("/{ticketId}")
+    public ResponseEntity<TicketDetailWithBlogResDto> findActiveTicketById(@PathVariable Long ticketId,
+                                                                           @RequestParam(defaultValue = "1") int page,
+                                                                           @RequestParam(defaultValue = "10") int size) {
+        TicketDetailWithBlogResDto ticketDetailWithBlogResDto = ticketService.findActiveTicketById(page, size, ticketId);
+
+        return new ResponseEntity<>(ticketDetailWithBlogResDto, HttpStatus.OK);
     }
 
     @GetMapping("/{ticketId}/options")

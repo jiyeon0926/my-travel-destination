@@ -41,6 +41,24 @@ public class CustomTicketRepositoryImpl implements CustomTicketRepository {
     }
 
     @Override
+    public Optional<Ticket> findActiveTicketByIdWithOptionAndImage(Long id) {
+        QTicket ticket = QTicket.ticket;
+        QTicketOption ticketOption = QTicketOption.ticketOption;
+        QTicketImage ticketImage = QTicketImage.ticketImage;
+
+        BooleanBuilder conditions = new BooleanBuilder();
+        conditions.and(ticket.id.eq(id));
+        conditions.and(ticket.saleStatus.eq(TicketSaleStatus.ACTIVE));
+
+        return Optional.ofNullable(jpaQueryFactory
+                .selectFrom(ticket)
+                .innerJoin(ticket.ticketOptions, ticketOption).fetchJoin()
+                .innerJoin(ticket.ticketImages, ticketImage).fetchJoin()
+                .where(conditions)
+                .fetchOne());
+    }
+
+    @Override
     public TicketListResDto searchMyTickets(Pageable pageable, TicketSaleStatus saleStatus, String email) {
         QUser user = QUser.user;
         QTicket ticket = QTicket.ticket;
