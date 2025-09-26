@@ -1,5 +1,6 @@
 package jiyeon.travel.domain.ticket.service;
 
+import jiyeon.travel.domain.ticket.dto.TicketListResDto;
 import jiyeon.travel.domain.ticket.dto.TicketOptionDetailsResDto;
 import jiyeon.travel.domain.ticket.dto.TicketOptionDto;
 import jiyeon.travel.domain.ticket.dto.TicketScheduleDetailsResDto;
@@ -11,6 +12,8 @@ import jiyeon.travel.global.common.enums.TicketSaleStatus;
 import jiyeon.travel.global.exception.CustomException;
 import jiyeon.travel.global.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -24,6 +27,13 @@ public class TicketService {
     private final TicketRepository ticketRepository;
     private final TicketOptionService ticketOptionService;
     private final TicketScheduleService ticketScheduleService;
+
+    @Transactional(readOnly = true)
+    public TicketListResDto searchTickets(int page, int size, String name) {
+        Pageable pageable = PageRequest.of(page - 1, size);
+
+        return ticketRepository.searchTickets(pageable, name);
+    }
 
     @Transactional(readOnly = true)
     public TicketScheduleDetailsResDto getScheduleById(Long ticketId) {

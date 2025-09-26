@@ -24,10 +24,10 @@ public class WebConfig {
 
     private static final String[] WHITE_LIST = {
             "/api/auth/signup", "/api/auth/login",
+            "/api/tickets/search",
             "/api/blogs/search",
             "/api/reservations/{reservationId}/payments/completed",
-            "/payments/cancel",
-            "/payments/fail"
+            "/payments/cancel", "/payments/fail"
     };
 
     private final JwtAuthFilter jwtAuthFilter;

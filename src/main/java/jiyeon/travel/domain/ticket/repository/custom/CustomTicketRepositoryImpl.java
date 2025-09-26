@@ -79,4 +79,41 @@ public class CustomTicketRepositoryImpl implements CustomTicketRepository {
 
         return new TicketListResDto(total, tickets);
     }
+
+    @Override
+    public TicketListResDto searchTickets(Pageable pageable, String name) {
+        QTicket ticket = QTicket.ticket;
+        QTicketImage ticketImage = QTicketImage.ticketImage;
+
+        BooleanBuilder conditions = new BooleanBuilder();
+        conditions.and(ticket.saleStatus.eq(TicketSaleStatus.ACTIVE));
+        if (name != null) conditions.and(ticket.name.contains(name));
+
+        Long total = Optional.ofNullable(
+                        jpaQueryFactory
+                                .select(ticket.count())
+                                .from(ticket)
+                                .where(conditions)
+                                .fetchOne())
+                .orElse(0L);
+
+        List<TicketPreviewResDto> tickets = jpaQueryFactory
+                .select(new QTicketPreviewResDto(
+                        ticket.id,
+                        ticket.name,
+                        ticket.saleStatus.stringValue(),
+                        ticketImage.imageUrl,
+                        ticketImage.fileName,
+                        ticketImage.isMain
+                ))
+                .from(ticket)
+                .leftJoin(ticketImage).on(ticket.id.eq(ticketImage.ticket.id).and(ticketImage.isMain.eq(true)))
+                .where(conditions)
+                .orderBy(ticket.saleStartDate.desc(), ticket.createdAt.desc())
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
+                .fetch();
+
+        return new TicketListResDto(total, tickets);
+    }
 }
