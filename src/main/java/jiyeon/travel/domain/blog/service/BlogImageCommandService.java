@@ -21,7 +21,7 @@ import java.util.stream.IntStream;
 
 @Service
 @RequiredArgsConstructor
-public class BlogImageService {
+public class BlogImageCommandService {
 
     private final BlogImageRepository blogImageRepository;
     private final S3Service s3Service;

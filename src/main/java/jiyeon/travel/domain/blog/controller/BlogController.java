@@ -2,7 +2,8 @@ package jiyeon.travel.domain.blog.controller;
 
 import jakarta.validation.Valid;
 import jiyeon.travel.domain.blog.dto.*;
-import jiyeon.travel.domain.blog.service.BlogService;
+import jiyeon.travel.domain.blog.service.BlogCommandService;
+import jiyeon.travel.domain.blog.service.BlogQueryService;
 import jiyeon.travel.global.auth.UserDetailsImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -19,14 +20,15 @@ import java.util.List;
 @RequiredArgsConstructor
 public class BlogController {
 
-    private final BlogService blogService;
+    private final BlogCommandService blogCommandService;
+    private final BlogQueryService blogQueryService;
 
     @PostMapping
     public ResponseEntity<BlogDetailResDto> createBlog(@AuthenticationPrincipal UserDetailsImpl userDetails,
                                                        @Valid @RequestPart("blog") BlogCreateReqDto blogCreateReqDto,
                                                        @RequestPart(value = "images", required = false) List<MultipartFile> files) {
         String email = userDetails.getUsername();
-        BlogDetailResDto blogDetailResDto = blogService.createBlog(
+        BlogDetailResDto blogDetailResDto = blogCommandService.createBlog(
                 email,
                 blogCreateReqDto.getTitle(),
                 blogCreateReqDto.getContent(),
@@ -41,40 +43,28 @@ public class BlogController {
         return new ResponseEntity<>(blogDetailResDto, HttpStatus.CREATED);
     }
 
-    @GetMapping("/me")
-    public ResponseEntity<BlogListResDto> findAllMyBlogs(@AuthenticationPrincipal UserDetailsImpl userDetails) {
+    @PostMapping("/{blogId}/images")
+    public ResponseEntity<BlogImageDetailsResDto> addImageById(@AuthenticationPrincipal UserDetailsImpl userDetails,
+                                                               @PathVariable Long blogId,
+                                                               @RequestParam("images") List<MultipartFile> files) {
         String email = userDetails.getUsername();
-        BlogListResDto blogListResDto = blogService.findAllMyBlogs(email);
+        BlogImageDetailsResDto blogImageDetailsResDto = blogCommandService.addImageById(email, blogId, files);
 
-        return new ResponseEntity<>(blogListResDto, HttpStatus.OK);
+        return new ResponseEntity<>(blogImageDetailsResDto, HttpStatus.CREATED);
     }
 
-    @GetMapping("/search")
-    public ResponseEntity<BlogListResDto> searchBlogs(@RequestParam(defaultValue = "1") int page,
-                                                      @RequestParam(defaultValue = "10") int size,
-                                                      @RequestParam(required = false) String title,
-                                                      @RequestParam(required = false) LocalDate travelStartDate,
-                                                      @RequestParam(required = false) LocalDate travelEndDate,
-                                                      @RequestParam(required = false) Integer totalExpense) {
-        BlogListResDto blogListResDto = blogService.searchBlogs(page, size, title, travelStartDate, travelEndDate, totalExpense);
-
-        return new ResponseEntity<>(blogListResDto, HttpStatus.OK);
-    }
-
-    @GetMapping("/{blogId}")
-    public ResponseEntity<BlogDetailResDto> findBlogById(@PathVariable Long blogId) {
-        BlogDetailResDto blogDetailResDto = blogService.findBlogById(blogId);
-
-        return new ResponseEntity<>(blogDetailResDto, HttpStatus.OK);
-    }
-
-    @DeleteMapping("/{blogId}")
-    public ResponseEntity<Void> deleteBlogById(@AuthenticationPrincipal UserDetailsImpl userDetails,
-                                               @PathVariable Long blogId) {
+    @PostMapping("/{blogId}/ticket-items")
+    public ResponseEntity<BlogTicketItemDetailsResDto> addTicketItemById(@AuthenticationPrincipal UserDetailsImpl userDetails,
+                                                                         @PathVariable Long blogId,
+                                                                         @Valid @RequestBody BlogTicketItemReqDto blogTicketItemReqDto) {
         String email = userDetails.getUsername();
-        blogService.deleteBlogById(email, blogId);
+        BlogTicketItemDetailsResDto blogTicketItemDetailsResDto = blogCommandService.addTicketItemById(
+                email,
+                blogId,
+                blogTicketItemReqDto.getReservationId()
+        );
 
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        return new ResponseEntity<>(blogTicketItemDetailsResDto, HttpStatus.CREATED);
     }
 
     @PatchMapping("/{blogId}")
@@ -82,7 +72,7 @@ public class BlogController {
                                                            @PathVariable Long blogId,
                                                            @RequestBody BlogUpdateReqDto blogUpdateReqDto) {
         String email = userDetails.getUsername();
-        BlogSimpleResDto blogSimpleResDto = blogService.updateBlogById(
+        BlogSimpleResDto blogSimpleResDto = blogCommandService.updateBlogById(
                 email,
                 blogId,
                 blogUpdateReqDto.getTitle(),
@@ -96,14 +86,23 @@ public class BlogController {
         return new ResponseEntity<>(blogSimpleResDto, HttpStatus.OK);
     }
 
-    @PostMapping("/{blogId}/images")
-    public ResponseEntity<BlogImageDetailsResDto> addImageById(@AuthenticationPrincipal UserDetailsImpl userDetails,
-                                                               @PathVariable Long blogId,
-                                                               @RequestParam("images") List<MultipartFile> files) {
+    @PatchMapping("/{blogId}/images/{imageId}/main")
+    public ResponseEntity<BlogImageDetailResDto> changeImageMainById(@AuthenticationPrincipal UserDetailsImpl userDetails,
+                                                                     @PathVariable Long blogId,
+                                                                     @PathVariable Long imageId) {
         String email = userDetails.getUsername();
-        BlogImageDetailsResDto blogImageDetailsResDto = blogService.addImageById(email, blogId, files);
+        BlogImageDetailResDto blogImageDetailResDto = blogCommandService.changeImageMainById(email, blogId, imageId);
 
-        return new ResponseEntity<>(blogImageDetailsResDto, HttpStatus.CREATED);
+        return new ResponseEntity<>(blogImageDetailResDto, HttpStatus.OK);
+    }
+
+    @DeleteMapping("/{blogId}")
+    public ResponseEntity<Void> deleteBlogById(@AuthenticationPrincipal UserDetailsImpl userDetails,
+                                               @PathVariable Long blogId) {
+        String email = userDetails.getUsername();
+        blogCommandService.deleteBlogById(email, blogId);
+
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
     @DeleteMapping("/{blogId}/images/{imageId}")
@@ -111,33 +110,9 @@ public class BlogController {
                                                 @PathVariable Long blogId,
                                                 @PathVariable Long imageId) {
         String email = userDetails.getUsername();
-        blogService.deleteImageById(email, blogId, imageId);
+        blogCommandService.deleteImageById(email, blogId, imageId);
 
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-    }
-
-    @PatchMapping("/{blogId}/images/{imageId}/main")
-    public ResponseEntity<BlogImageDetailResDto> changeImageMainById(@AuthenticationPrincipal UserDetailsImpl userDetails,
-                                                                     @PathVariable Long blogId,
-                                                                     @PathVariable Long imageId) {
-        String email = userDetails.getUsername();
-        BlogImageDetailResDto blogImageDetailResDto = blogService.changeImageMainById(email, blogId, imageId);
-
-        return new ResponseEntity<>(blogImageDetailResDto, HttpStatus.OK);
-    }
-
-    @PostMapping("/{blogId}/ticket-items")
-    public ResponseEntity<BlogTicketItemDetailsResDto> addTicketItemById(@AuthenticationPrincipal UserDetailsImpl userDetails,
-                                                                         @PathVariable Long blogId,
-                                                                         @Valid @RequestBody BlogTicketItemReqDto blogTicketItemReqDto) {
-        String email = userDetails.getUsername();
-        BlogTicketItemDetailsResDto blogTicketItemDetailsResDto = blogService.addTicketItemById(
-                email,
-                blogId,
-                blogTicketItemReqDto.getReservationId()
-        );
-
-        return new ResponseEntity<>(blogTicketItemDetailsResDto, HttpStatus.CREATED);
     }
 
     @DeleteMapping("/{blogId}/ticket-items/{itemId}")
@@ -145,8 +120,35 @@ public class BlogController {
                                                      @PathVariable Long blogId,
                                                      @PathVariable Long itemId) {
         String email = userDetails.getUsername();
-        blogService.deleteTicketItemById(email, blogId, itemId);
+        blogCommandService.deleteTicketItemById(email, blogId, itemId);
 
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
+    @GetMapping("/{blogId}")
+    public ResponseEntity<BlogDetailResDto> findBlogById(@PathVariable Long blogId) {
+        BlogDetailResDto blogDetailResDto = blogQueryService.findBlogById(blogId);
+
+        return new ResponseEntity<>(blogDetailResDto, HttpStatus.OK);
+    }
+
+    @GetMapping("/me")
+    public ResponseEntity<BlogListResDto> findAllMyBlogs(@AuthenticationPrincipal UserDetailsImpl userDetails) {
+        String email = userDetails.getUsername();
+        BlogListResDto blogListResDto = blogQueryService.findAllMyBlogs(email);
+
+        return new ResponseEntity<>(blogListResDto, HttpStatus.OK);
+    }
+
+    @GetMapping("/search")
+    public ResponseEntity<BlogListResDto> searchBlogs(@RequestParam(defaultValue = "1") int page,
+                                                      @RequestParam(defaultValue = "10") int size,
+                                                      @RequestParam(required = false) String title,
+                                                      @RequestParam(required = false) LocalDate travelStartDate,
+                                                      @RequestParam(required = false) LocalDate travelEndDate,
+                                                      @RequestParam(required = false) Integer totalExpense) {
+        BlogListResDto blogListResDto = blogQueryService.searchBlogs(page, size, title, travelStartDate, travelEndDate, totalExpense);
+
+        return new ResponseEntity<>(blogListResDto, HttpStatus.OK);
     }
 }

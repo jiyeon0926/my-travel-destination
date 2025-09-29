@@ -1,6 +1,5 @@
 package jiyeon.travel.domain.blog.service;
 
-import jiyeon.travel.domain.blog.dto.BlogTicketItemDto;
 import jiyeon.travel.domain.blog.dto.BlogTicketItemReqDto;
 import jiyeon.travel.domain.blog.entity.Blog;
 import jiyeon.travel.domain.blog.entity.BlogTicketItem;
@@ -20,7 +19,7 @@ import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
-public class BlogTicketItemService {
+public class BlogTicketItemCommandService {
 
     private final BlogTicketItemRepository blogTicketItemRepository;
     private final ReservationService reservationService;
@@ -64,9 +63,5 @@ public class BlogTicketItemService {
                 .orElseThrow(() -> new CustomException(ErrorCode.BLOG_TICKET_ITEM_NOT_FOUND));
 
         blogTicketItemRepository.delete(blogTicketItem);
-    }
-
-    public List<BlogTicketItemDto> findTicketItemsByBlogId(Long blogId) {
-        return blogTicketItemRepository.findDetailsByBlogId(blogId);
     }
 }

@@ -4,14 +4,11 @@ import jiyeon.travel.domain.blog.dto.*;
 import jiyeon.travel.domain.blog.entity.Blog;
 import jiyeon.travel.domain.blog.entity.BlogImage;
 import jiyeon.travel.domain.blog.repository.BlogRepository;
-import jiyeon.travel.domain.ticket.dto.TicketBlogDto;
 import jiyeon.travel.domain.user.entity.User;
 import jiyeon.travel.domain.user.service.UserQueryService;
 import jiyeon.travel.global.exception.CustomException;
 import jiyeon.travel.global.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -23,11 +20,12 @@ import java.util.function.Consumer;
 
 @Service
 @RequiredArgsConstructor
-public class BlogService {
+public class BlogCommandService {
 
     private final BlogRepository blogRepository;
-    private final BlogImageService blogImageService;
-    private final BlogTicketItemService blogTicketItemService;
+    private final BlogImageCommandService blogImageCommandService;
+    private final BlogTicketItemCommandService blogTicketItemCommandService;
+    private final BlogTicketItemQueryService blogTicketItemQueryService;
     private final UserQueryService userQueryService;
 
     @Transactional
@@ -48,40 +46,30 @@ public class BlogService {
         );
 
         Blog savedBlog = blogRepository.save(blog);
-        List<BlogImage> savedBlogImages = (files != null) ? blogImageService.saveImages(savedBlog, files) : Collections.emptyList();
-        if (items != null) blogTicketItemService.saveTicketItem(email, savedBlog, items);
+        List<BlogImage> savedBlogImages = (files != null) ? blogImageCommandService.saveImages(savedBlog, files) : Collections.emptyList();
+        if (items != null) blogTicketItemCommandService.saveTicketItem(email, savedBlog, items);
 
-        List<BlogTicketItemDto> blogTicketItemDtos = blogTicketItemService.findTicketItemsByBlogId(savedBlog.getId());
+        List<BlogTicketItemDto> blogTicketItemDtos = blogTicketItemQueryService.findTicketItemsByBlogId(savedBlog.getId());
 
         return new BlogDetailResDto(savedBlog, savedBlogImages, blogTicketItemDtos);
     }
 
-    @Transactional(readOnly = true)
-    public BlogListResDto findAllMyBlogs(String email) {
-        return blogRepository.findAllMyBlogs(email);
-    }
+    @Transactional
+    public BlogImageDetailsResDto addImageById(String email, Long blogId, List<MultipartFile> files) {
+        Blog blog = blogRepository.findByIdAndEmailOrElseThrow(blogId, email);
+        List<BlogImage> blogImages = blogImageCommandService.addImages(blog, files);
 
-    @Transactional(readOnly = true)
-    public BlogListResDto searchBlogs(int page, int size, String title, LocalDate travelStartDate, LocalDate travelEndDate, Integer totalExpense) {
-        Pageable pageable = PageRequest.of(page - 1, size);
-
-        return blogRepository.searchBlogs(pageable, title, travelStartDate, travelEndDate, totalExpense);
-    }
-
-    @Transactional(readOnly = true)
-    public BlogDetailResDto findBlogById(Long blogId) {
-        Blog blog = blogRepository.findById(blogId)
-                .orElseThrow(() -> new CustomException(ErrorCode.BLOG_NOT_FOUND));
-        List<BlogTicketItemDto> blogTicketItemDtos = blogTicketItemService.findTicketItemsByBlogId(blogId);
-
-        return new BlogDetailResDto(blog, blog.getBlogImages(), blogTicketItemDtos);
+        return new BlogImageDetailsResDto(blog, blogImages);
     }
 
     @Transactional
-    public void deleteBlogById(String email, Long blogId) {
+    public BlogTicketItemDetailsResDto addTicketItemById(String email, Long blogId, Long reservationId) {
         Blog blog = blogRepository.findByIdAndEmailOrElseThrow(blogId, email);
-        blogImageService.deleteImagesFromS3(blogId);
-        blogRepository.delete(blog);
+        blogTicketItemCommandService.addTicketItem(email, blog, reservationId);
+
+        List<BlogTicketItemDto> blogTicketItemDtos = blogTicketItemQueryService.findTicketItemsByBlogId(blogId);
+
+        return new BlogTicketItemDetailsResDto(blog, blogTicketItemDtos);
     }
 
     @Transactional
@@ -102,44 +90,27 @@ public class BlogService {
     }
 
     @Transactional
-    public BlogImageDetailsResDto addImageById(String email, Long blogId, List<MultipartFile> files) {
-        Blog blog = blogRepository.findByIdAndEmailOrElseThrow(blogId, email);
-        List<BlogImage> blogImages = blogImageService.addImages(blog, files);
-
-        return new BlogImageDetailsResDto(blog, blogImages);
-    }
-
-    @Transactional
-    public void deleteImageById(String email, Long blogId, Long imageId) {
-        blogImageService.deleteImage(email, blogId, imageId);
-    }
-
-    @Transactional
     public BlogImageDetailResDto changeImageMainById(String email, Long blogId, Long imageId) {
-        BlogImage blogImage = blogImageService.changeImageMain(email, blogId, imageId);
+        BlogImage blogImage = blogImageCommandService.changeImageMain(email, blogId, imageId);
 
         return new BlogImageDetailResDto(blogImage.getBlog(), blogImage);
     }
 
     @Transactional
-    public BlogTicketItemDetailsResDto addTicketItemById(String email, Long blogId, Long reservationId) {
+    public void deleteBlogById(String email, Long blogId) {
         Blog blog = blogRepository.findByIdAndEmailOrElseThrow(blogId, email);
-        blogTicketItemService.addTicketItem(email, blog, reservationId);
+        blogImageCommandService.deleteImagesFromS3(blogId);
+        blogRepository.delete(blog);
+    }
 
-        List<BlogTicketItemDto> blogTicketItemDtos = blogTicketItemService.findTicketItemsByBlogId(blogId);
-
-        return new BlogTicketItemDetailsResDto(blog, blogTicketItemDtos);
+    @Transactional
+    public void deleteImageById(String email, Long blogId, Long imageId) {
+        blogImageCommandService.deleteImage(email, blogId, imageId);
     }
 
     @Transactional
     public void deleteTicketItemById(String email, Long blogId, Long itemId) {
-        blogTicketItemService.deleteTicketItem(email, blogId, itemId);
-    }
-
-    public List<TicketBlogDto> findBlogsByTicketId(int page, int size, Long ticketId) {
-        Pageable pageable = PageRequest.of(page - 1, size);
-
-        return blogRepository.findAllByTicketId(pageable, ticketId);
+        blogTicketItemCommandService.deleteTicketItem(email, blogId, itemId);
     }
 
     private void validateTravelRange(LocalDate travelStartDate, LocalDate travelEndDate) {
