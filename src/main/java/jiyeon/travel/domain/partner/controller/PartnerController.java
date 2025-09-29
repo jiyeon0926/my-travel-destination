@@ -1,7 +1,7 @@
 package jiyeon.travel.domain.partner.controller;
 
 import jiyeon.travel.domain.partner.dto.PartnerProfileResDto;
-import jiyeon.travel.domain.partner.service.PartnerService;
+import jiyeon.travel.domain.partner.service.PartnerQueryService;
 import jiyeon.travel.global.auth.UserDetailsImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -16,12 +16,12 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class PartnerController {
 
-    private final PartnerService partnerService;
+    private final PartnerQueryService partnerQueryService;
 
     @GetMapping("/me")
     public ResponseEntity<PartnerProfileResDto> getProfile(@AuthenticationPrincipal UserDetailsImpl userDetails) {
         String email = userDetails.getUsername();
-        PartnerProfileResDto partnerProfileResDto = partnerService.getProfile(email);
+        PartnerProfileResDto partnerProfileResDto = partnerQueryService.getProfile(email);
 
         return new ResponseEntity<>(partnerProfileResDto, HttpStatus.OK);
     }

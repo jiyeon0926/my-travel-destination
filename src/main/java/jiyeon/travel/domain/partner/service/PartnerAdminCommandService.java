@@ -3,7 +3,6 @@ package jiyeon.travel.domain.partner.service;
 import jiyeon.travel.domain.auth.service.AuthService;
 import jiyeon.travel.domain.partner.dto.PartnerProfileResDto;
 import jiyeon.travel.domain.partner.dto.PartnerSignupResDto;
-import jiyeon.travel.domain.partner.dto.PartnerSimpleResDto;
 import jiyeon.travel.domain.partner.entity.Partner;
 import jiyeon.travel.domain.partner.repository.PartnerRepository;
 import jiyeon.travel.domain.user.entity.User;
@@ -11,17 +10,14 @@ import jiyeon.travel.domain.user.service.UserAdminCommandService;
 import jiyeon.travel.global.exception.CustomException;
 import jiyeon.travel.global.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
 import java.util.function.Consumer;
 
 @Service
 @RequiredArgsConstructor
-public class PartnerAdminService {
+public class PartnerAdminCommandService {
 
     private final PartnerRepository partnerRepository;
     private final AuthService authService;
@@ -51,25 +47,10 @@ public class PartnerAdminService {
         return new PartnerProfileResDto(partner.getUser(), partner);
     }
 
-    @Transactional(readOnly = true)
-    public PartnerProfileResDto findPartnerById(Long partnerId) {
-        Partner partner = partnerRepository.findByIdOrElseThrow(partnerId);
-
-        return new PartnerProfileResDto(partner.getUser(), partner);
-    }
-
     @Transactional
     public void deletePartnerById(Long partnerId) {
         Partner partner = partnerRepository.findByIdOrElseThrow(partnerId);
-        partnerRepository.delete(partner);
         userAdminCommandService.deletePartner(partner.getUser());
-    }
-
-    @Transactional(readOnly = true)
-    public List<PartnerSimpleResDto> searchPartners(int page, int size, String name) {
-        Pageable pageable = PageRequest.of(page - 1, size);
-
-        return partnerRepository.searchPartners(pageable, name).stream().toList();
     }
 
     private <T> void acceptIfNotNull(T t, Consumer<T> consumer) {

@@ -43,7 +43,7 @@ public class User extends BaseEntity {
     @Column(nullable = false)
     private boolean isDeleted;
 
-    @OneToMany(mappedBy = "user")
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Partner> partners = new ArrayList<>();
 
     @OneToMany(mappedBy = "user")

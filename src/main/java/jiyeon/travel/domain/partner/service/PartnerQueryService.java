@@ -11,7 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
-public class PartnerService {
+public class PartnerQueryService {
 
     private final PartnerRepository partnerRepository;
 
