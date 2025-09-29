@@ -10,7 +10,7 @@ public class ReservationScheduler {
 
     private final ReservationService reservationService;
 
-    public void deleteExpiredReservations() {
-        reservationService.deleteExpiredReservations();
+    public void expiredReservations() {
+        reservationService.expireReservations();
     }
 }

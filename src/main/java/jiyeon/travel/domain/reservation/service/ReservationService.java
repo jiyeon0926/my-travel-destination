@@ -49,9 +49,12 @@ public class ReservationService {
         validateBaseTicketReservation(baseQuantity, options, ticket);
         validateOptionTicketReservation(baseQuantity, options, ticket);
 
-        return baseQuantity != null
-                ? saveBaseTicketReservation(baseQuantity, reservationName, reservationPhone, ticket, user, ticketSchedule)
-                : saveOptionTicketReservation(reservationName, reservationPhone, options, ticket, user, ticketSchedule);
+        int totalQuantity = calculateTotalQuantity(baseQuantity, options);
+        ticketSchedule.decreaseRemainingQuantity(totalQuantity);
+
+        return (baseQuantity != null)
+                ? saveBaseTicketReservation(totalQuantity, reservationName, reservationPhone, ticket, user, ticketSchedule)
+                : saveOptionTicketReservation(totalQuantity, reservationName, reservationPhone, options, ticket, user, ticketSchedule);
     }
 
     @Transactional(readOnly = true)
@@ -86,9 +89,10 @@ public class ReservationService {
 
     @Transactional
     public void confirmReservationPayment(Long reservationId) {
-        Reservation reservation = getReservationByIdWithTicketAndSchedule(reservationId);
-        TicketSchedule ticketSchedule = reservation.getTicketSchedule();
+        Reservation reservation = reservationRepository.findByIdWithTicketAndSchedule(reservationId)
+                .orElseThrow(() -> new CustomException(ErrorCode.RESERVATION_NOT_FOUND));
 
+        TicketSchedule ticketSchedule = reservation.getTicketSchedule();
         ticketSchedule.decreaseRemainingQuantity(reservation.getTotalQuantity());
         reservation.changeStatus(ReservationStatus.PAID);
 
@@ -102,15 +106,18 @@ public class ReservationService {
     }
 
     @Transactional
-    public void deleteExpiredReservations() {
-        List<Reservation> reservations = reservationRepository.findAllByStatus(ReservationStatus.UNPAID);
+    public void expireReservations() {
+        List<Reservation> reservations = reservationRepository.findAllByStatusWithSchedule(ReservationStatus.UNPAID);
         LocalDateTime now = LocalDateTime.now();
 
-        List<Reservation> expiredReservations = reservations.stream()
+        reservations.stream()
                 .filter(reservation -> reservation.getCreatedAt().plusMinutes(30).isBefore(now))
-                .toList();
+                .forEach(reservation -> {
+                    reservation.changeStatus(ReservationStatus.EXPIRED);
 
-        reservationRepository.deleteAll(expiredReservations);
+                    TicketSchedule ticketSchedule = reservation.getTicketSchedule();
+                    ticketSchedule.increaseRemainingQuantity(reservation.getTotalQuantity());
+                });
     }
 
     public Reservation getReservationByIdWithTicketAndSchedule(Long reservationId) {
@@ -129,7 +136,6 @@ public class ReservationService {
 
     private void validateBaseTicketReservation(Integer baseQuantity, List<ReservationOptionCreateReqDto> options, Ticket ticket) {
         boolean isBaseTicket = ticket.getBasePrice() != null;
-
         if (isBaseTicket) {
             if (baseQuantity == null) {
                 throw new CustomException(ErrorCode.BASE_TICKET_QUANTITY_REQUIRED);
@@ -143,7 +149,6 @@ public class ReservationService {
 
     private void validateOptionTicketReservation(Integer baseQuantity, List<ReservationOptionCreateReqDto> options, Ticket ticket) {
         boolean isOptionTicket = ticket.getBasePrice() == null;
-
         if (isOptionTicket) {
             if (baseQuantity != null) {
                 throw new CustomException(ErrorCode.BASE_TICKET_QUANTITY_NOT_ALLOWED);
@@ -155,31 +160,28 @@ public class ReservationService {
         }
     }
 
-    private ReservationDetailResDto saveBaseTicketReservation(Integer baseQuantity, String reservationName, String reservationPhone,
+    private int calculateTotalQuantity(Integer baseQuantity, List<ReservationOptionCreateReqDto> options) {
+        return baseQuantity != null
+                ? baseQuantity
+                : options.stream()
+                .mapToInt(ReservationOptionCreateReqDto::getQuantity)
+                .sum();
+    }
+
+    private ReservationDetailResDto saveBaseTicketReservation(int totalQuantity, String reservationName, String reservationPhone,
                                                               Ticket ticket, User user, TicketSchedule ticketSchedule) {
-        int totalAmount = ticket.getBasePrice() * baseQuantity;
+        int totalAmount = ticket.getBasePrice() * totalQuantity;
         String phone = reservationPhone == null ? user.getPhone() : reservationPhone;
 
-        Reservation reservation = new Reservation(user, ticketSchedule, baseQuantity, totalAmount, reservationName, phone);
+        Reservation reservation = new Reservation(user, ticketSchedule, totalQuantity, totalAmount, reservationName, phone);
         Reservation savedReservation = reservationRepository.save(reservation);
 
         return new ReservationDetailResDto(savedReservation, ticket, ticketSchedule, List.of());
     }
 
-    private ReservationDetailResDto saveOptionTicketReservation(String reservationName, String reservationPhone, List<ReservationOptionCreateReqDto> options,
+    private ReservationDetailResDto saveOptionTicketReservation(int totalQuantity, String reservationName, String reservationPhone, List<ReservationOptionCreateReqDto> options,
                                                                 Ticket ticket, User user, TicketSchedule ticketSchedule) {
-        long uniqueCount = options.stream()
-                .map(ReservationOptionCreateReqDto::getOptionId)
-                .distinct()
-                .count();
-
-        if (uniqueCount != options.size()) {
-            throw new CustomException(ErrorCode.DUPLICATE_OPTION);
-        }
-
-        int totalQuantity = options.stream()
-                .mapToInt(ReservationOptionCreateReqDto::getQuantity)
-                .sum();
+        validateDuplicateOptions(options);
 
         int totalAmount = options.stream()
                 .mapToInt(option -> {
@@ -204,5 +206,16 @@ public class ReservationService {
                 .toList();
 
         return new ReservationDetailResDto(savedReservation, ticket, ticketSchedule, reservationOptions);
+    }
+
+    private void validateDuplicateOptions(List<ReservationOptionCreateReqDto> options) {
+        long uniqueCount = options.stream()
+                .map(ReservationOptionCreateReqDto::getOptionId)
+                .distinct()
+                .count();
+
+        if (uniqueCount != options.size()) {
+            throw new CustomException(ErrorCode.DUPLICATE_OPTION);
+        }
     }
 }

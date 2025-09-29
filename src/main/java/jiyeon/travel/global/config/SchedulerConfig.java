@@ -21,7 +21,7 @@ public class SchedulerConfig {
     }
 
     @Scheduled(fixedRate = 60_000)
-    public void deleteExpiredReservations() {
-        reservationScheduler.deleteExpiredReservations();
+    public void expiredReservations() {
+        reservationScheduler.expiredReservations();
     }
 }

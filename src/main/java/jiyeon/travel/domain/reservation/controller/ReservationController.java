@@ -4,6 +4,7 @@ import jakarta.validation.Valid;
 import jiyeon.travel.domain.reservation.dto.ReservationCreateReqDto;
 import jiyeon.travel.domain.reservation.dto.ReservationDetailResDto;
 import jiyeon.travel.domain.reservation.dto.ReservationSimpleResDto;
+import jiyeon.travel.domain.reservation.service.ReservationFacadeService;
 import jiyeon.travel.domain.reservation.service.ReservationService;
 import jiyeon.travel.global.auth.UserDetailsImpl;
 import lombok.RequiredArgsConstructor;
@@ -19,13 +20,14 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ReservationController {
 
+    private final ReservationFacadeService reservationFacadeService;
     private final ReservationService reservationService;
 
     @PostMapping
     public ResponseEntity<ReservationDetailResDto> createReservation(@AuthenticationPrincipal UserDetailsImpl userDetails,
                                                                      @Valid @RequestBody ReservationCreateReqDto reservationCreateReqDto) {
         String email = userDetails.getUsername();
-        ReservationDetailResDto reservationDetailResDto = reservationService.createReservation(
+        ReservationDetailResDto reservationDetailResDto = reservationFacadeService.createReservationWithLock(
                 email,
                 reservationCreateReqDto.getScheduleId(),
                 reservationCreateReqDto.getBaseQuantity(),

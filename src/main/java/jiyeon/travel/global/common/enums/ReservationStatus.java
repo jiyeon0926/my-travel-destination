@@ -6,7 +6,8 @@ public enum ReservationStatus {
     PAID("결제 완료"),
     USED("사용 완료"),
     NO_SHOW("노쇼"),
-    CANCELLED("취소");
+    CANCELLED("취소"),
+    EXPIRED("만료");
 
     private final String description;
 

@@ -94,6 +94,10 @@ public class TicketSchedule extends BaseEntity {
         this.remainingQuantity -= totalQuantity;
     }
 
+    public void increaseRemainingQuantity(int quantity) {
+        this.remainingQuantity += quantity;
+    }
+
     private boolean hasSaleStatus(TicketSaleStatus status) {
         return ticket.getSaleStatus() == status;
     }

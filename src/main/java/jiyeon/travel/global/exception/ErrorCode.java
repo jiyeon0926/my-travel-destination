@@ -59,13 +59,15 @@ public enum ErrorCode {
     TICKET_SCHEDULE_ALREADY_EXISTS(CONFLICT, "동일한 일정이 존재합니다."),
     ALREADY_PAID_RESERVATION(CONFLICT, "이미 결제 완료된 예약입니다."),
     DUPLICATE_RESERVATION_ID(CONFLICT, "동일한 예약 아이디가 존재합니다."),
+    RESERVATION_CONFLICT(CONFLICT, "현재 다른 사용자가 예약 중입니다."),
 
     // 500
     FILE_UPLOAD_FAILED(INTERNAL_SERVER_ERROR, "파일 업로드를 실패하였습니다."),
     PAYMENT_READY_API_ERROR(INTERNAL_SERVER_ERROR, "카카오페이 결제 준비 요청을 실패하였습니다."),
     PAYMENT_APPROVE_API_ERROR(INTERNAL_SERVER_ERROR, "카카오페이 결제 승인 요청을 실패하였습니다."),
     PAYMENT_READY_RESPONSE_ERROR(INTERNAL_SERVER_ERROR, "카카오페이 결제 준비 응답 처리 중 오류가 발생하였습니다."),
-    PAYMENT_APPROVE_RESPONSE_ERROR(INTERNAL_SERVER_ERROR, "카카오페이 결제 승인 응답 처리 중 오류가 발생하였습니다.");
+    PAYMENT_APPROVE_RESPONSE_ERROR(INTERNAL_SERVER_ERROR, "카카오페이 결제 승인 응답 처리 중 오류가 발생하였습니다."),
+    RESERVATION_INTERRUPT(INTERNAL_SERVER_ERROR, "예약 처리 중 인터럽트가 발생했습니다.");
 
     private final HttpStatus httpStatus;
     private final String message;
