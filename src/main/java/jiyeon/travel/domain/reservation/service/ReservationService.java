@@ -12,7 +12,7 @@ import jiyeon.travel.domain.ticket.entity.TicketOption;
 import jiyeon.travel.domain.ticket.entity.TicketSchedule;
 import jiyeon.travel.domain.ticket.service.TicketQueryService;
 import jiyeon.travel.domain.user.entity.User;
-import jiyeon.travel.domain.user.service.UserService;
+import jiyeon.travel.domain.user.service.UserQueryService;
 import jiyeon.travel.global.common.enums.ReservationStatus;
 import jiyeon.travel.global.common.enums.TicketSaleStatus;
 import jiyeon.travel.global.exception.CustomException;
@@ -31,14 +31,14 @@ public class ReservationService {
 
     private final ReservationRepository reservationRepository;
     private final ReservationOptionRepository reservationOptionRepository;
-    private final UserService userService;
+    private final UserQueryService userQueryService;
     private final TicketQueryService ticketQueryService;
 
     @Transactional
     public ReservationDetailResDto createReservation(String email, Long scheduleId, Integer baseQuantity,
                                                      String reservationName, String reservationPhone,
                                                      List<ReservationOptionCreateReqDto> options) {
-        User user = userService.getActiveUserByEmail(email);
+        User user = userQueryService.getActiveUserByEmail(email);
         TicketSchedule ticketSchedule = ticketQueryService.getActiveSchedule(scheduleId);
         Ticket ticket = ticketQueryService.getTicketByScheduleId(scheduleId);
 

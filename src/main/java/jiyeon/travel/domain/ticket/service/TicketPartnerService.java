@@ -9,7 +9,7 @@ import jiyeon.travel.domain.ticket.entity.TicketOption;
 import jiyeon.travel.domain.ticket.entity.TicketSchedule;
 import jiyeon.travel.domain.ticket.repository.TicketRepository;
 import jiyeon.travel.domain.user.entity.User;
-import jiyeon.travel.domain.user.service.UserService;
+import jiyeon.travel.domain.user.service.UserQueryService;
 import jiyeon.travel.global.common.enums.TicketSaleStatus;
 import jiyeon.travel.global.exception.CustomException;
 import jiyeon.travel.global.exception.ErrorCode;
@@ -35,7 +35,7 @@ public class TicketPartnerService {
     private final TicketOptionService ticketOptionService;
     private final TicketScheduleService ticketScheduleService;
     private final TicketImageService ticketImageService;
-    private final UserService userService;
+    private final UserQueryService userQueryService;
     private final ReservationService reservationService;
 
     @Transactional
@@ -54,7 +54,7 @@ public class TicketPartnerService {
             throw new CustomException(ErrorCode.BASE_PRICE_PRESENT);
         }
 
-        User user = userService.getActiveUserByEmail(email);
+        User user = userQueryService.getActiveUserByEmail(email);
         Ticket ticket = Ticket.builder()
                 .user(user)
                 .name(name)

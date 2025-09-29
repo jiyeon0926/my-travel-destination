@@ -1,7 +1,6 @@
 package jiyeon.travel.domain.user.service;
 
 import jiyeon.travel.domain.user.dto.UserDetailResDto;
-import jiyeon.travel.domain.user.entity.User;
 import jiyeon.travel.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
@@ -13,7 +12,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class UserAdminService {
+public class UserAdminQueryService {
 
     private final UserRepository userRepository;
 
@@ -22,10 +21,5 @@ public class UserAdminService {
         Pageable pageable = PageRequest.of(page - 1, size);
 
         return userRepository.searchUsers(pageable, email, nickname, isDeleted).stream().toList();
-    }
-
-    @Transactional
-    public void deletePartner(User user) {
-        userRepository.delete(user);
     }
 }

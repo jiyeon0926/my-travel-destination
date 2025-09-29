@@ -7,7 +7,7 @@ import jiyeon.travel.domain.partner.dto.PartnerSimpleResDto;
 import jiyeon.travel.domain.partner.entity.Partner;
 import jiyeon.travel.domain.partner.repository.PartnerRepository;
 import jiyeon.travel.domain.user.entity.User;
-import jiyeon.travel.domain.user.service.UserAdminService;
+import jiyeon.travel.domain.user.service.UserAdminCommandService;
 import jiyeon.travel.global.exception.CustomException;
 import jiyeon.travel.global.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
@@ -25,7 +25,7 @@ public class PartnerAdminService {
 
     private final PartnerRepository partnerRepository;
     private final AuthService authService;
-    private final UserAdminService userAdminService;
+    private final UserAdminCommandService userAdminCommandService;
 
     @Transactional
     public PartnerSignupResDto signupPartner(String email, String password, String name, String businessNumber, String address, String phone) {
@@ -62,7 +62,7 @@ public class PartnerAdminService {
     public void deletePartnerById(Long partnerId) {
         Partner partner = partnerRepository.findByIdOrElseThrow(partnerId);
         partnerRepository.delete(partner);
-        userAdminService.deletePartner(partner.getUser());
+        userAdminCommandService.deletePartner(partner.getUser());
     }
 
     @Transactional(readOnly = true)

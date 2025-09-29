@@ -1,7 +1,7 @@
 package jiyeon.travel.domain.user.controller;
 
 import jiyeon.travel.domain.user.dto.UserDetailResDto;
-import jiyeon.travel.domain.user.service.UserAdminService;
+import jiyeon.travel.domain.user.service.UserAdminQueryService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,7 +17,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class UserAdminController {
 
-    private final UserAdminService userAdminService;
+    private final UserAdminQueryService userAdminQueryService;
 
     @GetMapping("/search")
     public ResponseEntity<List<UserDetailResDto>> searchUsers(@RequestParam(defaultValue = "1") int page,
@@ -25,8 +25,8 @@ public class UserAdminController {
                                                               @RequestParam(required = false) String email,
                                                               @RequestParam(required = false) String nickname,
                                                               @RequestParam(required = false) Boolean isDeleted) {
-        List<UserDetailResDto> userDetailResDtos = userAdminService.searchUsers(page, size, email, nickname, isDeleted);
+        List<UserDetailResDto> userDetailResDtoList = userAdminQueryService.searchUsers(page, size, email, nickname, isDeleted);
 
-        return new ResponseEntity<>(userDetailResDtos, HttpStatus.OK);
+        return new ResponseEntity<>(userDetailResDtoList, HttpStatus.OK);
     }
 }

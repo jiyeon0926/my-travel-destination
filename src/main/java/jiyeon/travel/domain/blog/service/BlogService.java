@@ -6,7 +6,7 @@ import jiyeon.travel.domain.blog.entity.BlogImage;
 import jiyeon.travel.domain.blog.repository.BlogRepository;
 import jiyeon.travel.domain.ticket.dto.TicketBlogDto;
 import jiyeon.travel.domain.user.entity.User;
-import jiyeon.travel.domain.user.service.UserService;
+import jiyeon.travel.domain.user.service.UserQueryService;
 import jiyeon.travel.global.exception.CustomException;
 import jiyeon.travel.global.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
@@ -28,7 +28,7 @@ public class BlogService {
     private final BlogRepository blogRepository;
     private final BlogImageService blogImageService;
     private final BlogTicketItemService blogTicketItemService;
-    private final UserService userService;
+    private final UserQueryService userQueryService;
 
     @Transactional
     public BlogDetailResDto createBlog(String email, String title, String content, LocalDate travelStartDate,
@@ -36,7 +36,7 @@ public class BlogService {
                                        List<BlogTicketItemReqDto> items, List<MultipartFile> files) {
         validateTravelRange(travelStartDate, travelEndDate);
 
-        User user = userService.getActiveUserByEmail(email);
+        User user = userQueryService.getActiveUserByEmail(email);
         Blog blog = new Blog(
                 user,
                 title,
