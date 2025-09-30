@@ -15,7 +15,7 @@ import java.util.function.Consumer;
 
 @Service
 @RequiredArgsConstructor
-public class TicketOptionService {
+public class TicketOptionCommandService {
 
     private final TicketOptionRepository ticketOptionRepository;
 

@@ -21,7 +21,7 @@ import java.util.stream.IntStream;
 
 @Service
 @RequiredArgsConstructor
-public class TicketImageService {
+public class TicketImageCommandService {
 
     private static final int IMAGE_MAX_SIZE = 5;
 

@@ -18,7 +18,7 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-public class TicketScheduleService {
+public class TicketScheduleCommandService {
 
     private final TicketScheduleRepository ticketScheduleRepository;
 

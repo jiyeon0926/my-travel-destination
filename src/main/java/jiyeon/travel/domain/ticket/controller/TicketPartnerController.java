@@ -2,7 +2,8 @@ package jiyeon.travel.domain.ticket.controller;
 
 import jakarta.validation.Valid;
 import jiyeon.travel.domain.ticket.dto.*;
-import jiyeon.travel.domain.ticket.service.TicketPartnerService;
+import jiyeon.travel.domain.ticket.service.TicketPartnerCommandFacade;
+import jiyeon.travel.domain.ticket.service.TicketPartnerQueryService;
 import jiyeon.travel.global.auth.UserDetailsImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -18,14 +19,15 @@ import java.util.List;
 @RequiredArgsConstructor
 public class TicketPartnerController {
 
-    private final TicketPartnerService ticketPartnerService;
+    private final TicketPartnerCommandFacade ticketPartnerCommandFacade;
+    private final TicketPartnerQueryService ticketPartnerQueryService;
 
     @PostMapping
     public ResponseEntity<TicketDetailResDto> createTicket(@AuthenticationPrincipal UserDetailsImpl userDetails,
                                                            @Valid @RequestPart("ticket") TicketCreateReqDto ticketCreateReqDto,
                                                            @RequestPart(value = "images", required = false) List<MultipartFile> files) {
         String email = userDetails.getUsername();
-        TicketDetailResDto ticketDetailResDto = ticketPartnerService.createTicket(
+        TicketDetailResDto ticketDetailResDto = ticketPartnerCommandFacade.createTicket(
                 email,
                 ticketCreateReqDto.getName(),
                 ticketCreateReqDto.getSaleStartDate(),
@@ -42,33 +44,45 @@ public class TicketPartnerController {
         return new ResponseEntity<>(ticketDetailResDto, HttpStatus.CREATED);
     }
 
-    @GetMapping("/search")
-    public ResponseEntity<TicketListResDto> searchMyTickets(@RequestParam(defaultValue = "1") int page,
-                                                            @RequestParam(defaultValue = "10") int size,
-                                                            @RequestParam(required = false) String saleStatus,
-                                                            @AuthenticationPrincipal UserDetailsImpl userDetails) {
+    @PostMapping("/{ticketId}/options")
+    public ResponseEntity<TicketOptionDetailResDto> addOptionById(@AuthenticationPrincipal UserDetailsImpl userDetails,
+                                                                  @PathVariable Long ticketId,
+                                                                  @Valid @RequestBody TicketOptionCreateReqDto ticketOptionCreateReqDto) {
         String email = userDetails.getUsername();
-        TicketListResDto ticketListResDto = ticketPartnerService.searchMyTickets(page, size, saleStatus, email);
+        TicketOptionDetailResDto ticketOptionDetailResDto = ticketPartnerCommandFacade.addOptionById(
+                email,
+                ticketId,
+                ticketOptionCreateReqDto.getName(),
+                ticketOptionCreateReqDto.getPrice()
+        );
 
-        return new ResponseEntity<>(ticketListResDto, HttpStatus.OK);
+        return new ResponseEntity<>(ticketOptionDetailResDto, HttpStatus.CREATED);
     }
 
-    @GetMapping("/{ticketId}")
-    public ResponseEntity<TicketDetailResDto> findMyTicketById(@AuthenticationPrincipal UserDetailsImpl userDetails,
-                                                               @PathVariable Long ticketId) {
+    @PostMapping("/{ticketId}/schedules")
+    public ResponseEntity<TicketScheduleDetailResDto> addScheduleById(@AuthenticationPrincipal UserDetailsImpl userDetails,
+                                                                      @PathVariable Long ticketId,
+                                                                      @Valid @RequestBody TicketScheduleCreateReqDto ticketScheduleCreateReqDto) {
         String email = userDetails.getUsername();
-        TicketDetailResDto ticketDetailResDto = ticketPartnerService.findMyTicketById(email, ticketId);
+        TicketScheduleDetailResDto ticketScheduleDetailResDto = ticketPartnerCommandFacade.addScheduleById(
+                email,
+                ticketId,
+                ticketScheduleCreateReqDto.getStartDate(),
+                ticketScheduleCreateReqDto.getStartTime(),
+                ticketScheduleCreateReqDto.getQuantity()
+        );
 
-        return new ResponseEntity<>(ticketDetailResDto, HttpStatus.OK);
+        return new ResponseEntity<>(ticketScheduleDetailResDto, HttpStatus.CREATED);
     }
 
-    @DeleteMapping("/{ticketId}")
-    public ResponseEntity<Void> deleteTicketById(@AuthenticationPrincipal UserDetailsImpl userDetails,
-                                                 @PathVariable Long ticketId) {
+    @PostMapping("/{ticketId}/images")
+    public ResponseEntity<TicketImageDetailsResDto> addImageById(@AuthenticationPrincipal UserDetailsImpl userDetails,
+                                                                 @PathVariable Long ticketId,
+                                                                 @RequestParam("images") List<MultipartFile> files) {
         String email = userDetails.getUsername();
-        ticketPartnerService.deleteTicketById(ticketId, email);
+        TicketImageDetailsResDto ticketImageDetailsResDto = ticketPartnerCommandFacade.addImageById(email, ticketId, files);
 
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        return new ResponseEntity<>(ticketImageDetailsResDto, HttpStatus.CREATED);
     }
 
     @PatchMapping("/{ticketId}")
@@ -76,7 +90,7 @@ public class TicketPartnerController {
                                                                        @PathVariable Long ticketId,
                                                                        @RequestBody TicketInfoUpdateReqDto ticketInfoUpdateReqDto) {
         String email = userDetails.getUsername();
-        TicketInfoDetailResDto ticketInfoResDto = ticketPartnerService.updateTicketInfoById(
+        TicketInfoDetailResDto ticketInfoResDto = ticketPartnerCommandFacade.updateTicketInfoById(
                 ticketId,
                 email,
                 ticketInfoUpdateReqDto.getName(),
@@ -96,34 +110,9 @@ public class TicketPartnerController {
                                                                          @PathVariable Long ticketId,
                                                                          @Valid @RequestBody TicketStatusReqDto ticketStatusReqDto) {
         String email = userDetails.getUsername();
-        TicketInfoDetailResDto ticketInfoDetailResDto = ticketPartnerService.changeTicketStatusById(email, ticketId, ticketStatusReqDto.getSaleStatus());
+        TicketInfoDetailResDto ticketInfoDetailResDto = ticketPartnerCommandFacade.changeTicketStatusById(email, ticketId, ticketStatusReqDto.getSaleStatus());
 
         return new ResponseEntity<>(ticketInfoDetailResDto, HttpStatus.OK);
-    }
-
-    @PostMapping("/{ticketId}/options")
-    public ResponseEntity<TicketOptionDetailResDto> addOptionById(@AuthenticationPrincipal UserDetailsImpl userDetails,
-                                                                  @PathVariable Long ticketId,
-                                                                  @Valid @RequestBody TicketOptionCreateReqDto ticketOptionCreateReqDto) {
-        String email = userDetails.getUsername();
-        TicketOptionDetailResDto ticketOptionDetailResDto = ticketPartnerService.addOptionById(
-                email,
-                ticketId,
-                ticketOptionCreateReqDto.getName(),
-                ticketOptionCreateReqDto.getPrice()
-        );
-
-        return new ResponseEntity<>(ticketOptionDetailResDto, HttpStatus.CREATED);
-    }
-
-    @DeleteMapping("/{ticketId}/options/{optionId}")
-    public ResponseEntity<Void> deleteOptionById(@AuthenticationPrincipal UserDetailsImpl userDetails,
-                                                 @PathVariable Long ticketId,
-                                                 @PathVariable Long optionId) {
-        String email = userDetails.getUsername();
-        ticketPartnerService.deleteOptionById(email, ticketId, optionId);
-
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
     @PatchMapping("/{ticketId}/options/{optionId}")
@@ -132,7 +121,7 @@ public class TicketPartnerController {
                                                                      @PathVariable Long optionId,
                                                                      @RequestBody TicketOptionUpdateReqDto ticketOptionUpdateReqDto) {
         String email = userDetails.getUsername();
-        TicketOptionDetailResDto ticketOptionDetailResDto = ticketPartnerService.updateOptionById(
+        TicketOptionDetailResDto ticketOptionDetailResDto = ticketPartnerCommandFacade.updateOptionById(
                 email,
                 ticketId,
                 optionId,
@@ -143,39 +132,13 @@ public class TicketPartnerController {
         return new ResponseEntity<>(ticketOptionDetailResDto, HttpStatus.OK);
     }
 
-    @PostMapping("/{ticketId}/schedules")
-    public ResponseEntity<TicketScheduleDetailResDto> addScheduleById(@AuthenticationPrincipal UserDetailsImpl userDetails,
-                                                                      @PathVariable Long ticketId,
-                                                                      @Valid @RequestBody TicketScheduleCreateReqDto ticketScheduleCreateReqDto) {
-        String email = userDetails.getUsername();
-        TicketScheduleDetailResDto ticketScheduleDetailResDto = ticketPartnerService.addScheduleById(
-                email,
-                ticketId,
-                ticketScheduleCreateReqDto.getStartDate(),
-                ticketScheduleCreateReqDto.getStartTime(),
-                ticketScheduleCreateReqDto.getQuantity()
-        );
-
-        return new ResponseEntity<>(ticketScheduleDetailResDto, HttpStatus.CREATED);
-    }
-
-    @DeleteMapping("/{ticketId}/schedules/{scheduleId}")
-    public ResponseEntity<Void> deleteScheduleById(@AuthenticationPrincipal UserDetailsImpl userDetails,
-                                                   @PathVariable Long ticketId,
-                                                   @PathVariable Long scheduleId) {
-        String email = userDetails.getUsername();
-        ticketPartnerService.deleteScheduleById(email, ticketId, scheduleId);
-
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-    }
-
     @PatchMapping("/{ticketId}/schedules/{scheduleId}")
     public ResponseEntity<TicketScheduleDetailResDto> updateScheduleById(@AuthenticationPrincipal UserDetailsImpl userDetails,
                                                                          @PathVariable Long ticketId,
                                                                          @PathVariable Long scheduleId,
                                                                          @Valid @RequestBody TicketScheduleUpdateReqDto ticketScheduleUpdateReqDto) {
         String email = userDetails.getUsername();
-        TicketScheduleDetailResDto ticketScheduleDetailResDto = ticketPartnerService.updateScheduleById(
+        TicketScheduleDetailResDto ticketScheduleDetailResDto = ticketPartnerCommandFacade.updateScheduleById(
                 email,
                 ticketId,
                 scheduleId,
@@ -188,14 +151,43 @@ public class TicketPartnerController {
         return new ResponseEntity<>(ticketScheduleDetailResDto, HttpStatus.OK);
     }
 
-    @PostMapping("/{ticketId}/images")
-    public ResponseEntity<TicketImageDetailsResDto> addImageById(@AuthenticationPrincipal UserDetailsImpl userDetails,
-                                                                 @PathVariable Long ticketId,
-                                                                 @RequestParam("images") List<MultipartFile> files) {
+    @PatchMapping("/{ticketId}/images/{imageId}/main")
+    public ResponseEntity<TicketImageDetailResDto> changeImageMainById(@AuthenticationPrincipal UserDetailsImpl userDetails,
+                                                                       @PathVariable Long ticketId,
+                                                                       @PathVariable Long imageId) {
         String email = userDetails.getUsername();
-        TicketImageDetailsResDto ticketImageDetailsResDto = ticketPartnerService.addImageById(email, ticketId, files);
+        TicketImageDetailResDto ticketImageDetailResDto = ticketPartnerCommandFacade.changeImageMainById(email, ticketId, imageId);
 
-        return new ResponseEntity<>(ticketImageDetailsResDto, HttpStatus.CREATED);
+        return new ResponseEntity<>(ticketImageDetailResDto, HttpStatus.OK);
+    }
+
+    @DeleteMapping("/{ticketId}")
+    public ResponseEntity<Void> deleteTicketById(@AuthenticationPrincipal UserDetailsImpl userDetails,
+                                                 @PathVariable Long ticketId) {
+        String email = userDetails.getUsername();
+        ticketPartnerCommandFacade.deleteTicketById(ticketId, email);
+
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
+    @DeleteMapping("/{ticketId}/options/{optionId}")
+    public ResponseEntity<Void> deleteOptionById(@AuthenticationPrincipal UserDetailsImpl userDetails,
+                                                 @PathVariable Long ticketId,
+                                                 @PathVariable Long optionId) {
+        String email = userDetails.getUsername();
+        ticketPartnerCommandFacade.deleteOptionById(email, ticketId, optionId);
+
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
+    @DeleteMapping("/{ticketId}/schedules/{scheduleId}")
+    public ResponseEntity<Void> deleteScheduleById(@AuthenticationPrincipal UserDetailsImpl userDetails,
+                                                   @PathVariable Long ticketId,
+                                                   @PathVariable Long scheduleId) {
+        String email = userDetails.getUsername();
+        ticketPartnerCommandFacade.deleteScheduleById(email, ticketId, scheduleId);
+
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
     @DeleteMapping("/{ticketId}/images/{imageId}")
@@ -203,18 +195,28 @@ public class TicketPartnerController {
                                                 @PathVariable Long ticketId,
                                                 @PathVariable Long imageId) {
         String email = userDetails.getUsername();
-        ticketPartnerService.deleteImageById(email, ticketId, imageId);
+        ticketPartnerCommandFacade.deleteImageById(email, ticketId, imageId);
 
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
-    @PatchMapping("/{ticketId}/images/{imageId}/main")
-    public ResponseEntity<TicketImageDetailResDto> changeImageMainById(@AuthenticationPrincipal UserDetailsImpl userDetails,
-                                                                       @PathVariable Long ticketId,
-                                                                       @PathVariable Long imageId) {
+    @GetMapping("/{ticketId}")
+    public ResponseEntity<TicketDetailResDto> findMyTicketById(@AuthenticationPrincipal UserDetailsImpl userDetails,
+                                                               @PathVariable Long ticketId) {
         String email = userDetails.getUsername();
-        TicketImageDetailResDto ticketImageDetailResDto = ticketPartnerService.changeImageMainById(email, ticketId, imageId);
+        TicketDetailResDto ticketDetailResDto = ticketPartnerQueryService.findMyTicketById(email, ticketId);
 
-        return new ResponseEntity<>(ticketImageDetailResDto, HttpStatus.OK);
+        return new ResponseEntity<>(ticketDetailResDto, HttpStatus.OK);
+    }
+
+    @GetMapping("/search")
+    public ResponseEntity<TicketListResDto> searchMyTickets(@RequestParam(defaultValue = "1") int page,
+                                                            @RequestParam(defaultValue = "10") int size,
+                                                            @RequestParam(required = false) String saleStatus,
+                                                            @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        String email = userDetails.getUsername();
+        TicketListResDto ticketListResDto = ticketPartnerQueryService.searchMyTickets(page, size, saleStatus, email);
+
+        return new ResponseEntity<>(ticketListResDto, HttpStatus.OK);
     }
 }
