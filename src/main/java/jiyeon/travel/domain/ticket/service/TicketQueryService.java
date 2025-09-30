@@ -1,5 +1,6 @@
 package jiyeon.travel.domain.ticket.service;
 
+import jiyeon.travel.domain.blog.service.BlogQueryService;
 import jiyeon.travel.domain.ticket.dto.*;
 import jiyeon.travel.domain.ticket.entity.Ticket;
 import jiyeon.travel.domain.ticket.entity.TicketOption;
@@ -24,12 +25,14 @@ public class TicketQueryService {
     private final TicketRepository ticketRepository;
     private final TicketOptionRepository ticketOptionRepository;
     private final TicketScheduleRepository ticketScheduleRepository;
+    private final BlogQueryService blogQueryService;
 
     @Transactional(readOnly = true)
-    public TicketDetailWithBlogResDto findTicketById(int page, int size, Long ticketId, List<TicketBlogDto> ticketBlogDtoList) {
+    public TicketDetailWithBlogResDto findTicketById(int page, int size, Long ticketId) {
         Ticket ticket = ticketRepository.findByIdWithImage(ticketId)
                 .orElseThrow(() -> new CustomException(ErrorCode.TICKET_NOT_FOUND));
         List<TicketOption> options = findOptionsByTicketId(ticketId);
+        List<TicketBlogDto> ticketBlogDtoList = blogQueryService.findBlogsByTicketId(page, size, ticketId);
 
         return new TicketDetailWithBlogResDto(ticket, options, ticket.getTicketImages(), ticketBlogDtoList);
     }

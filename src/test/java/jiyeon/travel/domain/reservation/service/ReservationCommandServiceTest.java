@@ -7,7 +7,6 @@ import jiyeon.travel.domain.ticket.entity.Ticket;
 import jiyeon.travel.domain.ticket.entity.TicketSchedule;
 import jiyeon.travel.domain.ticket.repository.TicketRepository;
 import jiyeon.travel.domain.ticket.repository.TicketScheduleRepository;
-import jiyeon.travel.domain.ticket.service.TicketPartnerCommandFacade;
 import jiyeon.travel.domain.user.entity.User;
 import jiyeon.travel.domain.user.repository.UserRepository;
 import jiyeon.travel.global.common.enums.TicketSaleStatus;

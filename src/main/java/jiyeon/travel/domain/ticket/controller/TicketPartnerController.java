@@ -2,7 +2,7 @@ package jiyeon.travel.domain.ticket.controller;
 
 import jakarta.validation.Valid;
 import jiyeon.travel.domain.ticket.dto.*;
-import jiyeon.travel.domain.ticket.service.TicketPartnerCommandFacade;
+import jiyeon.travel.domain.ticket.service.TicketPartnerCommandService;
 import jiyeon.travel.domain.ticket.service.TicketPartnerQueryService;
 import jiyeon.travel.global.auth.UserDetailsImpl;
 import lombok.RequiredArgsConstructor;
@@ -19,7 +19,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class TicketPartnerController {
 
-    private final TicketPartnerCommandFacade ticketPartnerCommandFacade;
+    private final TicketPartnerCommandService ticketPartnerCommandService;
     private final TicketPartnerQueryService ticketPartnerQueryService;
 
     @PostMapping
@@ -27,7 +27,7 @@ public class TicketPartnerController {
                                                            @Valid @RequestPart("ticket") TicketCreateReqDto ticketCreateReqDto,
                                                            @RequestPart(value = "images", required = false) List<MultipartFile> files) {
         String email = userDetails.getUsername();
-        TicketDetailResDto ticketDetailResDto = ticketPartnerCommandFacade.createTicket(
+        TicketDetailResDto ticketDetailResDto = ticketPartnerCommandService.createTicket(
                 email,
                 ticketCreateReqDto.getName(),
                 ticketCreateReqDto.getSaleStartDate(),
@@ -49,7 +49,7 @@ public class TicketPartnerController {
                                                                   @PathVariable Long ticketId,
                                                                   @Valid @RequestBody TicketOptionCreateReqDto ticketOptionCreateReqDto) {
         String email = userDetails.getUsername();
-        TicketOptionDetailResDto ticketOptionDetailResDto = ticketPartnerCommandFacade.addOptionById(
+        TicketOptionDetailResDto ticketOptionDetailResDto = ticketPartnerCommandService.addOptionById(
                 email,
                 ticketId,
                 ticketOptionCreateReqDto.getName(),
@@ -64,7 +64,7 @@ public class TicketPartnerController {
                                                                       @PathVariable Long ticketId,
                                                                       @Valid @RequestBody TicketScheduleCreateReqDto ticketScheduleCreateReqDto) {
         String email = userDetails.getUsername();
-        TicketScheduleDetailResDto ticketScheduleDetailResDto = ticketPartnerCommandFacade.addScheduleById(
+        TicketScheduleDetailResDto ticketScheduleDetailResDto = ticketPartnerCommandService.addScheduleById(
                 email,
                 ticketId,
                 ticketScheduleCreateReqDto.getStartDate(),
@@ -80,7 +80,7 @@ public class TicketPartnerController {
                                                                  @PathVariable Long ticketId,
                                                                  @RequestParam("images") List<MultipartFile> files) {
         String email = userDetails.getUsername();
-        TicketImageDetailsResDto ticketImageDetailsResDto = ticketPartnerCommandFacade.addImageById(email, ticketId, files);
+        TicketImageDetailsResDto ticketImageDetailsResDto = ticketPartnerCommandService.addImageById(email, ticketId, files);
 
         return new ResponseEntity<>(ticketImageDetailsResDto, HttpStatus.CREATED);
     }
@@ -90,7 +90,7 @@ public class TicketPartnerController {
                                                                        @PathVariable Long ticketId,
                                                                        @RequestBody TicketInfoUpdateReqDto ticketInfoUpdateReqDto) {
         String email = userDetails.getUsername();
-        TicketInfoDetailResDto ticketInfoResDto = ticketPartnerCommandFacade.updateTicketInfoById(
+        TicketInfoDetailResDto ticketInfoResDto = ticketPartnerCommandService.updateTicketInfoById(
                 ticketId,
                 email,
                 ticketInfoUpdateReqDto.getName(),
@@ -110,7 +110,7 @@ public class TicketPartnerController {
                                                                          @PathVariable Long ticketId,
                                                                          @Valid @RequestBody TicketStatusReqDto ticketStatusReqDto) {
         String email = userDetails.getUsername();
-        TicketInfoDetailResDto ticketInfoDetailResDto = ticketPartnerCommandFacade.changeTicketStatusById(email, ticketId, ticketStatusReqDto.getSaleStatus());
+        TicketInfoDetailResDto ticketInfoDetailResDto = ticketPartnerCommandService.changeTicketStatusById(email, ticketId, ticketStatusReqDto.getSaleStatus());
 
         return new ResponseEntity<>(ticketInfoDetailResDto, HttpStatus.OK);
     }
@@ -121,7 +121,7 @@ public class TicketPartnerController {
                                                                      @PathVariable Long optionId,
                                                                      @RequestBody TicketOptionUpdateReqDto ticketOptionUpdateReqDto) {
         String email = userDetails.getUsername();
-        TicketOptionDetailResDto ticketOptionDetailResDto = ticketPartnerCommandFacade.updateOptionById(
+        TicketOptionDetailResDto ticketOptionDetailResDto = ticketPartnerCommandService.updateOptionById(
                 email,
                 ticketId,
                 optionId,
@@ -138,7 +138,7 @@ public class TicketPartnerController {
                                                                          @PathVariable Long scheduleId,
                                                                          @Valid @RequestBody TicketScheduleUpdateReqDto ticketScheduleUpdateReqDto) {
         String email = userDetails.getUsername();
-        TicketScheduleDetailResDto ticketScheduleDetailResDto = ticketPartnerCommandFacade.updateScheduleById(
+        TicketScheduleDetailResDto ticketScheduleDetailResDto = ticketPartnerCommandService.updateScheduleById(
                 email,
                 ticketId,
                 scheduleId,
@@ -156,7 +156,7 @@ public class TicketPartnerController {
                                                                        @PathVariable Long ticketId,
                                                                        @PathVariable Long imageId) {
         String email = userDetails.getUsername();
-        TicketImageDetailResDto ticketImageDetailResDto = ticketPartnerCommandFacade.changeImageMainById(email, ticketId, imageId);
+        TicketImageDetailResDto ticketImageDetailResDto = ticketPartnerCommandService.changeImageMainById(email, ticketId, imageId);
 
         return new ResponseEntity<>(ticketImageDetailResDto, HttpStatus.OK);
     }
@@ -165,7 +165,7 @@ public class TicketPartnerController {
     public ResponseEntity<Void> deleteTicketById(@AuthenticationPrincipal UserDetailsImpl userDetails,
                                                  @PathVariable Long ticketId) {
         String email = userDetails.getUsername();
-        ticketPartnerCommandFacade.deleteTicketById(ticketId, email);
+        ticketPartnerCommandService.deleteTicketById(ticketId, email);
 
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
@@ -175,7 +175,7 @@ public class TicketPartnerController {
                                                  @PathVariable Long ticketId,
                                                  @PathVariable Long optionId) {
         String email = userDetails.getUsername();
-        ticketPartnerCommandFacade.deleteOptionById(email, ticketId, optionId);
+        ticketPartnerCommandService.deleteOptionById(email, ticketId, optionId);
 
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
@@ -185,7 +185,7 @@ public class TicketPartnerController {
                                                    @PathVariable Long ticketId,
                                                    @PathVariable Long scheduleId) {
         String email = userDetails.getUsername();
-        ticketPartnerCommandFacade.deleteScheduleById(email, ticketId, scheduleId);
+        ticketPartnerCommandService.deleteScheduleById(email, ticketId, scheduleId);
 
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
@@ -195,7 +195,7 @@ public class TicketPartnerController {
                                                 @PathVariable Long ticketId,
                                                 @PathVariable Long imageId) {
         String email = userDetails.getUsername();
-        ticketPartnerCommandFacade.deleteImageById(email, ticketId, imageId);
+        ticketPartnerCommandService.deleteImageById(email, ticketId, imageId);
 
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }

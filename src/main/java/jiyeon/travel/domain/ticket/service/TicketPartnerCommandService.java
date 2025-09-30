@@ -1,6 +1,7 @@
 package jiyeon.travel.domain.ticket.service;
 
 import jiyeon.travel.domain.reservation.entity.Reservation;
+import jiyeon.travel.domain.reservation.service.ReservationQueryService;
 import jiyeon.travel.domain.ticket.dto.*;
 import jiyeon.travel.domain.ticket.entity.Ticket;
 import jiyeon.travel.domain.ticket.entity.TicketImage;
@@ -8,6 +9,7 @@ import jiyeon.travel.domain.ticket.entity.TicketOption;
 import jiyeon.travel.domain.ticket.entity.TicketSchedule;
 import jiyeon.travel.domain.ticket.repository.TicketRepository;
 import jiyeon.travel.domain.user.entity.User;
+import jiyeon.travel.domain.user.service.UserQueryService;
 import jiyeon.travel.global.common.enums.TicketSaleStatus;
 import jiyeon.travel.global.exception.CustomException;
 import jiyeon.travel.global.exception.ErrorCode;
@@ -31,12 +33,16 @@ public class TicketPartnerCommandService {
     private final TicketOptionCommandService ticketOptionCommandService;
     private final TicketScheduleCommandService ticketScheduleCommandService;
     private final TicketImageCommandService ticketImageCommandService;
+    private final UserQueryService userQueryService;
+    private final ReservationQueryService reservationQueryService;
 
     @Transactional
-    public TicketDetailResDto createTicket(String name, LocalDateTime saleStartDate, LocalDateTime saleEndDate,
+    public TicketDetailResDto createTicket(String email,String name, LocalDateTime saleStartDate, LocalDateTime saleEndDate,
                                            String phone, String address, Integer basePrice, String description,
                                            List<TicketOptionCreateReqDto> options, List<TicketScheduleCreateReqDto> schedules,
-                                           List<MultipartFile> files, User user) {
+                                           List<MultipartFile> files) {
+        User user = userQueryService.getActiveUserByEmail(email);
+
         LocalDateTime now = LocalDateTime.now();
         validateSaleRange(saleStartDate, saleEndDate, now);
 
@@ -139,7 +145,7 @@ public class TicketPartnerCommandService {
     }
 
     @Transactional
-    public TicketInfoDetailResDto changeTicketStatusById(String email, Long ticketId, String saleStatus, List<Reservation> reservations) {
+    public TicketInfoDetailResDto changeTicketStatusById(String email, Long ticketId, String saleStatus) {
         Ticket ticket = ticketRepository.findByIdAndEmailOrElseThrow(ticketId, email);
         TicketSaleStatus currentStatus = TicketSaleStatus.of(saleStatus);
 
@@ -147,6 +153,7 @@ public class TicketPartnerCommandService {
             throw new CustomException(ErrorCode.INVALID_STATUS_CHANGE);
         }
 
+        List<Reservation> reservations = reservationQueryService.findReservationsByTicketIdWithTicketAndSchedule(ticketId);
         boolean isPaidReservation = reservations.stream().allMatch(Reservation::isPaidStatus);
 
         if (ticket.isActiveStatus() && isPaidReservation) {
