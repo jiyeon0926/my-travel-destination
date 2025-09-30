@@ -7,7 +7,7 @@ import jiyeon.travel.domain.ticket.entity.Ticket;
 import jiyeon.travel.domain.ticket.entity.TicketSchedule;
 import jiyeon.travel.domain.ticket.repository.TicketRepository;
 import jiyeon.travel.domain.ticket.repository.TicketScheduleRepository;
-import jiyeon.travel.domain.ticket.service.TicketPartnerCommandService;
+import jiyeon.travel.domain.ticket.service.TicketPartnerCommandFacade;
 import jiyeon.travel.domain.user.entity.User;
 import jiyeon.travel.domain.user.repository.UserRepository;
 import jiyeon.travel.global.common.enums.TicketSaleStatus;
@@ -33,7 +33,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @ActiveProfiles("test")
 @SpringBootTest
-class ReservationServiceTest {
+class ReservationCommandServiceTest {
 
     @Autowired
     private UserRepository userRepository;
@@ -48,10 +48,10 @@ class ReservationServiceTest {
     private ReservationRepository reservationRepository;
 
     @Autowired
-    private TicketPartnerCommandService ticketPartnerCommandService;
+    private TicketPartnerCommandFacade ticketPartnerCommandFacade;
 
     @Autowired
-    private ReservationFacadeService reservationFacadeService;
+    private ReservationFacade reservationFacade;
 
     private User partner;
 
@@ -98,7 +98,7 @@ class ReservationServiceTest {
             int index = i;
             executorService.execute(() -> {
                 try {
-                    reservationFacadeService.createReservationWithLock(
+                    reservationFacade.createReservationWithLock(
                             users.get(index).getEmail(),
                             ticketSchedule.getId(),
                             1,
@@ -144,7 +144,7 @@ class ReservationServiceTest {
                 new TicketScheduleCreateReqDto(saleStartDate.toLocalDate(), null, 10)
         );
 
-        return ticketPartnerCommandService.createTicket(
+        return ticketPartnerCommandFacade.createTicket(
                 partner.getEmail(),
                 "타르트 만들기 체험",
                 saleStartDate,

@@ -5,7 +5,7 @@ import jiyeon.travel.domain.blog.entity.Blog;
 import jiyeon.travel.domain.blog.entity.BlogTicketItem;
 import jiyeon.travel.domain.blog.repository.BlogTicketItemRepository;
 import jiyeon.travel.domain.reservation.entity.Reservation;
-import jiyeon.travel.domain.reservation.service.ReservationService;
+import jiyeon.travel.domain.reservation.service.ReservationQueryService;
 import jiyeon.travel.global.common.enums.ReservationStatus;
 import jiyeon.travel.global.exception.CustomException;
 import jiyeon.travel.global.exception.ErrorCode;
@@ -22,7 +22,7 @@ import java.util.Set;
 public class BlogTicketItemCommandService {
 
     private final BlogTicketItemRepository blogTicketItemRepository;
-    private final ReservationService reservationService;
+    private final ReservationQueryService reservationQueryService;
 
     @Transactional
     public List<BlogTicketItem> saveTicketItem(String email, Blog blog, List<BlogTicketItemReqDto> items) {
@@ -36,7 +36,7 @@ public class BlogTicketItemCommandService {
                         throw new CustomException(ErrorCode.DUPLICATE_RESERVATION_ID);
                     }
 
-                    Reservation reservation = reservationService.getReservationByIdAndEmailAndStatus(reservationId, email, ReservationStatus.USED);
+                    Reservation reservation = reservationQueryService.getReservationByIdAndEmailAndStatus(reservationId, email, ReservationStatus.USED);
 
                     return new BlogTicketItem(blog, reservation);
                 })
@@ -52,7 +52,7 @@ public class BlogTicketItemCommandService {
             throw new CustomException(ErrorCode.DUPLICATE_RESERVATION_ID);
         }
 
-        Reservation reservation = reservationService.getReservationByIdAndEmailAndStatus(reservationId, email, ReservationStatus.USED);
+        Reservation reservation = reservationQueryService.getReservationByIdAndEmailAndStatus(reservationId, email, ReservationStatus.USED);
         BlogTicketItem blogTicketItem = new BlogTicketItem(blog, reservation);
         blogTicketItemRepository.save(blogTicketItem);
     }

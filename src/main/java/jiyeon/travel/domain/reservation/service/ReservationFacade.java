@@ -2,22 +2,25 @@ package jiyeon.travel.domain.reservation.service;
 
 import jiyeon.travel.domain.reservation.dto.ReservationDetailResDto;
 import jiyeon.travel.domain.reservation.dto.ReservationOptionCreateReqDto;
+import jiyeon.travel.domain.reservation.dto.ReservationSimpleResDto;
 import jiyeon.travel.global.exception.CustomException;
 import jiyeon.travel.global.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 @Service
 @RequiredArgsConstructor
-public class ReservationFacadeService {
+public class ReservationFacade {
 
     private final RedissonClient redissonClient;
-    private final ReservationService reservationService;
+    private final ReservationCommandService reservationCommandService;
+    private final ReservationQueryService reservationQueryService;
 
     public ReservationDetailResDto createReservationWithLock(String email, Long scheduleId, Integer baseQuantity,
                                                              String reservationName, String reservationPhone,
@@ -29,7 +32,7 @@ public class ReservationFacadeService {
                 throw new CustomException(ErrorCode.RESERVATION_CONFLICT);
             }
 
-            return reservationService.createReservation(email, scheduleId, baseQuantity, reservationName, reservationPhone, options);
+            return reservationCommandService.createReservation(email, scheduleId, baseQuantity, reservationName, reservationPhone, options);
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
             throw new CustomException(ErrorCode.RESERVATION_INTERRUPT);
@@ -38,5 +41,20 @@ public class ReservationFacadeService {
                 lock.unlock();
             }
         }
+    }
+
+    @Transactional(readOnly = true)
+    public ReservationDetailResDto findMyReservationById(String email, Long reservationId) {
+        return reservationQueryService.findMyReservationById(email, reservationId);
+    }
+
+    @Transactional(readOnly = true)
+    public List<ReservationSimpleResDto> findAll(String email) {
+        return reservationQueryService.findAll(email);
+    }
+
+    @Transactional(readOnly = true)
+    public List<ReservationSimpleResDto> findMyUsedReservations(String email) {
+        return reservationQueryService.findMyUsedReservations(email);
     }
 }

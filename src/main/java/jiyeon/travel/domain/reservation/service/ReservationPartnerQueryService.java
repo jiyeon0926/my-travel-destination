@@ -7,7 +7,6 @@ import jiyeon.travel.domain.reservation.entity.ReservationOption;
 import jiyeon.travel.domain.reservation.repository.ReservationRepository;
 import jiyeon.travel.domain.ticket.entity.Ticket;
 import jiyeon.travel.domain.ticket.entity.TicketSchedule;
-import jiyeon.travel.global.common.enums.ReservationStatus;
 import jiyeon.travel.global.exception.CustomException;
 import jiyeon.travel.global.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
@@ -18,18 +17,9 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class ReservationPartnerService {
+public class ReservationPartnerQueryService {
 
     private final ReservationRepository reservationRepository;
-
-    @Transactional(readOnly = true)
-    public List<ReservationSimpleResDto> findAllWithoutUnpaid(String email) {
-        List<Reservation> reservations = reservationRepository.findAllByPartnerEmailWithoutUnpaid(email);
-
-        return reservations.stream()
-                .map(ReservationSimpleResDto::new)
-                .toList();
-    }
 
     @Transactional(readOnly = true)
     public ReservationDetailResDto findReservationById(String email, Long reservationId) {
@@ -43,22 +33,12 @@ public class ReservationPartnerService {
         return new ReservationDetailResDto(reservation, ticket, ticketSchedule, reservationOptions);
     }
 
-    @Transactional
-    public ReservationSimpleResDto changeReservationStatusById(String email, Long reservationId, String status) {
-        Reservation reservation = reservationRepository.findByIdAndPartnerEmailWithTicketAndSchedule(reservationId, email)
-                .orElseThrow(() -> new CustomException(ErrorCode.RESERVATION_NOT_FOUND));
+    @Transactional(readOnly = true)
+    public List<ReservationSimpleResDto> findAllWithoutUnpaid(String email) {
+        List<Reservation> reservations = reservationRepository.findAllByPartnerEmailWithoutUnpaid(email);
 
-        if (reservation.isNotPaidStatus()) {
-            throw new CustomException(ErrorCode.INVALID_STATUS_CHANGE);
-        }
-
-        ReservationStatus currentStatus = ReservationStatus.of(status);
-        if (reservation.isNotUsedOrNoShow(currentStatus)) {
-            throw new CustomException(ErrorCode.INVALID_RESERVATION_STATUS_CHANGE);
-        }
-
-        reservation.changeStatus(currentStatus);
-
-        return new ReservationSimpleResDto(reservation);
+        return reservations.stream()
+                .map(ReservationSimpleResDto::new)
+                .toList();
     }
 }

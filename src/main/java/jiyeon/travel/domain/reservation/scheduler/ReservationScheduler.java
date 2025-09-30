@@ -1,6 +1,6 @@
 package jiyeon.travel.domain.reservation.scheduler;
 
-import jiyeon.travel.domain.reservation.service.ReservationService;
+import jiyeon.travel.domain.reservation.service.ReservationCommandService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -8,9 +8,9 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class ReservationScheduler {
 
-    private final ReservationService reservationService;
+    private final ReservationCommandService reservationCommandService;
 
     public void expiredReservations() {
-        reservationService.expireReservations();
+        reservationCommandService.expireReservations();
     }
 }

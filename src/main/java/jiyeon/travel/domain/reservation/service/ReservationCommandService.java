@@ -2,7 +2,6 @@ package jiyeon.travel.domain.reservation.service;
 
 import jiyeon.travel.domain.reservation.dto.ReservationDetailResDto;
 import jiyeon.travel.domain.reservation.dto.ReservationOptionCreateReqDto;
-import jiyeon.travel.domain.reservation.dto.ReservationSimpleResDto;
 import jiyeon.travel.domain.reservation.entity.Reservation;
 import jiyeon.travel.domain.reservation.entity.ReservationOption;
 import jiyeon.travel.domain.reservation.repository.ReservationOptionRepository;
@@ -14,7 +13,6 @@ import jiyeon.travel.domain.ticket.service.TicketQueryService;
 import jiyeon.travel.domain.user.entity.User;
 import jiyeon.travel.domain.user.service.UserQueryService;
 import jiyeon.travel.global.common.enums.ReservationStatus;
-import jiyeon.travel.global.common.enums.TicketSaleStatus;
 import jiyeon.travel.global.exception.CustomException;
 import jiyeon.travel.global.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
@@ -27,7 +25,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class ReservationService {
+public class ReservationCommandService {
 
     private final ReservationRepository reservationRepository;
     private final ReservationOptionRepository reservationOptionRepository;
@@ -35,8 +33,7 @@ public class ReservationService {
     private final TicketQueryService ticketQueryService;
 
     @Transactional
-    public ReservationDetailResDto createReservation(String email, Long scheduleId, Integer baseQuantity,
-                                                     String reservationName, String reservationPhone,
+    public ReservationDetailResDto createReservation(String email, Long scheduleId, Integer baseQuantity, String reservationName, String reservationPhone,
                                                      List<ReservationOptionCreateReqDto> options) {
         User user = userQueryService.getActiveUserByEmail(email);
         TicketSchedule ticketSchedule = ticketQueryService.getActiveSchedule(scheduleId);
@@ -57,54 +54,6 @@ public class ReservationService {
                 : saveOptionTicketReservation(totalQuantity, reservationName, reservationPhone, options, ticket, user, ticketSchedule);
     }
 
-    @Transactional(readOnly = true)
-    public List<ReservationSimpleResDto> findAll(String email) {
-        List<Reservation> reservations = reservationRepository.findAllByEmail(email);
-
-        return reservations.stream()
-                .map(ReservationSimpleResDto::new)
-                .toList();
-    }
-
-    @Transactional(readOnly = true)
-    public List<ReservationSimpleResDto> findMyUsedReservations(String email) {
-        List<Reservation> reservations = reservationRepository.findAllByEmailAndStatus(email, ReservationStatus.USED);
-
-        return reservations.stream()
-                .map(ReservationSimpleResDto::new)
-                .toList();
-    }
-
-    @Transactional(readOnly = true)
-    public ReservationDetailResDto findMyReservationById(String email, Long reservationId) {
-        Reservation reservation = reservationRepository.findByIdAndUserEmailWithSchedule(reservationId, email)
-                .orElseThrow(() -> new CustomException(ErrorCode.RESERVATION_NOT_FOUND));
-
-        List<ReservationOption> reservationOptions = reservation.getReservationOptions();
-        TicketSchedule ticketSchedule = reservation.getTicketSchedule();
-        Ticket ticket = ticketSchedule.getTicket();
-
-        return new ReservationDetailResDto(reservation, ticket, ticketSchedule, reservationOptions);
-    }
-
-    @Transactional
-    public void confirmReservationPayment(Long reservationId) {
-        Reservation reservation = reservationRepository.findByIdWithTicketAndSchedule(reservationId)
-                .orElseThrow(() -> new CustomException(ErrorCode.RESERVATION_NOT_FOUND));
-
-        TicketSchedule ticketSchedule = reservation.getTicketSchedule();
-        ticketSchedule.decreaseRemainingQuantity(reservation.getTotalQuantity());
-        reservation.changeStatus(ReservationStatus.PAID);
-
-        Ticket ticket = ticketSchedule.getTicket();
-        List<TicketSchedule> ticketSchedules = ticketQueryService.findActiveSchedulesByTicketId(ticket.getId());
-
-        boolean isSoldOut = ticketSchedules.stream().allMatch(TicketSchedule::isSoldOut);
-        if (isSoldOut) {
-            ticket.changeSaleStatus(TicketSaleStatus.SOLD_OUT);
-        }
-    }
-
     @Transactional
     public void expireReservations() {
         List<Reservation> reservations = reservationRepository.findAllByStatusWithSchedule(ReservationStatus.UNPAID);
@@ -118,20 +67,6 @@ public class ReservationService {
                     TicketSchedule ticketSchedule = reservation.getTicketSchedule();
                     ticketSchedule.increaseRemainingQuantity(reservation.getTotalQuantity());
                 });
-    }
-
-    public Reservation getReservationByIdWithTicketAndSchedule(Long reservationId) {
-        return reservationRepository.findByIdWithTicketAndSchedule(reservationId)
-                .orElseThrow(() -> new CustomException(ErrorCode.RESERVATION_NOT_FOUND));
-    }
-
-    public Reservation getReservationByIdAndEmailAndStatus(Long reservationId, String email, ReservationStatus status) {
-        return reservationRepository.findByIdAndEmailAndStatus(reservationId, email, status)
-                .orElseThrow(() -> new CustomException(ErrorCode.RESERVATION_NOT_FOUND));
-    }
-
-    public List<Reservation> findReservationsByTicketIdWithTicketAndSchedule(Long ticketId) {
-        return reservationRepository.findAllByTicketIdWithTicketAndSchedule(ticketId);
     }
 
     private void validateBaseTicketReservation(Integer baseQuantity, List<ReservationOptionCreateReqDto> options, Ticket ticket) {

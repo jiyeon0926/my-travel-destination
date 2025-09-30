@@ -1,7 +1,7 @@
 package jiyeon.travel.domain.ticket.service;
 
 import jiyeon.travel.domain.reservation.entity.Reservation;
-import jiyeon.travel.domain.reservation.service.ReservationService;
+import jiyeon.travel.domain.reservation.service.ReservationQueryService;
 import jiyeon.travel.domain.ticket.dto.*;
 import jiyeon.travel.domain.user.entity.User;
 import jiyeon.travel.domain.user.service.UserQueryService;
@@ -21,7 +21,7 @@ public class TicketPartnerCommandFacade {
 
     private final TicketPartnerCommandService ticketPartnerCommandService;
     private final UserQueryService userQueryService;
-    private final ReservationService reservationService;
+    private final ReservationQueryService reservationQueryService;
 
     @Transactional
     public TicketDetailResDto createTicket(String email, String name, LocalDateTime saleStartDate, LocalDateTime saleEndDate,
@@ -58,7 +58,7 @@ public class TicketPartnerCommandFacade {
 
     @Transactional
     public TicketInfoDetailResDto changeTicketStatusById(String email, Long ticketId, String saleStatus) {
-        List<Reservation> reservations = reservationService.findReservationsByTicketIdWithTicketAndSchedule(ticketId);
+        List<Reservation> reservations = reservationQueryService.findReservationsByTicketIdWithTicketAndSchedule(ticketId);
 
         return ticketPartnerCommandService.changeTicketStatusById(email, ticketId, saleStatus, reservations);
     }

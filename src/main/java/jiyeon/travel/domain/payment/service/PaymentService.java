@@ -5,15 +5,20 @@ import jiyeon.travel.domain.payment.dto.KakaopayReadyResDto;
 import jiyeon.travel.domain.payment.entity.Payment;
 import jiyeon.travel.domain.payment.repository.PaymentRepository;
 import jiyeon.travel.domain.reservation.entity.Reservation;
-import jiyeon.travel.domain.reservation.service.ReservationService;
+import jiyeon.travel.domain.reservation.service.ReservationQueryService;
 import jiyeon.travel.domain.ticket.entity.Ticket;
 import jiyeon.travel.domain.ticket.entity.TicketSchedule;
+import jiyeon.travel.domain.ticket.service.TicketQueryService;
 import jiyeon.travel.global.common.enums.PaymentStatus;
+import jiyeon.travel.global.common.enums.ReservationStatus;
+import jiyeon.travel.global.common.enums.TicketSaleStatus;
 import jiyeon.travel.global.exception.CustomException;
 import jiyeon.travel.global.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -21,11 +26,12 @@ public class PaymentService {
 
     private final PaymentRepository paymentRepository;
     private final KakaopayService kakaopayService;
-    private final ReservationService reservationService;
+    private final ReservationQueryService reservationQueryService;
+    private final TicketQueryService ticketQueryService;
 
     @Transactional
     public KakaopayReadyResDto readyPayment(Long reservationId) {
-        Reservation reservation = reservationService.getReservationByIdWithTicketAndSchedule(reservationId);
+        Reservation reservation = reservationQueryService.getReservationByIdWithTicketAndSchedule(reservationId);
         if (reservation.isPaidStatus()) {
             throw new CustomException(ErrorCode.ALREADY_PAID_RESERVATION);
         }
@@ -56,8 +62,24 @@ public class PaymentService {
         KakaopayCompletedResDto kakaopayCompletedResDto = kakaopayService.approvePayment(payment.getTid(), payment.getReservation(), pgToken);
 
         payment.completedPayment(kakaopayCompletedResDto.getPaymentMethod(), kakaopayCompletedResDto.getApprovedAt());
-        reservationService.confirmReservationPayment(reservationId);
+        confirmReservationPayment(reservationId);
 
         return kakaopayCompletedResDto;
+    }
+
+    private void confirmReservationPayment(Long reservationId) {
+        Reservation reservation = reservationQueryService.getReservationByIdWithTicketAndSchedule(reservationId);
+        TicketSchedule ticketSchedule = reservation.getTicketSchedule();
+
+        ticketSchedule.decreaseRemainingQuantity(reservation.getTotalQuantity());
+        reservation.changeStatus(ReservationStatus.PAID);
+
+        Ticket ticket = ticketSchedule.getTicket();
+        List<TicketSchedule> ticketSchedules = ticketQueryService.findActiveSchedulesByTicketId(ticket.getId());
+
+        boolean isSoldOut = ticketSchedules.stream().allMatch(TicketSchedule::isSoldOut);
+        if (isSoldOut) {
+            ticket.changeSaleStatus(TicketSaleStatus.SOLD_OUT);
+        }
     }
 }

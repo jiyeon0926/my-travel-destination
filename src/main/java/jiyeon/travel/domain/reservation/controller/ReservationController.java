@@ -4,8 +4,7 @@ import jakarta.validation.Valid;
 import jiyeon.travel.domain.reservation.dto.ReservationCreateReqDto;
 import jiyeon.travel.domain.reservation.dto.ReservationDetailResDto;
 import jiyeon.travel.domain.reservation.dto.ReservationSimpleResDto;
-import jiyeon.travel.domain.reservation.service.ReservationFacadeService;
-import jiyeon.travel.domain.reservation.service.ReservationService;
+import jiyeon.travel.domain.reservation.service.ReservationFacade;
 import jiyeon.travel.global.auth.UserDetailsImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -20,14 +19,13 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ReservationController {
 
-    private final ReservationFacadeService reservationFacadeService;
-    private final ReservationService reservationService;
+    private final ReservationFacade reservationFacade;
 
     @PostMapping
     public ResponseEntity<ReservationDetailResDto> createReservation(@AuthenticationPrincipal UserDetailsImpl userDetails,
                                                                      @Valid @RequestBody ReservationCreateReqDto reservationCreateReqDto) {
         String email = userDetails.getUsername();
-        ReservationDetailResDto reservationDetailResDto = reservationFacadeService.createReservationWithLock(
+        ReservationDetailResDto reservationDetailResDto = reservationFacade.createReservationWithLock(
                 email,
                 reservationCreateReqDto.getScheduleId(),
                 reservationCreateReqDto.getBaseQuantity(),
@@ -39,27 +37,27 @@ public class ReservationController {
         return new ResponseEntity<>(reservationDetailResDto, HttpStatus.CREATED);
     }
 
-    @GetMapping
-    public ResponseEntity<List<ReservationSimpleResDto>> findAll(@AuthenticationPrincipal UserDetailsImpl userDetails) {
-        String email = userDetails.getUsername();
-        List<ReservationSimpleResDto> reservationSimpleResDtos = reservationService.findAll(email);
-
-        return new ResponseEntity<>(reservationSimpleResDtos, HttpStatus.OK);
-    }
-
     @GetMapping("/{reservationId}")
     public ResponseEntity<ReservationDetailResDto> findMyReservationById(@AuthenticationPrincipal UserDetailsImpl userDetails,
                                                                          @PathVariable Long reservationId) {
         String email = userDetails.getUsername();
-        ReservationDetailResDto reservationDetailResDto = reservationService.findMyReservationById(email, reservationId);
+        ReservationDetailResDto reservationDetailResDto = reservationFacade.findMyReservationById(email, reservationId);
 
         return new ResponseEntity<>(reservationDetailResDto, HttpStatus.OK);
+    }
+
+    @GetMapping
+    public ResponseEntity<List<ReservationSimpleResDto>> findAll(@AuthenticationPrincipal UserDetailsImpl userDetails) {
+        String email = userDetails.getUsername();
+        List<ReservationSimpleResDto> reservationSimpleResDtos = reservationFacade.findAll(email);
+
+        return new ResponseEntity<>(reservationSimpleResDtos, HttpStatus.OK);
     }
 
     @GetMapping("/used")
     public ResponseEntity<List<ReservationSimpleResDto>> findMyUsedReservations(@AuthenticationPrincipal UserDetailsImpl userDetails) {
         String email = userDetails.getUsername();
-        List<ReservationSimpleResDto> reservationSimpleResDtos = reservationService.findMyUsedReservations(email);
+        List<ReservationSimpleResDto> reservationSimpleResDtos = reservationFacade.findMyUsedReservations(email);
 
         return new ResponseEntity<>(reservationSimpleResDtos, HttpStatus.OK);
     }
