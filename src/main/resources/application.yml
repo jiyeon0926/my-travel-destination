@@ -29,6 +29,13 @@ spring:
       max-file-size: 10MB
       max-request-size: 10MB
 
+springdoc:
+  swagger-ui:
+    path: /swagger-ui
+    groups-order: desc
+    tags-sorter: alpha
+    operations-sorter: method
+
 jwt:
   secret: ${JWT_SECRET}
   access-expiry-millis: ${JWT_ACCESS_EXPIRY_MILLIS}

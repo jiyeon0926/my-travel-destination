@@ -23,10 +23,11 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class WebConfig {
 
     private static final String[] WHITE_LIST = {
+            "/v3/api-docs/**", "/swagger-ui/**",
             "/api/auth/signup", "/api/auth/login",
             "/api/tickets/search",
             "/api/blogs/search",
-            "/api/reservations/{reservationId}/payments/completed",
+            "/api/reservations/*/payments/completed",
             "/payments/cancel", "/payments/fail"
     };
 
