@@ -9,10 +9,10 @@ import java.time.LocalDateTime;
 
 @Getter
 @RequiredArgsConstructor
-@Schema(description = "프로필 응답 DTO")
+@Schema(description = "사용자 프로필 응답")
 public class UserProfileResDto {
 
-    @Schema(description = "고유 식별자", example = "1")
+    @Schema(description = "사용자 고유 식별자", example = "1")
     private final Long id;
 
     @Schema(description = "이메일", example = "user1@naver.com")

@@ -7,10 +7,10 @@ import lombok.Getter;
 import java.time.LocalDateTime;
 
 @Getter
-@Schema(description = "사용자 상세 정보 응답 DTO")
+@Schema(description = "사용자 상세 응답")
 public class UserDetailResDto {
 
-    @Schema(description = "고유 식별자", example = "1")
+    @Schema(description = "사용자 고유 식별자", example = "1")
     private final Long id;
 
     @Schema(description = "이메일", example = "user1@naver.com")

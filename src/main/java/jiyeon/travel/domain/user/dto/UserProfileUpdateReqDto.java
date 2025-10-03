@@ -6,7 +6,7 @@ import lombok.RequiredArgsConstructor;
 
 @Getter
 @RequiredArgsConstructor
-@Schema(description = "프로필 수정 요청 DTO")
+@Schema(description = "사용자 프로필 수정 요청")
 public class UserProfileUpdateReqDto {
 
     @Schema(description = "별명", example = "고양이")
