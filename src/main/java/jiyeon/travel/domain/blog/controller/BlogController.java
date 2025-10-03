@@ -70,7 +70,7 @@ public class BlogController {
     @PatchMapping("/{blogId}")
     public ResponseEntity<BlogSimpleResDto> updateBlogById(@AuthenticationPrincipal UserDetailsImpl userDetails,
                                                            @PathVariable Long blogId,
-                                                           @RequestBody BlogUpdateReqDto blogUpdateReqDto) {
+                                                           @Valid @RequestBody BlogUpdateReqDto blogUpdateReqDto) {
         String email = userDetails.getUsername();
         BlogSimpleResDto blogSimpleResDto = blogCommandService.updateBlogById(
                 email,

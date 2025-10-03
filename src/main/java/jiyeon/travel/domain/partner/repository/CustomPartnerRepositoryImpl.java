@@ -35,7 +35,6 @@ public class CustomPartnerRepositoryImpl implements CustomPartnerRepository {
 
         List<PartnerSimpleResDto> partners = jpaQueryFactory
                 .select(new QPartnerSimpleResDto(
-                        user.id,
                         partner.id,
                         user.displayName,
                         partner.businessNumber,
