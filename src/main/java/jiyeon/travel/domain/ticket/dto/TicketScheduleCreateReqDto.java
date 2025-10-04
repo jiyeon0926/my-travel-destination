@@ -18,7 +18,7 @@ public class TicketScheduleCreateReqDto {
     @NotNull(message = "일정 일자는 필수입니다.")
     private final LocalDate startDate;
 
-    @Schema(description = "일정 시작시간", example = "11:00:00")
+    @Schema(description = "일정 시작시간", example = "11:00:00", type = "string")
     private final LocalTime startTime;
 
     @Schema(description = "초기 재고 수량", example = "10")

@@ -33,7 +33,7 @@ public class ReservationDetailResDto {
     @Schema(description = "일정 시작일자", example = "2025-09-12")
     private final LocalDate startDate;
 
-    @Schema(description = "일정 시작시간", example = "11:00:00")
+    @Schema(description = "일정 시작시간", example = "11:00:00", type = "string")
     private final LocalTime startTime;
 
     @Schema(description = "예약 번호", example = "yyyyMMdd-UUID")
