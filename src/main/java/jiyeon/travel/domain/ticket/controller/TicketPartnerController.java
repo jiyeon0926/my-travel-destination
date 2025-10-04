@@ -86,11 +86,11 @@ public class TicketPartnerController {
     }
 
     @PatchMapping("/{ticketId}")
-    public ResponseEntity<TicketInfoDetailResDto> updateTicketInfoById(@AuthenticationPrincipal UserDetailsImpl userDetails,
-                                                                       @PathVariable Long ticketId,
-                                                                       @RequestBody TicketInfoUpdateReqDto ticketInfoUpdateReqDto) {
+    public ResponseEntity<TicketSimpleResDto> updateTicketInfoById(@AuthenticationPrincipal UserDetailsImpl userDetails,
+                                                                   @PathVariable Long ticketId,
+                                                                   @RequestBody TicketInfoUpdateReqDto ticketInfoUpdateReqDto) {
         String email = userDetails.getUsername();
-        TicketInfoDetailResDto ticketInfoResDto = ticketPartnerCommandService.updateTicketInfoById(
+        TicketSimpleResDto ticketInfoResDto = ticketPartnerCommandService.updateTicketInfoById(
                 ticketId,
                 email,
                 ticketInfoUpdateReqDto.getName(),
@@ -106,13 +106,13 @@ public class TicketPartnerController {
     }
 
     @PatchMapping("/{ticketId}/status")
-    public ResponseEntity<TicketInfoDetailResDto> changeTicketStatusById(@AuthenticationPrincipal UserDetailsImpl userDetails,
-                                                                         @PathVariable Long ticketId,
-                                                                         @Valid @RequestBody TicketStatusReqDto ticketStatusReqDto) {
+    public ResponseEntity<TicketSimpleResDto> changeTicketStatusById(@AuthenticationPrincipal UserDetailsImpl userDetails,
+                                                                     @PathVariable Long ticketId,
+                                                                     @Valid @RequestBody TicketStatusReqDto ticketStatusReqDto) {
         String email = userDetails.getUsername();
-        TicketInfoDetailResDto ticketInfoDetailResDto = ticketPartnerCommandService.changeTicketStatusById(email, ticketId, ticketStatusReqDto.getSaleStatus());
+        TicketSimpleResDto ticketSimpleResDto = ticketPartnerCommandService.changeTicketStatusById(email, ticketId, ticketStatusReqDto.getSaleStatus());
 
-        return new ResponseEntity<>(ticketInfoDetailResDto, HttpStatus.OK);
+        return new ResponseEntity<>(ticketSimpleResDto, HttpStatus.OK);
     }
 
     @PatchMapping("/{ticketId}/options/{optionId}")

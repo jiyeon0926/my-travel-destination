@@ -114,9 +114,9 @@ public class TicketPartnerCommandService {
     }
 
     @Transactional
-    public TicketInfoDetailResDto updateTicketInfoById(Long ticketId, String email, String name,
-                                                       LocalDateTime saleStartDate, LocalDateTime saleEndDate, String phone,
-                                                       String address, Integer basePrice, String description) {
+    public TicketSimpleResDto updateTicketInfoById(Long ticketId, String email, String name,
+                                                   LocalDateTime saleStartDate, LocalDateTime saleEndDate, String phone,
+                                                   String address, Integer basePrice, String description) {
         Ticket ticket = ticketRepository.findByIdAndEmailWithOption(ticketId, email)
                 .orElseThrow(() -> new CustomException(ErrorCode.TICKET_NOT_FOUND));
 
@@ -141,11 +141,11 @@ public class TicketPartnerCommandService {
         acceptIfNotNull(address, ticket::changeAddress);
         acceptIfNotNull(description, ticket::changeDescription);
 
-        return new TicketInfoDetailResDto(ticket);
+        return new TicketSimpleResDto(ticket);
     }
 
     @Transactional
-    public TicketInfoDetailResDto changeTicketStatusById(String email, Long ticketId, String saleStatus) {
+    public TicketSimpleResDto changeTicketStatusById(String email, Long ticketId, String saleStatus) {
         Ticket ticket = ticketRepository.findByIdAndEmailOrElseThrow(ticketId, email);
         TicketSaleStatus currentStatus = TicketSaleStatus.of(saleStatus);
 
@@ -162,7 +162,7 @@ public class TicketPartnerCommandService {
 
         ticket.changeSaleStatus(currentStatus);
 
-        return new TicketInfoDetailResDto(ticket);
+        return new TicketSimpleResDto(ticket);
     }
 
     @Transactional
