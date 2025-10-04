@@ -31,5 +31,9 @@ public class UserSignupReqDto {
 
     @Schema(description = "전화번호", example = "01012349876")
     @NotBlank(message = "전화번호는 필수입니다.")
+    @Pattern(
+            regexp = "^[0-9]{10,11}$",
+            message = "전화번호는 10자리 또는 11자리만 가능하고, 숫자만 포함해야 합니다."
+    )
     private final String phone;
 }

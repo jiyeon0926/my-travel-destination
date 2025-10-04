@@ -3,6 +3,7 @@ package jiyeon.travel.domain.partner.dto;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
@@ -34,5 +35,9 @@ public class PartnerSignupReqDto {
 
     @Schema(description = "전화번호", example = "03112345678")
     @NotBlank(message = "전화번호는 필수입니다.")
+    @Pattern(
+            regexp = "^[0-9]{10,11}$",
+            message = "전화번호는 10자리 또는 11자리만 가능하고, 숫자만 포함해야 합니다."
+    )
     private final String phone;
 }
