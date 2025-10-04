@@ -86,3 +86,4 @@
 - [카카오페이 단건 결제 공식 문서](https://developers.kakaopay.com/docs/payment/online/single-payment)
 - [Java 8 Consumer accept() 공식 문서](https://docs.oracle.com/javase/8/docs/api/java/util/function/Consumer.html)
 - [CQRS 패턴 By Azure Architecture](https://learn.microsoft.com/ko-kr/azure/architecture/patterns/cqrs)
+- [Swagger-UI 참고 블로그](https://velog.io/@gmlstjq123/SpringBoot-%ED%94%84%EB%A1%9C%EC%A0%9D%ED%8A%B8%EC%97%90-Swagger-UI-%EC%A0%81%EC%9A%A9%ED%95%98%EA%B8%B0)
