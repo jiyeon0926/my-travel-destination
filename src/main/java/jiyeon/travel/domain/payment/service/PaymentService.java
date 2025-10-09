@@ -62,18 +62,16 @@ public class PaymentService {
         KakaopayCompletedResDto kakaopayCompletedResDto = kakaopayService.approvePayment(payment.getTid(), payment.getReservation(), pgToken);
 
         payment.completedPayment(kakaopayCompletedResDto.getPaymentMethod(), kakaopayCompletedResDto.getApprovedAt());
-        confirmReservationPayment(reservationId);
+        completeReservationPayment(reservationId);
 
         return kakaopayCompletedResDto;
     }
 
-    private void confirmReservationPayment(Long reservationId) {
+    private void completeReservationPayment(Long reservationId) {
         Reservation reservation = reservationQueryService.getReservationByIdWithTicketAndSchedule(reservationId);
-        TicketSchedule ticketSchedule = reservation.getTicketSchedule();
-
-        ticketSchedule.decreaseRemainingQuantity(reservation.getTotalQuantity());
         reservation.changeStatus(ReservationStatus.PAID);
 
+        TicketSchedule ticketSchedule = reservation.getTicketSchedule();
         Ticket ticket = ticketSchedule.getTicket();
         List<TicketSchedule> ticketSchedules = ticketQueryService.findActiveSchedulesByTicketId(ticket.getId());
 
