@@ -1,7 +1,7 @@
 package jiyeon.travel.domain.blog.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
@@ -13,7 +13,7 @@ import java.time.LocalDate;
 public class BlogUpdateReqDto {
 
     @Schema(description = "제목")
-    @Max(value = 50, message = "제목은 최대 50자 입니다.")
+    @Size(max = 50, message = "제목은 최대 50자입니다.")
     private final String title;
 
     @Schema(description = "내용")
