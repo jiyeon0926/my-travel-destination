@@ -37,7 +37,7 @@ public class UserAdminController {
     @Parameters(value = {
             @Parameter(name = "email", description = "이메일", example = "user1@naver.com"),
             @Parameter(name = "nickname", description = "별명", example = "고양이"),
-            @Parameter(name = "isDeleted", description = "탈퇴 여부", example = "true"),
+            @Parameter(name = "isDeleted", description = "탈퇴 여부", example = "true")
     })
     @ApiResponses(value = {
             @ApiResponse(
@@ -47,7 +47,7 @@ public class UserAdminController {
                             array = @ArraySchema(schema = @Schema(implementation = UserDetailResDto.class))
                     )),
             @ApiResponse(responseCode = "401", description = "JWT 인증이 필요합니다.", content = @Content(mediaType = "application/json")),
-            @ApiResponse(responseCode = "403", description = "관리자 권한만 접근할 수 있습니다.", content = @Content(mediaType = "application/json")),
+            @ApiResponse(responseCode = "403", description = "관리자 권한만 접근할 수 있습니다.", content = @Content(mediaType = "application/json"))
     })
     public ResponseEntity<List<UserDetailResDto>> searchUsers(@RequestParam(defaultValue = "1") int page,
                                                               @RequestParam(defaultValue = "10") int size,
