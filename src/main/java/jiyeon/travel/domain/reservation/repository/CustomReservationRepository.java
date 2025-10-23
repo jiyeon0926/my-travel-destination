@@ -1,6 +1,7 @@
 package jiyeon.travel.domain.reservation.repository;
 
 import jiyeon.travel.domain.reservation.entity.Reservation;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 import java.util.Optional;
@@ -17,5 +18,5 @@ public interface CustomReservationRepository {
 
     List<Reservation> findAllByTicketIdWithTicketAndSchedule(Long ticketId);
 
-    List<Reservation> findAllByPartnerEmailWithoutUnpaid(String email);
+    List<Reservation> findAllByPartnerEmailWithoutUnpaid(String email, Pageable pageable);
 }

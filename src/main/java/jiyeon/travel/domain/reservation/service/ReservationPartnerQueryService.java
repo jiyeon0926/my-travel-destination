@@ -10,6 +10,8 @@ import jiyeon.travel.domain.ticket.entity.TicketSchedule;
 import jiyeon.travel.global.exception.CustomException;
 import jiyeon.travel.global.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -34,8 +36,9 @@ public class ReservationPartnerQueryService {
     }
 
     @Transactional(readOnly = true)
-    public List<ReservationSimpleResDto> findAllWithoutUnpaid(String email) {
-        List<Reservation> reservations = reservationRepository.findAllByPartnerEmailWithoutUnpaid(email);
+    public List<ReservationSimpleResDto> findAllWithoutUnpaid(String email, int page, int size) {
+        Pageable pageable = PageRequest.of(page - 1, size);
+        List<Reservation> reservations = reservationRepository.findAllByPartnerEmailWithoutUnpaid(email, pageable);
 
         return reservations.stream()
                 .map(ReservationSimpleResDto::new)

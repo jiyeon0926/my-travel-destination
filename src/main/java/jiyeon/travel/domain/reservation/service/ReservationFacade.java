@@ -49,8 +49,8 @@ public class ReservationFacade {
     }
 
     @Transactional(readOnly = true)
-    public List<ReservationSimpleResDto> findAll(String email) {
-        return reservationQueryService.findAll(email);
+    public List<ReservationSimpleResDto> findAll(String email, int page, int size) {
+        return reservationQueryService.findAll(email, page, size);
     }
 
     @Transactional(readOnly = true)

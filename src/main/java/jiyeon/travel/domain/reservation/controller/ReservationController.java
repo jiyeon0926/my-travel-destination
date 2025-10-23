@@ -88,9 +88,11 @@ public class ReservationController {
             @ApiResponse(responseCode = "401", description = "JWT 인증이 필요합니다.", content = @Content(mediaType = "application/json")),
             @ApiResponse(responseCode = "403", description = "사용자 권한만 접근할 수 있습니다.", content = @Content(mediaType = "application/json"))
     })
-    public ResponseEntity<List<ReservationSimpleResDto>> findAll(@AuthenticationPrincipal UserDetailsImpl userDetails) {
+    public ResponseEntity<List<ReservationSimpleResDto>> findAll(@AuthenticationPrincipal UserDetailsImpl userDetails,
+                                                                 @RequestParam(defaultValue = "1") int page,
+                                                                 @RequestParam(defaultValue = "10") int size) {
         String email = userDetails.getUsername();
-        List<ReservationSimpleResDto> reservationSimpleResDtoList = reservationFacade.findAll(email);
+        List<ReservationSimpleResDto> reservationSimpleResDtoList = reservationFacade.findAll(email, page, size);
 
         return new ResponseEntity<>(reservationSimpleResDtoList, HttpStatus.OK);
     }

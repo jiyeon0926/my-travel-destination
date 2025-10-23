@@ -11,6 +11,8 @@ import jiyeon.travel.global.common.enums.ReservationStatus;
 import jiyeon.travel.global.exception.CustomException;
 import jiyeon.travel.global.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -35,8 +37,9 @@ public class ReservationQueryService {
     }
 
     @Transactional(readOnly = true)
-    public List<ReservationSimpleResDto> findAll(String email) {
-        List<Reservation> reservations = reservationRepository.findAllByEmail(email);
+    public List<ReservationSimpleResDto> findAll(String email, int page, int size) {
+        Pageable pageable = PageRequest.of(page - 1, size);
+        List<Reservation> reservations = reservationRepository.findAllByEmail(email, pageable);
 
         return reservations.stream()
                 .map(ReservationSimpleResDto::new)

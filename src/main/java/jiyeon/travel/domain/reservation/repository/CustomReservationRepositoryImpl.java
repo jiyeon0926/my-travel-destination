@@ -10,6 +10,7 @@ import jiyeon.travel.domain.ticket.entity.QTicketSchedule;
 import jiyeon.travel.domain.user.entity.QUser;
 import jiyeon.travel.global.common.enums.ReservationStatus;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 import java.util.Optional;
@@ -111,7 +112,7 @@ public class CustomReservationRepositoryImpl implements CustomReservationReposit
     }
 
     @Override
-    public List<Reservation> findAllByPartnerEmailWithoutUnpaid(String email) {
+    public List<Reservation> findAllByPartnerEmailWithoutUnpaid(String email, Pageable pageable) {
         QReservation reservation = QReservation.reservation;
         QTicket ticket = QTicket.ticket;
         QTicketSchedule ticketSchedule = QTicketSchedule.ticketSchedule;
@@ -120,6 +121,7 @@ public class CustomReservationRepositoryImpl implements CustomReservationReposit
         BooleanBuilder conditions = new BooleanBuilder();
         conditions.and(user.email.eq(email));
         conditions.and(reservation.status.ne(ReservationStatus.UNPAID));
+        conditions.and(reservation.status.ne(ReservationStatus.EXPIRED));
 
         return jpaQueryFactory
                 .selectFrom(reservation)
@@ -127,6 +129,8 @@ public class CustomReservationRepositoryImpl implements CustomReservationReposit
                 .innerJoin(ticketSchedule.ticket, ticket).fetchJoin()
                 .innerJoin(ticket.user, user).fetchJoin()
                 .where(conditions)
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
                 .fetch();
     }
 }
