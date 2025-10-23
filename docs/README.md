@@ -7,10 +7,9 @@
 - 사용자들이 작성한 여행 블로그를 한 곳에서 확인하고, 나의 다음 여행지를 발견하는 서비스
 
 ## 📅 프로젝트 기간
-- 총 기간 : 2025-08-16 ~ 2025-10-09
+- 총 기간 : 2025-08-16 ~ 2025-10-24
 - 설계 : 2025-08-16 ~ 2025-08-23
 - BE 1차 기능 개발 : 2025-08-23 ~ 2025-09-30
-- BE 2차 기능 개발 : 미정
 
 ## 🛠️ 기술 스택
 - Java 21
@@ -115,6 +114,7 @@ Lettuce 기반의 분산 락은 락에 대한 타임아웃 설정이 없어서 �
 - [AWS S3 이미지 업로드](https://blog.naver.com/yeondata/223989927527)
 - [Querydsl을 적용한 Fetch Join](https://velog.io/@yeoni9094/%EB%AC%B8%EC%A0%9C%ED%95%B4%EA%B2%B0-Querydsl%EC%9D%84-%EC%A0%81%EC%9A%A9%ED%95%9C-Fetch-Join)
 - [동시성 제어](https://blog.naver.com/yeondata/224021426407)
+- [Swagger에서 multipart/form-data 테스트 오류](https://velog.io/@yeoni9094/%EB%AC%B8%EC%A0%9C%ED%95%B4%EA%B2%B0-Swagger%EC%97%90%EC%84%9C-multipartform-data-%ED%85%8C%EC%8A%A4%ED%8A%B8-%EC%98%A4%EB%A5%98)
 
 ## 🔗 참고
 - [카카오페이 단건 결제 공식 문서](https://developers.kakaopay.com/docs/payment/online/single-payment)
