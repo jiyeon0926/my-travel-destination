@@ -23,8 +23,6 @@ import java.util.stream.IntStream;
 @RequiredArgsConstructor
 public class TicketImageCommandService {
 
-    private static final int IMAGE_MAX_SIZE = 5;
-
     private final TicketImageRepository ticketImageRepository;
     private final S3Service s3Service;
 
@@ -40,7 +38,7 @@ public class TicketImageCommandService {
 
         return (imageCount == 0)
                 ? uploadAndSaveTicketImages(ticket, files)
-                : addImagesWithLimit(ticket, files, imageCount);
+                : addImagesWithLimit(ticket, files);
     }
 
     @Transactional
@@ -87,7 +85,7 @@ public class TicketImageCommandService {
     }
 
     private List<TicketImage> uploadAndSaveTicketImages(Ticket ticket, List<MultipartFile> files) {
-        validateFiles(files.size(), files);
+        validateFiles(files);
 
         return IntStream.range(0, files.size())
                 .mapToObj(i -> {
@@ -104,19 +102,15 @@ public class TicketImageCommandService {
         }
     }
 
-    private List<TicketImage> addImagesWithLimit(Ticket ticket, List<MultipartFile> files, int count) {
-        validateFiles(count + files.size(), files);
+    private List<TicketImage> addImagesWithLimit(Ticket ticket, List<MultipartFile> files) {
+        validateFiles(files);
 
         return files.stream()
                 .map(file -> uploadToS3AndSaveImage(ticket, file, false))
                 .toList();
     }
 
-    private void validateFiles(int size, List<MultipartFile> files) {
-        if (size > IMAGE_MAX_SIZE) {
-            throw new CustomException(ErrorCode.IMAGE_MAX_COUNT_EXCEEDED);
-        }
-
+    private void validateFiles(List<MultipartFile> files) {
         boolean isImage = files.stream()
                 .allMatch(file -> Objects.requireNonNull(file.getContentType()).startsWith("image"));
         if (!isImage) {
