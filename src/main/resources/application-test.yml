@@ -1,0 +1,50 @@
+spring:
+  config:
+    activate:
+      on-profile: test
+
+  data:
+    redis:
+      host: localhost
+      port: 6379
+
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/my_travel_destination_test
+    username: root
+    password: 1234
+
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+
+jwt:
+  secret: AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+  access-expiry-millis: 1000000000000
+
+cloud:
+  aws:
+    s3:
+      bucket: my-travel-destination
+    region:
+      static: ap-northeast-2
+    stack:
+      auto: false
+    credentials:
+      access-key: AAAAAAAAAAAAAAAAAAAAA
+      secret-key: AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+
+kakao:
+  pay:
+    secret-key: AAAAAAAAAAAAAAAAAAAAAAAAAA
+    cid: TC0ONETIME
+    ready-url: https://open-api.kakaopay.com/online/v1/payment/ready
+    approve-url: https://open-api.kakaopay.com/online/v1/payment/approve
+    approval-redirect-url: https://developers.kakao.com/success
+    cancel-redirect-url: https://developers.kakao.com/cancel
+    fail-redirect-url: https://developers.kakao.com/fail

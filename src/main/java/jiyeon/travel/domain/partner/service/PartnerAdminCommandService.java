@@ -1,0 +1,59 @@
+package jiyeon.travel.domain.partner.service;
+
+import jiyeon.travel.domain.auth.service.AuthService;
+import jiyeon.travel.domain.partner.dto.PartnerProfileResDto;
+import jiyeon.travel.domain.partner.dto.PartnerSignupResDto;
+import jiyeon.travel.domain.partner.entity.Partner;
+import jiyeon.travel.domain.partner.repository.PartnerRepository;
+import jiyeon.travel.domain.user.entity.User;
+import jiyeon.travel.domain.user.service.UserAdminCommandService;
+import jiyeon.travel.global.exception.CustomException;
+import jiyeon.travel.global.exception.ErrorCode;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.function.Consumer;
+
+@Service
+@RequiredArgsConstructor
+public class PartnerAdminCommandService {
+
+    private final PartnerRepository partnerRepository;
+    private final AuthService authService;
+    private final UserAdminCommandService userAdminCommandService;
+
+    @Transactional
+    public PartnerSignupResDto signupPartner(String email, String password, String name, String businessNumber, String address, String phone) {
+        partnerRepository.findByBusinessNumber(businessNumber)
+                .ifPresent(partner -> {
+                    throw new CustomException(ErrorCode.BUSINESS_NUMBER_ALREADY_EXISTS);
+                });
+
+        User savedUser = authService.signupPartner(email, password, name, phone);
+        Partner partner = new Partner(savedUser, businessNumber, address);
+        Partner savedPartner = partnerRepository.save(partner);
+
+        return new PartnerSignupResDto(savedUser, savedPartner);
+    }
+
+    @Transactional
+    public PartnerProfileResDto updatePartnerById(Long partnerId, String name, String phone, String address) {
+        Partner partner = partnerRepository.findByIdOrElseThrow(partnerId);
+        acceptIfNotNull(name, partner::changeName);
+        acceptIfNotNull(phone, partner::changePhone);
+        acceptIfNotNull(address, partner::changeAddress);
+
+        return new PartnerProfileResDto(partner.getUser(), partner);
+    }
+
+    @Transactional
+    public void deletePartnerById(Long partnerId) {
+        Partner partner = partnerRepository.findByIdOrElseThrow(partnerId);
+        userAdminCommandService.deletePartner(partner.getUser());
+    }
+
+    private <T> void acceptIfNotNull(T t, Consumer<T> consumer) {
+        if (t != null) consumer.accept(t);
+    }
+}
