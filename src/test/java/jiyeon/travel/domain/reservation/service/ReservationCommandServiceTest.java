@@ -7,6 +7,7 @@ import jiyeon.travel.domain.ticket.entity.Ticket;
 import jiyeon.travel.domain.ticket.entity.TicketSchedule;
 import jiyeon.travel.domain.ticket.repository.TicketRepository;
 import jiyeon.travel.domain.ticket.repository.TicketScheduleRepository;
+import jiyeon.travel.domain.ticket.service.TicketPartnerCommandService;
 import jiyeon.travel.domain.user.entity.User;
 import jiyeon.travel.domain.user.repository.UserRepository;
 import jiyeon.travel.global.common.enums.TicketSaleStatus;
@@ -47,7 +48,7 @@ class ReservationCommandServiceTest {
     private ReservationRepository reservationRepository;
 
     @Autowired
-    private TicketPartnerCommandFacade ticketPartnerCommandFacade;
+    private TicketPartnerCommandService ticketPartnerCommandService;
 
     @Autowired
     private ReservationFacade reservationFacade;
@@ -143,7 +144,7 @@ class ReservationCommandServiceTest {
                 new TicketScheduleCreateReqDto(saleStartDate.toLocalDate(), null, 10)
         );
 
-        return ticketPartnerCommandFacade.createTicket(
+        return ticketPartnerCommandService.createTicket(
                 partner.getEmail(),
                 "타르트 만들기 체험",
                 saleStartDate,
