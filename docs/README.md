@@ -67,6 +67,15 @@
 - 티켓 관리
 - 예약 내역 확인
 
+## 👩‍🔬 테스트용 계정
+
+**업체 계정**
+- 이메일 : partner@test.com
+- 비밀번호 : test
+- 업체명 : (주)테스트
+- 사업장 번호 : 123-45-67890
+- 권한 : PARTNER
+
 ## 🧩 [ERD](https://dbdiagram.io/d/My-Travel-Destination-686676f8f413ba3508206ce6)
 
 ## 📝 API 명세서
