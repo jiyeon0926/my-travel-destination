@@ -1,6 +1,7 @@
-create database my_travel_destination
+create database if not exists my_travel_destination;
+use my_travel_destination;
 
-create table my_travel_destination.user (
+create table user (
 	id bigint primary key auto_increment,
 	email varchar(255) unique not null,
 	password varchar(200) not null,
@@ -12,7 +13,7 @@ create table my_travel_destination.user (
 	updated_at datetime not null
 );
 
-create table my_travel_destination.partner (
+create table partner (
 	id bigint primary key auto_increment,
 	user_id bigint not null,
 	business_number varchar(50) unique not null,
@@ -21,9 +22,9 @@ create table my_travel_destination.partner (
 	updated_at datetime not null
 );
 
-alter table my_travel_destination.partner add foreign key (user_id) references my_travel_destination.user (id);
+alter table partner add foreign key (user_id) references user (id);
 
-create table my_travel_destination.ticket (
+create table ticket (
 	id bigint primary key auto_increment,
 	user_id bigint not null,
 	name varchar(50) not null,
@@ -38,9 +39,9 @@ create table my_travel_destination.ticket (
 	updated_at datetime not null
 );
 
-alter table my_travel_destination.ticket add foreign key (user_id) references my_travel_destination.user (id);
+alter table ticket add foreign key (user_id) references user (id);
 
-create table my_travel_destination.ticket_option (
+create table ticket_option (
 	id bigint primary key auto_increment,
 	ticket_id bigint not null,
 	name varchar(100) not null,
@@ -49,9 +50,9 @@ create table my_travel_destination.ticket_option (
 	updated_at datetime not null
 );
 
-alter table my_travel_destination.ticket_option add foreign key (ticket_id) references my_travel_destination.ticket (id);
+alter table ticket_option add foreign key (ticket_id) references ticket (id);
 
-create table my_travel_destination.ticket_schedule (
+create table ticket_schedule (
 	id bigint primary key auto_increment,
 	ticket_id bigint not null,
 	is_active boolean not null default true,
@@ -63,9 +64,9 @@ create table my_travel_destination.ticket_schedule (
 	updated_at datetime not null
 );
 
-alter table my_travel_destination.ticket_schedule add foreign key (ticket_id) references my_travel_destination.ticket (id);
+alter table ticket_schedule add foreign key (ticket_id) references ticket (id);
 
-create table my_travel_destination.ticket_image (
+create table ticket_image (
 	id bigint primary key auto_increment,
 	ticket_id bigint not null,
 	image_url varchar(500) not null,
@@ -76,9 +77,9 @@ create table my_travel_destination.ticket_image (
 	updated_at datetime not null
 );
 
-alter table my_travel_destination.ticket_image add foreign key (ticket_id) references my_travel_destination.ticket (id);
+alter table ticket_image add foreign key (ticket_id) references ticket (id);
 
-create table my_travel_destination.reservation (
+create table reservation (
 	id bigint primary key auto_increment,
 	user_id bigint not null,
 	ticket_schedule_id bigint not null,
@@ -93,10 +94,10 @@ create table my_travel_destination.reservation (
 	updated_at datetime not null
 );
 
-alter table my_travel_destination.reservation add foreign key (user_id) references my_travel_destination.user (id);
-alter table my_travel_destination.reservation add foreign key (ticket_schedule_id) references my_travel_destination.ticket_schedule (id);
+alter table reservation add foreign key (user_id) references user (id);
+alter table reservation add foreign key (ticket_schedule_id) references ticket_schedule (id);
 
-create table my_travel_destination.reservation_option (
+create table reservation_option (
 	id bigint primary key auto_increment,
 	reservation_id bigint not null,
 	ticket_option_id bigint not null,
@@ -106,10 +107,10 @@ create table my_travel_destination.reservation_option (
 	created_at datetime not null
 );
 
-alter table my_travel_destination.reservation_option add foreign key (reservation_id) references my_travel_destination.reservation (id);
-alter table my_travel_destination.reservation_option add foreign key (ticket_option_id) references my_travel_destination.ticket_option (id);
+alter table reservation_option add foreign key (reservation_id) references reservation (id);
+alter table reservation_option add foreign key (ticket_option_id) references ticket_option (id);
 
-create table my_travel_destination.payment (
+create table payment (
 	id bigint primary key auto_increment,
 	reservation_id bigint not null,
 	amount int not null,
@@ -122,9 +123,9 @@ create table my_travel_destination.payment (
 	updated_at datetime not null
 );
 
-alter table my_travel_destination.payment add foreign key (reservation_id) references my_travel_destination.reservation (id);
+alter table payment add foreign key (reservation_id) references reservation (id);
 
-create table my_travel_destination.blog (
+create table blog (
 	id bigint primary key auto_increment,
 	user_id bigint not null,
 	title varchar(50) not null,
@@ -137,9 +138,9 @@ create table my_travel_destination.blog (
 	updated_at datetime not null
 );
 
-alter table my_travel_destination.blog add foreign key (user_id) references my_travel_destination.user (id);
+alter table blog add foreign key (user_id) references user (id);
 
-create table my_travel_destination.blog_image (
+create table blog_image (
 	id bigint primary key auto_increment,
 	blog_id bigint not null,
 	image_url varchar(500) not null,
@@ -150,18 +151,18 @@ create table my_travel_destination.blog_image (
     updated_at datetime not null
 );
 
-alter table my_travel_destination.blog_image add foreign key (blog_id) references my_travel_destination.blog (id);
+alter table blog_image add foreign key (blog_id) references blog (id);
 
-create table my_travel_destination.blog_ticket_item (
+create table blog_ticket_item (
 	id bigint primary key auto_increment,
 	blog_id bigint not null,
 	reservation_id bigint not null,
 	created_at datetime not null
 );
 
-alter table my_travel_destination.blog_ticket_item add foreign key (blog_id) references my_travel_destination.blog (id);
-alter table my_travel_destination.blog_ticket_item add foreign key (reservation_id) references my_travel_destination.reservation (id);
+alter table blog_ticket_item add foreign key (blog_id) references blog (id);
+alter table blog_ticket_item add foreign key (reservation_id) references reservation (id);
 
 -- 관리자 (admin, admin)
-insert into my_travel_destination.user (email, password, display_name, phone, role, is_deleted, created_at, updated_at)
+insert into user (email, password, display_name, phone, role, is_deleted, created_at, updated_at)
 values ('admin', '$2a$10$VPrBFOayEQd.JqkxnLPkGO2KUPnSRD0mjA1mXCVQr/i0kGohCBM5y', '관리자', '01012345678', 'ADMIN', 0, now(), now())
