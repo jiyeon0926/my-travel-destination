@@ -1,7 +1,14 @@
-FROM amazoncorretto:21 AS build
+# Build stage
+FROM amazoncorretto:21 AS builder
+WORKDIR /build
+COPY . .
+RUN chmod +x ./gradlew
+RUN ./gradlew build -x test
+
+# Run stage
+FROM amazoncorretto:21
+WORKDIR /app
+COPY --from=builder /build/build/libs/*.jar app.jar
 
 EXPOSE 8080
-
-COPY ./build/libs/travel-0.0.1-SNAPSHOT.jar app.jar
-
 ENTRYPOINT ["java", "-Dspring.profiles.active=docker", "-jar", "app.jar"]
