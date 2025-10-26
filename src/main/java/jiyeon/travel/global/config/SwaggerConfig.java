@@ -29,7 +29,7 @@ public class SwaggerConfig {
     private Info apiInfo() {
         return new Info()
                 .title("My Travel Destination API")
-                .description("My Travel Destination Project API 명세서")
+                .description("My Travel Destination Project API 명세서 \nGitHub: https://github.com/jiyeon0926/my-travel-destination")
                 .version("1.0.0");
     }
 }

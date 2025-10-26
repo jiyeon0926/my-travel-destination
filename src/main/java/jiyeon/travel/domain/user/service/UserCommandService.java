@@ -1,6 +1,5 @@
 package jiyeon.travel.domain.user.service;
 
-import jiyeon.travel.domain.auth.service.AuthService;
 import jiyeon.travel.domain.user.dto.UserProfileResDto;
 import jiyeon.travel.domain.user.entity.User;
 import jiyeon.travel.domain.user.repository.UserRepository;
@@ -15,7 +14,6 @@ import java.util.function.Consumer;
 public class UserCommandService {
 
     private final UserRepository userRepository;
-    private final AuthService authService;
 
     @Transactional
     public UserProfileResDto updateProfile(String email, String nickname, String phone) {
@@ -27,10 +25,9 @@ public class UserCommandService {
     }
 
     @Transactional
-    public void deleteUser(String email, String accessToken) {
+    public void deleteUser(String email) {
         User user = userRepository.findActiveByEmailOrElseThrow(email);
         user.changeIsDeleted();
-        authService.logout(accessToken);
     }
 
     private <T> void acceptIfNotNull(T t, Consumer<T> consumer) {

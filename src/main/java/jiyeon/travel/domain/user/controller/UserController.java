@@ -10,10 +10,8 @@ import jiyeon.travel.domain.user.dto.UserProfileResDto;
 import jiyeon.travel.domain.user.dto.UserProfileUpdateReqDto;
 import jiyeon.travel.domain.user.service.UserCommandService;
 import jiyeon.travel.domain.user.service.UserQueryService;
-import jiyeon.travel.global.auth.AuthenticationScheme;
 import jiyeon.travel.global.auth.UserDetailsImpl;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -58,12 +56,9 @@ public class UserController {
             @ApiResponse(responseCode = "403", description = "사용자 권한만 접근할 수 있습니다.", content = @Content(mediaType = "application/json")),
             @ApiResponse(responseCode = "404", description = "사용자를 찾을 수 없습니다.", content = @Content(mediaType = "application/json"))
     })
-    public ResponseEntity<Void> deleteUser(@AuthenticationPrincipal UserDetailsImpl userDetails,
-                                           @RequestHeader(HttpHeaders.AUTHORIZATION) String authorizationHeader) {
+    public ResponseEntity<Void> deleteUser(@AuthenticationPrincipal UserDetailsImpl userDetails) {
         String email = userDetails.getUsername();
-        String accessToken = authorizationHeader.replace(AuthenticationScheme.generateType(AuthenticationScheme.BEARER), "");
-
-        userCommandService.deleteUser(email, accessToken);
+        userCommandService.deleteUser(email);
 
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
