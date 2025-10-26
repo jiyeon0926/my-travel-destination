@@ -2,6 +2,7 @@ package jiyeon.travel.global.config;
 
 import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.OpenAPI;
+import io.swagger.v3.oas.models.info.Contact;
 import io.swagger.v3.oas.models.info.Info;
 import io.swagger.v3.oas.models.security.SecurityRequirement;
 import io.swagger.v3.oas.models.security.SecurityScheme;
@@ -27,9 +28,15 @@ public class SwaggerConfig {
     }
 
     private Info apiInfo() {
+        Contact contact = new Contact();
+        contact.name("김지연")
+                .url("https://github.com/jiyeon0926")
+                .email("wldus2499@naver.com");
+
         return new Info()
                 .title("My Travel Destination API")
-                .description("My Travel Destination Project API 명세서 \nGitHub: https://github.com/jiyeon0926/my-travel-destination")
-                .version("1.0.0");
+                .summary("사용자들이 작성한 여행 블로그를 한 곳에서 확인하고, 나의 다음 여행지를 발견하는 서비스")
+                .description("GitHub: <a href='https://github.com/jiyeon0926/my-travel-destination'></a>")
+                .contact(contact);
     }
 }
