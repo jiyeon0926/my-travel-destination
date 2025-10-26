@@ -29,7 +29,6 @@ public class SwaggerConfig {
     private Info apiInfo() {
         return new Info()
                 .title("My Travel Destination API")
-                .summary("사용자들이 작성한 여행 블로그를 한 곳에서 확인하고, 나의 다음 여행지를 발견하는 서비스")
                 .description("[자세한 내용은 GitHub README에서 확인할 수 있습니다.](https://github.com/jiyeon0926/my-travel-destination)");
     }
 }
