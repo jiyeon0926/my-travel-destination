@@ -7,9 +7,10 @@
 - 사용자들이 작성한 여행 블로그를 한 곳에서 확인하고, 나의 다음 여행지를 발견하는 서비스
 
 ## 📅 프로젝트 기간
-- 총 기간 : 2025-08-16 ~ 2025-10-24
+- 총 기간 : 2025-08-16 ~ 2025-10-26
 - 설계 : 2025-08-16 ~ 2025-08-23
 - BE 1차 기능 개발 : 2025-08-23 ~ 2025-09-30
+- 1차 기능 배포 및 자동화 : 2025-10-26
 
 ## 🛠️ 기술 스택
 - Java 21
@@ -19,7 +20,7 @@
 - Kakaopay Open API
 - Redis
 - MySQL
-- AWS S3
+- AWS S3/EC2
 
 ## 🖌️ 와이어프레임
 - 1️⃣[사용자](https://www.figma.com/design/pz5HnNQ6CbxfQP8pICnl6K/my-travel-service?node-id=2-153&p=f&t=nUCVQhWyv5rZqjOm-0)
@@ -66,10 +67,19 @@
 - 티켓 관리
 - 예약 내역 확인
 
+## 👩‍🔬 테스트용 계정
+
+**업체 계정**
+- 이메일 : partner@test.com
+- 비밀번호 : test
+- 업체명 : (주)테스트
+- 사업장 번호 : 123-45-67890
+- 권한 : PARTNER
+
 ## 🧩 [ERD](https://dbdiagram.io/d/My-Travel-Destination-686676f8f413ba3508206ce6)
 
 ## 📝 API 명세서
-- [Swagger]() (링크 첨부 예정)
+- [Swagger](http://15.165.73.82/swagger-ui/index.html)
 - [Notion](https://www.notion.so/My-Travel-Destination-2562f0d54a3480bcadeaed91521358fe?source=copy_link)
 
 ## 🔒 로그인 및 로그아웃
