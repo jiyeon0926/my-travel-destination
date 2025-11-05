@@ -83,7 +83,7 @@ public class AuthController {
     @PatchMapping("/password")
     @Operation(summary = "비밀번호 변경", description = "비밀번호는 최소 8자 이상, 대문자, 소문자, 숫자, 특수문자를 포함하여 변경해야 합니다.")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "요청에 성공하였습니다.", content = @Content(mediaType = "application/json")),
+            @ApiResponse(responseCode = "200", description = "요청에 성공하였습니다."),
             @ApiResponse(responseCode = "400", description = "잘못된 요청입니다.", content = @Content(mediaType = "application/json")),
             @ApiResponse(responseCode = "401", description = "JWT 인증이 필요합니다.", content = @Content(mediaType = "application/json")),
             @ApiResponse(responseCode = "404", description = "사용자를 찾을 수 없습니다.", content = @Content(mediaType = "application/json"))
