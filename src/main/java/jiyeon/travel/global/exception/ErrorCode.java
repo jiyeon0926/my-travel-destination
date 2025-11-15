@@ -16,7 +16,7 @@ public enum ErrorCode {
     BASE_PRICE_EMPTY(BAD_REQUEST, "기본 가격이 없을 경우, 옵션은 반드시 존재해야 합니다."),
     BASE_PRICE_PRESENT(BAD_REQUEST, "기본 가격이 있을 경우, 옵션은 저장할 수 없습니다."),
     IMAGE_ONLY_ALLOWED(BAD_REQUEST, "이미지 파일만 업로드할 수 있습니다."),
-    FILE_UPLOAD_SIZE_EXCEEDED(BAD_REQUEST, "파일 업로드 크기는 최대 10MB까지 가능합니다."),
+    FILE_UPLOAD_SIZE_EXCEEDED(BAD_REQUEST, "파일 업로드 최대 크기를 초과하였습니다."),
     TICKET_OPTION_PRESENT(BAD_REQUEST, "옵션이 존재할 경우, 기본 가격을 설정할 수 없습니다."),
     CANNOT_DELETE_MAIN_IMAGE(BAD_REQUEST, "대표 이미지는 삭제할 수 없습니다."),
     NULL_TIME_SCHEDULE_DUPLICATE(BAD_REQUEST, "하루 기준으로 시간 없는 일정은 중복 등록할 수 없습니다."),
