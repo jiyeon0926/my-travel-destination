@@ -48,8 +48,6 @@ public class KakaopayService {
     private String failRedirectUrl;
 
     public KakaopayReadyResDto readyPayment(Reservation reservation, Ticket ticket) {
-        approvalRedirectUrl = String.format(approvalRedirectUrl, reservation.getId());
-
         Map<String, String> body = readyPaymentBody(reservation, ticket);
         HttpHeaders headers = httpHeaders();
         HttpEntity<Map<String, String>> request = new HttpEntity<>(body, headers);
@@ -116,6 +114,8 @@ public class KakaopayService {
     }
 
     private Map<String, String> readyPaymentBody(Reservation reservation, Ticket ticket) {
+        String formattedApprovalRedirectUrl = String.format(approvalRedirectUrl, reservation.getId());
+
         Map<String, String> body = new HashMap<>();
         body.put("cid", cid);
         body.put("partner_order_id", reservation.getReservationNumber());
@@ -124,7 +124,7 @@ public class KakaopayService {
         body.put("quantity", String.valueOf(reservation.getTotalQuantity()));
         body.put("total_amount", String.valueOf(reservation.getTotalAmount()));
         body.put("tax_free_amount", "0");
-        body.put("approval_url", approvalRedirectUrl);
+        body.put("approval_url", formattedApprovalRedirectUrl);
         body.put("cancel_url", cancelRedirectUrl);
         body.put("fail_url", failRedirectUrl);
 
