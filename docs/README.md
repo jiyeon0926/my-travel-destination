@@ -79,9 +79,10 @@
 - 권한 : PARTNER
 
 ## 🧩 [ERD](https://dbdiagram.io/d/My-Travel-Destination-686676f8f413ba3508206ce6)
+<img width="550" height="550" alt="My Travel Destination" src="https://github.com/user-attachments/assets/b458c080-2b89-49d7-bd48-e9744b51bf5b" />
 
 ## 📝 API 명세서
-- [Swagger](http://15.165.73.82/swagger-ui/index.html)
+- [Swagger](http://ec2-13-125-248-235.ap-northeast-2.compute.amazonaws.com/swagger-ui/index.html)
 - [Notion](https://www.notion.so/My-Travel-Destination-2562f0d54a3480bcadeaed91521358fe?source=copy_link)
 
 ## 🔒 로그인 및 로그아웃
