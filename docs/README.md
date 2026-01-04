@@ -83,7 +83,7 @@
 
 ## 📝 API 명세서
 - [Swagger](http://ec2-13-125-248-235.ap-northeast-2.compute.amazonaws.com/swagger-ui/index.html)
-- [Notion](https://www.notion.so/My-Travel-Destination-2562f0d54a3480bcadeaed91521358fe?source=copy_link)
+- [Notion](https://www.notion.so/2562f0d54a34804d9719cc38efe1638d?v=2562f0d54a3480b885a0000ca7b234ad)
 
 ## 🔒 로그인 및 로그아웃
 이 프로젝트의 핵심은 인증 기능이 아니므로, 로그인 연장 기능은 구현하지 않았습니다. <br/>
