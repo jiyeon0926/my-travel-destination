@@ -9,8 +9,8 @@
 ## 📅 프로젝트 기간
 - 총 기간 : 2025-08-16 ~ 2025-10-26
 - 설계 : 2025-08-16 ~ 2025-08-23
-- BE 1차 기능 개발 : 2025-08-23 ~ 2025-09-30
-- 1차 기능 배포 및 자동화 : 2025-10-26
+- API 개발 : 2025-08-23 ~ 2025-09-30
+- 1차 배포 및 자동화 : 2025-10-26
 
 ## 🛠️ 기술 스택
 - Java 21
@@ -68,15 +68,6 @@
 - 비밀번호 변경
 - 티켓 관리
 - 예약 내역 확인
-
-## 👩‍🔬 테스트용 계정
-
-**업체 계정**
-- 이메일 : partner@test.com
-- 비밀번호 : test
-- 업체명 : (주)테스트
-- 사업장 번호 : 123-45-67890
-- 권한 : PARTNER
 
 ## 🧩 [ERD](https://dbdiagram.io/d/My-Travel-Destination-686676f8f413ba3508206ce6)
 <img width="550" height="550" alt="My Travel Destination" src="https://github.com/user-attachments/assets/b458c080-2b89-49d7-bd48-e9744b51bf5b" />
