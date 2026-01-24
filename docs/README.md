@@ -73,7 +73,7 @@
 <img width="550" height="550" alt="My Travel Destination" src="https://github.com/user-attachments/assets/b458c080-2b89-49d7-bd48-e9744b51bf5b" />
 
 ## 📝 API 명세서
-- [Swagger](http://ec2-13-125-248-235.ap-northeast-2.compute.amazonaws.com/swagger-ui/index.html)
+- ~~[Swagger](http://ec2-13-125-248-235.ap-northeast-2.compute.amazonaws.com/swagger-ui/index.html)~~
 - [Notion](https://www.notion.so/2562f0d54a34804d9719cc38efe1638d?v=2562f0d54a3480b885a0000ca7b234ad)
 
 ## 🔒 로그인 및 로그아웃
