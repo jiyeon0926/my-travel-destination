@@ -116,7 +116,6 @@ Lettuce 기반의 분산 락은 락에 대한 타임아웃 설정이 없어서 �
 ## 🧾 문서
 프로젝트 진행 과정에서 학습한 내용과 문제 해결 과정을 기록한 문서입니다.
 - [AWS S3 이미지 업로드](https://blog.naver.com/yeondata/223989927527)
-- [Querydsl을 적용한 Fetch Join](https://velog.io/@yeoni9094/%EB%AC%B8%EC%A0%9C%ED%95%B4%EA%B2%B0-Querydsl%EC%9D%84-%EC%A0%81%EC%9A%A9%ED%95%9C-Fetch-Join)
 - [동시성 제어](https://blog.naver.com/yeondata/224021426407)
 - [Swagger에서 multipart/form-data 테스트 오류](https://velog.io/@yeoni9094/%EB%AC%B8%EC%A0%9C%ED%95%B4%EA%B2%B0-Swagger%EC%97%90%EC%84%9C-multipartform-data-%ED%85%8C%EC%8A%A4%ED%8A%B8-%EC%98%A4%EB%A5%98)
 
